@@ -3,6 +3,7 @@ import { useTranslations } from 'next-intl';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { useLocale } from 'next-intl'; // Import useLocale to get the current locale
+import { HeroCarousel } from '@/components/HeroCarousel';
 
 export default function Home() {
   const t = useTranslations('Index');
@@ -32,23 +33,17 @@ export default function Home() {
   return (
     <div className="flex flex-col min-h-screen">
       {/* Hero Section */}
-      <section className="relative h-[60vh] flex items-center justify-center bg-gray-100 dark:bg-gray-800 text-center px-4 overflow-hidden">
-        {/* Background Image Placeholder - Make sure this image path is valid or remove */}
-        <div className="absolute inset-0 bg-cover bg-center opacity-70 z-0" style={{ backgroundImage: 'url(/hero-placeholder.jpg)' }}></div>
-        <div className="relative z-10 text-white dark:text-gray-100">
-          <h1 className="text-4xl md:text-6xl font-bold mb-4">
-            {t('hero_headline')}
-          </h1>
-          <p className="text-xl md:text-2xl mb-8 max-w-2xl mx-auto">
-            {t('hero_subheadline')}
-          </p>
-          <Link href={`/${locale}/products`}>
-            <Button size="lg" className="bg-blue-600 hover:bg-blue-700 text-white">
-              {t('explore_products')}
-            </Button>
-          </Link>
-        </div>
-      </section>
+      <HeroCarousel
+        images={[
+          '/hero-bg.png',
+          '/hero-bg-2.png',
+          '/hero-bg-3.png'
+        ]}
+        headline={t('hero_headline')}
+        subheadline={t('hero_subheadline')}
+        ctaText={t('explore_products')}
+        ctaLink={`/${locale}/products`}
+      />
 
       {/* Product Summary Section */}
       <section className="container mx-auto py-16 px-4">
