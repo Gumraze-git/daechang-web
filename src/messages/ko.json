@@ -11,7 +11,7 @@
     "product1_desc": "효율적이고 고품질의 플라스틱 용기 생산에 최적화.",
     "product2_title": "첨단 PVC 압출 라인",
     "product2_desc": "다양한 PVC 프로파일 및 파이프를 위한 정밀 엔지니어링.",
-    "latest_notices": "최신 공지사항",
+    "latest_notices": "공지사항",
     "notice1_title": "전시회 참가 안내",
     "notice1_date": "2025-11-28",
     "notice2_title": "신제품 라인업 출시",
@@ -89,5 +89,10 @@
     "form_privacy_consent": "개인정보 수집 및 이용에 동의합니다.",
     "form_submit_button": "문의 제출",
     "form_success_message": "문의가 성공적으로 제출되었습니다. 곧 연락 드리겠습니다."
+  },
+  "Footer": {
+    "address_road": "경기 화성시 양감면 토성로 579-17",
+    "address_lot": "경기 화성시 양감면 송산리 산70",
+    "zip_code": "18628"
   }
 }

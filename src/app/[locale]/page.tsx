@@ -73,39 +73,38 @@ export default function Home() {
 
       {/* Product Summary Section */}
       <section className="container mx-auto py-16 px-4">
-        <h2 className="text-3xl font-bold text-center mb-12">
+        <h2 className="text-3xl font-bold text-left mb-12">
           {t('latest_products')}
         </h2>
         <ProductCarousel products={products} locale={locale} />
-        <div className="mt-8 text-center">
-          <Link href={`/${locale}/products`}>
-            <Button variant="outline" size="lg">
-              {t('view_all')}
-            </Button>
-          </Link>
-        </div>
       </section>
 
       {/* Notices Section */}
-      <section className="container mx-auto py-16 px-4 bg-gray-50 dark:bg-gray-800">
-        <h2 className="text-3xl font-bold text-center mb-12">
+      <section className="container mx-auto py-16 px-4 bg-white">
+        <h2 className="text-3xl font-bold text-left mb-12">
           {t('latest_notices')}
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {notices.map((notice, index) => (
-            <Card key={index}>
-              <CardHeader>
-                <CardTitle>{t(notice.titleKey)}</CardTitle>
-                <CardDescription>{t(notice.dateKey)}</CardDescription>
-              </CardHeader>
-              <CardFooter>
-                <Link href={`/${locale}${notice.href}`}>
-                  <Button variant="link" className="px-0">
-                    {t('view_all')}
-                  </Button>
-                </Link>
-              </CardFooter>
-            </Card>
+            <Link key={index} href={`/${locale}${notice.href}`} className="group">
+              <Card className="h-full transition-all duration-300 hover:shadow-lg hover:border-primary/50">
+                <CardHeader>
+                  <div className="flex justify-between items-start mb-2">
+                    <span className="text-sm text-muted-foreground group-hover:text-primary transition-colors">
+                      {t(notice.dateKey)}
+                    </span>
+                  </div>
+                  <CardTitle className="text-xl group-hover:text-primary transition-colors">
+                    {t(notice.titleKey)}
+                  </CardTitle>
+                </CardHeader>
+                <CardFooter className="pt-0">
+                  <span className="text-sm font-medium text-muted-foreground group-hover:text-primary flex items-center mt-4">
+                    {t('view_all')} <span className="ml-1 transition-transform group-hover:translate-x-1">→</span>
+                  </span>
+                </CardFooter>
+              </Card>
+            </Link>
           ))}
         </div>
       </section>
