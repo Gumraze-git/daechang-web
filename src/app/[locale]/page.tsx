@@ -87,19 +87,23 @@ export default function Home() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {notices.map((notice, index) => (
             <Link key={index} href={`/${locale}${notice.href}`} className="group">
-              <Card className="h-full transition-all duration-300 hover:shadow-lg hover:border-primary/50">
+              <Card className="h-full transition-all duration-300 hover:shadow-lg hover:border-primary/50 overflow-hidden">
+                {/* Image Placeholder */}
+                <div className="w-full aspect-video bg-gray-200 flex items-center justify-center text-gray-400 group-hover:bg-gray-100 transition-colors">
+                  Notice Image
+                </div>
                 <CardHeader>
                   <div className="flex justify-between items-start mb-2">
                     <span className="text-sm text-muted-foreground group-hover:text-primary transition-colors">
                       {t(notice.dateKey)}
                     </span>
                   </div>
-                  <CardTitle className="text-xl group-hover:text-primary transition-colors">
+                  <CardTitle className="text-xl group-hover:text-primary transition-colors line-clamp-2">
                     {t(notice.titleKey)}
                   </CardTitle>
                 </CardHeader>
-                <CardFooter className="pt-0">
-                  <span className="text-sm font-medium text-muted-foreground group-hover:text-primary flex items-center mt-4">
+                <CardFooter className="pt-0 mt-auto">
+                  <span className="text-sm font-medium text-muted-foreground group-hover:text-primary flex items-center">
                     {t('view_all')} <span className="ml-1 transition-transform group-hover:translate-x-1">→</span>
                   </span>
                 </CardFooter>

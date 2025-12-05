@@ -98,5 +98,10 @@
     "quick_links": "바로가기",
     "privacy_policy": "개인정보처리방침",
     "terms_of_service": "이용약관"
+  },
+  "NoticeDetail": {
+    "back_to_list": "목록으로 돌아가기",
+    "next_post": "다음 글",
+    "prev_post": "이전 글"
   }
 }

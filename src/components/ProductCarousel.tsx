@@ -37,25 +37,20 @@ export function ProductCarousel({ products, locale }: ProductCarouselProps) {
                 <div className="flex -ml-4">
                     {products.map((product, index) => (
                         <div key={index} className="flex-[0_0_100%] md:flex-[0_0_50%] lg:flex-[0_0_33.333%] min-w-0 pl-4">
-                            <Card className="flex flex-col h-full">
-                                <CardHeader>
-                                    <CardTitle className="line-clamp-1">{product.title}</CardTitle>
-                                    <CardDescription className="line-clamp-2">{product.description}</CardDescription>
-                                </CardHeader>
-                                <CardContent className="flex-grow">
-                                    {/* Product Image Placeholder */}
-                                    <div className="w-full h-48 bg-gray-200 rounded-md mb-4 flex items-center justify-center text-gray-400">
-                                        Image Placeholder
-                                    </div>
-                                </CardContent>
-                                <CardFooter>
-                                    <Link href={`/${locale}${product.href}`} className="w-full">
-                                        <Button variant="outline" className="w-full">
-                                            {t('view_all')}
-                                        </Button>
-                                    </Link>
-                                </CardFooter>
-                            </Card>
+                            <Link href={`/${locale}${product.href}`} className="block h-full group/card">
+                                <Card className="flex flex-col h-full transition-all duration-300 hover:shadow-lg hover:border-primary/50 group-hover/card:border-primary/50">
+                                    <CardHeader>
+                                        <CardTitle className="line-clamp-1 group-hover/card:text-primary transition-colors">{product.title}</CardTitle>
+                                        <CardDescription className="line-clamp-2">{product.description}</CardDescription>
+                                    </CardHeader>
+                                    <CardContent className="flex-grow">
+                                        {/* Product Image Placeholder */}
+                                        <div className="w-full h-48 bg-gray-200 rounded-md mb-4 flex items-center justify-center text-gray-400 group-hover/card:bg-gray-100 transition-colors">
+                                            Image Placeholder
+                                        </div>
+                                    </CardContent>
+                                </Card>
+                            </Link>
                         </div>
                     ))}
                 </div>
@@ -81,6 +76,6 @@ export function ProductCarousel({ products, locale }: ProductCarouselProps) {
                 <ChevronRight className="h-6 w-6" />
                 <span className="sr-only">Next slide</span>
             </Button>
-        </div>
+        </div >
     );
 }
