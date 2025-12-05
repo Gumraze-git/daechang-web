@@ -12,9 +12,8 @@ export default function SupportLayout({ children }: { children: React.ReactNode 
   const locale = useLocale();
 
   const supportNavItems = [
-    { name: t('support_notices'), href: `/${locale}/support/notices` },
-    { name: t('support_resources'), href: `/${locale}/support/resources` },
     { name: t('support_contact'), href: `/${locale}/support/contact` },
+    { name: t('support_resources'), href: `/${locale}/support/resources` },
   ];
 
   return (

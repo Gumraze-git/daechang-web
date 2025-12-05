@@ -97,7 +97,7 @@ export default function NoticeDetailPage({ params }: { params: Promise<{ id: str
 
       {/* Footer / Navigation */}
       <div className="border-t pt-8 flex justify-between items-center">
-        <Link href={`/${locale}`}>
+        <Link href={`/${locale}/notices`}>
           <Button variant="outline" className="flex items-center">
             <ArrowLeft className="w-4 h-4 mr-2" />
             {tDetail('back_to_list')}

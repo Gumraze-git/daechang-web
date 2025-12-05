@@ -103,5 +103,11 @@
     "back_to_list": "목록으로 돌아가기",
     "next_post": "다음 글",
     "prev_post": "이전 글"
+  },
+  "NoticeCategories": {
+    "all": "전체",
+    "news": "뉴스",
+    "exhibition": "전시회",
+    "maintenance": "유지보수"
   }
 }
