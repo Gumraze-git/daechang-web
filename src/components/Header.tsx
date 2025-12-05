@@ -40,28 +40,13 @@ export function Header() {
   );
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-white/95 shadow-sm backdrop-blur supports-[backdrop-filter]:bg-white/60 dark:bg-black/95">
+    <header className="relative sticky top-0 z-50 w-full border-b bg-white/95 shadow-sm backdrop-blur supports-[backdrop-filter]:bg-white/60 dark:bg-black/95">
       <div className="container flex h-16 items-center justify-between px-4 md:px-8">
         <Link href="/" className="mr-6 flex items-center space-x-2">
           <span className="font-bold text-lg">{tIndex('title')}</span>
         </Link>
 
-        {/* Desktop Navigation */}
-        <NavigationMenu className="hidden md:flex">
-          <NavigationMenuList className="gap-4">
-            {navItems.map((item) => (
-              <NavigationMenuItem key={item.name}>
-                <NavigationMenuLink asChild active={pathname.endsWith(item.href)} className={navigationMenuTriggerStyle()}>
-                  <Link href={`/${currentLocale}${item.href}`} className="text-base font-medium">
-                    {item.name}
-                  </Link>
-                </NavigationMenuLink>
-              </NavigationMenuItem>
-            ))}
-          </NavigationMenuList>
-        </NavigationMenu>
-
-        <div className="flex items-center space-x-4">
+        <div className="flex items-center space-x-4 ml-auto">
           <div className="hidden md:block">
             <LanguageSwitcher />
           </div>
@@ -87,6 +72,25 @@ export function Header() {
               </div>
             </SheetContent>
           </Sheet>
+        </div>
+      </div>
+
+      {/* Desktop Navigation - Centered relative to viewport (header) */}
+      <div className="hidden md:flex absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none">
+        <div className="pointer-events-auto">
+          <NavigationMenu>
+            <NavigationMenuList className="gap-4">
+              {navItems.map((item) => (
+                <NavigationMenuItem key={item.name}>
+                  <NavigationMenuLink asChild active={pathname.endsWith(item.href)} className={navigationMenuTriggerStyle()}>
+                    <Link href={`/${currentLocale}${item.href}`} className="text-base font-medium">
+                      {item.name}
+                    </Link>
+                  </NavigationMenuLink>
+                </NavigationMenuItem>
+              ))}
+            </NavigationMenuList>
+          </NavigationMenu>
         </div>
       </div>
     </header>
