@@ -4,6 +4,21 @@ export default function CompanyPage() {
   const t = useTranslations('CompanyPage');
   return (
     <div className="flex flex-col gap-16">
+      {/* Company Info Cards */}
+      <section className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+        {[
+          { label: t('info_establishment'), value: t('info_establishment_value') },
+          { label: t('info_ceo'), value: t('info_ceo_value') },
+          { label: t('info_revenue'), value: t('info_revenue_value') },
+          { label: t('info_employees'), value: t('info_employees_value') },
+        ].map((item, index) => (
+          <div key={index} className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 text-center">
+            <h3 className="text-sm text-gray-500 dark:text-gray-400 mb-2 font-medium">{item.label}</h3>
+            <p className="text-xl font-bold text-gray-900 dark:text-white">{item.value}</p>
+          </div>
+        ))}
+      </section>
+
       {/* Mission Section */}
       <section className="text-center">
         <h2 className="text-3xl font-bold mb-6 text-blue-900 dark:text-blue-400">
