@@ -42,7 +42,7 @@ export function Header() {
   );
 
   return (
-    <header className="relative sticky top-0 z-50 w-full border-b bg-white/95 shadow-sm backdrop-blur supports-[backdrop-filter]:bg-white/60 dark:bg-black/95">
+    <header className="relative sticky top-0 z-50 w-full border-b bg-white shadow-sm dark:bg-black">
       <div className="container flex h-16 items-center justify-between px-4 md:px-8">
         <Link href="/" className="mr-6 flex items-center space-x-2">
           <Image src="/logo.png" alt="Daechang Logo" width={150} height={40} className="h-10 w-auto" unoptimized />
@@ -81,11 +81,11 @@ export function Header() {
       <div className="hidden md:flex absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none">
         <div className="pointer-events-auto">
           <NavigationMenu>
-            <NavigationMenuList className="gap-4">
+            <NavigationMenuList className="gap-8">
               {navItems.map((item) => (
                 <NavigationMenuItem key={item.name}>
-                  <NavigationMenuLink asChild active={pathname.endsWith(item.href)} className={navigationMenuTriggerStyle()}>
-                    <Link href={`/${currentLocale}${item.href}`} className="text-base font-medium">
+                  <NavigationMenuLink asChild active={pathname.endsWith(item.href)} className="text-base font-medium transition-colors hover:text-primary">
+                    <Link href={`/${currentLocale}${item.href}`}>
                       {item.name}
                     </Link>
                   </NavigationMenuLink>
