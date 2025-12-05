@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { useLocale } from 'next-intl'; // Import useLocale to get the current locale
 import { HeroCarousel } from '@/components/HeroCarousel';
+import { ProductCarousel } from '@/components/ProductCarousel';
 
 export default function Home() {
   const t = useTranslations('Index');
@@ -12,14 +13,39 @@ export default function Home() {
   // Placeholder product data (will be fetched from API later)
   const products = [
     {
-      titleKey: 'product1_title',
-      descriptionKey: 'product1_desc',
-      href: '/products/blow-molding-machine-1', // Placeholder link
+      title: t('product1_title'),
+      description: t('product1_desc'),
+      href: '/products/blow-molding-machine-1',
     },
     {
-      titleKey: 'product2_title',
-      descriptionKey: 'product2_desc',
-      href: '/products/pvc-extrusion-line-1', // Placeholder link
+      title: t('product2_title'),
+      description: t('product2_desc'),
+      href: '/products/pvc-extrusion-line-1',
+    },
+    {
+      title: 'Product 3',
+      description: 'Description for Product 3',
+      href: '/products/product-3',
+    },
+    {
+      title: 'Product 4',
+      description: 'Description for Product 4',
+      href: '/products/product-4',
+    },
+    {
+      title: 'Product 5',
+      description: 'Description for Product 5',
+      href: '/products/product-5',
+    },
+    {
+      title: 'Product 6',
+      description: 'Description for Product 6',
+      href: '/products/product-6',
+    },
+    {
+      title: 'Product 7',
+      description: 'Description for Product 7',
+      href: '/products/product-7',
     },
   ];
 
@@ -50,26 +76,13 @@ export default function Home() {
         <h2 className="text-3xl font-bold text-center mb-12">
           {t('latest_products')}
         </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {products.map((product, index) => (
-            <Card key={index} className="flex flex-col">
-              <CardHeader>
-                <CardTitle>{t(product.titleKey)}</CardTitle>
-                <CardDescription>{t(product.descriptionKey)}</CardDescription>
-              </CardHeader>
-              <CardContent className="flex-grow">
-                {/* Product Image Placeholder */}
-                <div className="w-full h-48 bg-gray-200 rounded-md mb-4"></div>
-              </CardContent>
-              <CardFooter>
-                <Link href={`/${locale}${product.href}`} className="w-full">
-                  <Button variant="outline" className="w-full">
-                    {t('view_all')}
-                  </Button>
-                </Link>
-              </CardFooter>
-            </Card>
-          ))}
+        <ProductCarousel products={products} locale={locale} />
+        <div className="mt-8 text-center">
+          <Link href={`/${locale}/products`}>
+            <Button variant="outline" size="lg">
+              {t('view_all')}
+            </Button>
+          </Link>
         </div>
       </section>
 
