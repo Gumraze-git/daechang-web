@@ -13,8 +13,11 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: '대창기계산업(주) - Daechang Machinery Industry Co., Ltd.',
+  title: 'Daechang',
   description: '혁신적인 기술과 변함없는 품질로 기계 산업의 미래를 선도합니다.',
+  icons: {
+    icon: '/favicon_v3.png',
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
