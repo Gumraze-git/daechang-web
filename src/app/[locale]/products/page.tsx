@@ -16,8 +16,8 @@ export default function ProductsPage() {
 
   // Placeholder products (will be dynamic later)
   const products = [
-    { id: 'blow-molding-machine-1', category: 'blow-molding-machines', nameKey: 'Index.product1_title', descKey: 'Index.product1_desc', imageUrl: '/product-placeholder.jpg' },
-    { id: 'extrusion-line-1', category: 'extrusion-lines', nameKey: 'Index.product2_title', descKey: 'Index.product2_desc', imageUrl: '/product-placeholder.jpg' },
+    { id: 'blow-molding-machine-1', category: 'blow-molding-machines', nameKey: 'product1_title', descKey: 'product1_desc', imageUrl: '/product-placeholder.jpg' },
+    { id: 'extrusion-line-1', category: 'extrusion-lines', nameKey: 'product2_title', descKey: 'product2_desc', imageUrl: '/product-placeholder.jpg' },
   ];
 
   return (

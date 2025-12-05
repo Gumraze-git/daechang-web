@@ -1,134 +1,43 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
-import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Label } from '@/components/ui/label';
+import { Mail } from 'lucide-react';
 
 export default function ContactPage() {
   const t = useTranslations('SupportPage');
-  const [formData, setFormData] = useState({
-    companyName: '',
-    personInCharge: '',
-    email: '',
-    phone: '',
-    inquiryType: '',
-    message: '',
-    privacyConsent: false,
-  });
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { id, value } = e.target;
-    setFormData((prev) => ({ ...prev, [id]: value }));
-  };
-
-  const handleSelectChange = (value: string) => {
-    setFormData((prev) => ({ ...prev, inquiryType: value }));
-  };
-
-  const handleCheckboxChange = (checked: boolean) => {
-    setFormData((prev) => ({ ...prev, privacyConsent: checked }));
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    // Here you would typically send formData to your backend API
-    console.log('Form submitted:', formData);
-    alert(t('form_success_message'));
-    // Reset form or redirect
+  const handleEmailInquiry = () => {
+    window.location.href = 'mailto:info@daechang.co.kr';
   };
 
   return (
-    <div className="container mx-auto py-8 max-w-2xl">
-      <h1 className="text-4xl font-bold text-center mb-8">{t('contact_form_title')}</h1>
-      <p className="text-lg text-center text-gray-700 dark:text-gray-300 mb-8">
-        {t('contact_form_description')}
-      </p>
+    <div className="max-w-2xl mx-auto py-12 px-4">
+      <div className="text-center mb-12">
+        <h2 className="text-3xl font-bold mb-4">{t('contact_form_title')}</h2>
+        <p className="text-gray-600 dark:text-gray-300 mb-8">
+          {t('contact_form_description')}
+        </p>
 
-      <form onSubmit={handleSubmit} className="space-y-6 bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
-        <div>
-          <Label htmlFor="companyName">{t('form_field_company_name')}</Label>
-          <Input
-            id="companyName"
-            type="text"
-            value={formData.companyName}
-            onChange={handleChange}
-            required
-          />
+        <div className="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-700">
+          <div className="w-16 h-16 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center mx-auto mb-6">
+            <Mail className="w-8 h-8 text-blue-600 dark:text-blue-300" />
+          </div>
+          <h3 className="text-xl font-bold mb-2">이메일 문의</h3>
+          <p className="text-gray-500 dark:text-gray-400 mb-8">
+            제품에 대한 궁금한 점이나 견적 문의를 이메일로 보내주세요.<br />
+            담당자가 확인 후 신속하게 답변 드리겠습니다.
+          </p>
+
+          <Button
+            onClick={handleEmailInquiry}
+            className="w-full md:w-auto px-8 py-6 text-lg bg-blue-600 hover:bg-blue-700 text-white rounded-full transition-all shadow-md hover:shadow-lg flex items-center justify-center gap-2"
+          >
+            <Mail className="w-5 h-5" />
+            이메일로 문의하기
+          </Button>
         </div>
-        <div>
-          <Label htmlFor="personInCharge">{t('form_field_person_in_charge')}</Label>
-          <Input
-            id="personInCharge"
-            type="text"
-            value={formData.personInCharge}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div>
-          <Label htmlFor="email">{t('form_field_email')}</Label>
-          <Input
-            id="email"
-            type="email"
-            value={formData.email}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div>
-          <Label htmlFor="phone">{t('form_field_phone')}</Label>
-          <Input
-            id="phone"
-            type="tel"
-            value={formData.phone}
-            onChange={handleChange}
-          />
-        </div>
-        <div>
-          <Label htmlFor="inquiryType">{t('form_field_inquiry_type')}</Label>
-          <Select onValueChange={handleSelectChange} value={formData.inquiryType} required>
-            <SelectTrigger id="inquiryType">
-              <SelectValue placeholder={t('form_field_inquiry_type')} />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="general">{t('form_option_general_inquiry')}</SelectItem>
-              <SelectItem value="product">{t('form_option_product_inquiry')}</SelectItem>
-              <SelectItem value="technical">{t('form_option_technical_support')}</SelectItem>
-              <SelectItem value="quotation">{t('form_option_quotation_request')}</SelectItem>
-              <SelectItem value="other">{t('form_option_other')}</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-        <div>
-          <Label htmlFor="message">{t('form_field_message')}</Label>
-          <Textarea
-            id="message"
-            value={formData.message}
-            onChange={handleChange}
-            required
-            rows={5}
-          />
-        </div>
-        <div className="flex items-center space-x-2">
-          <Checkbox
-            id="privacyConsent"
-            checked={formData.privacyConsent}
-            onCheckedChange={handleCheckboxChange}
-            required
-          />
-          <Label htmlFor="privacyConsent">
-            {t('form_privacy_consent')}
-          </Label>
-        </div>
-        <Button type="submit" className="w-full">
-          {t('form_submit_button')}
-        </Button>
-      </form>
+      </div>
     </div>
   );
 }

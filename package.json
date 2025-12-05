@@ -25,7 +25,6 @@
     "next-intl": "^4.5.8",
     "react": "19.2.0",
     "react-dom": "19.2.0",
-    "react-naver-maps": "^0.1.4",
     "tailwind-merge": "^3.4.0"
   },
   "devDependencies": {

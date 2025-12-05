@@ -1,10 +1,7 @@
-import { useTranslations } from 'next-intl';
+import { redirect } from 'next/navigation';
+import { useLocale } from 'next-intl';
 
 export default function SupportPage() {
-  const t = useTranslations('Common');
-  return (
-    <div className="flex min-h-screen items-center justify-center">
-      <h1 className="text-4xl font-bold">{t('support')}</h1>
-    </div>
-  );
+  const locale = useLocale();
+  redirect(`/${locale}/support/contact`);
 }

@@ -17,32 +17,55 @@ export default function SupportLayout({ children }: { children: React.ReactNode 
   ];
 
   return (
-    <div className="container mx-auto py-8">
-      <h1 className="text-4xl font-bold text-center mb-8">{t('support')}</h1>
-      <div className="flex flex-col md:flex-row gap-8">
-        {/* Sidebar Navigation for Support pages */}
-        <aside className="w-full md:w-1/4">
-          <nav className="flex flex-col space-y-2">
-            {supportNavItems.map((item) => (
-              <Link
-                key={item.name}
-                href={item.href}
-                className={cn(
-                  'px-4 py-2 rounded-md text-lg font-medium transition-colors hover:bg-gray-100 dark:hover:bg-gray-700',
-                  pathname === item.href
-                    ? 'bg-blue-500 text-white hover:bg-blue-600 dark:bg-blue-700 dark:hover:bg-blue-800'
-                    : 'text-gray-700 dark:text-gray-300'
-                )}
-              >
-                {item.name}
-              </Link>
-            ))}
-          </nav>
-        </aside>
-        {/* Main Content Area */}
-        <main className="w-full md:w-3/4">
-          {children}
-        </main>
+    <div className="flex flex-col min-h-screen">
+      {/* Sub-visual Banner */}
+      <div className="relative w-full h-64 md:h-80 bg-slate-900 flex items-center justify-center overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-r from-blue-900/90 to-slate-900/90 z-10" />
+        <div className="absolute inset-0 bg-[url('/images/support_banner.png')] bg-cover bg-center" />
+        <div className="relative z-10 text-center text-white">
+          <h1 className="text-4xl md:text-5xl font-bold mb-4">{t('support')}</h1>
+          <p className="text-lg md:text-xl text-gray-300 max-w-2xl mx-auto px-4">
+            {t('description')}
+          </p>
+        </div>
+      </div>
+
+      {/* Main Content with Sidebar */}
+      <div className="container mx-auto py-12 px-4 md:px-8">
+        <div className="flex flex-col md:flex-row gap-12">
+          {/* Sidebar Navigation */}
+          <aside className="w-full md:w-1/4 lg:w-1/5">
+            <nav className="flex flex-col space-y-2 sticky top-24">
+              <h2 className="text-xl font-bold mb-4 px-4 text-gray-900 dark:text-white border-b-2 border-gray-900 dark:border-white pb-2">
+                {t('support')}
+              </h2>
+              {supportNavItems.map((item) => {
+                const isActive = pathname === item.href || pathname.startsWith(item.href);
+
+                return (
+                  <Link
+                    key={item.name}
+                    href={item.href}
+                    className={cn(
+                      'px-4 py-3 rounded-lg text-base font-medium transition-all duration-200',
+                      isActive
+                        ? 'bg-blue-600 text-white shadow-md transform translate-x-1'
+                        : 'text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-blue-600 dark:hover:text-blue-400'
+                    )}
+                    aria-current={isActive ? 'page' : undefined}
+                  >
+                    {item.name}
+                  </Link>
+                );
+              })}
+            </nav>
+          </aside>
+
+          {/* Main Content Area */}
+          <main className="w-full md:w-3/4 lg:w-4/5 min-h-[500px]">
+            {children}
+          </main>
+        </div>
       </div>
     </div>
   );

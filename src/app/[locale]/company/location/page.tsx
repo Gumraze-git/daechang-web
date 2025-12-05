@@ -1,44 +1,75 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
-import { Container as MapDiv, NaverMap, Marker, NavermapsProvider } from 'react-naver-maps';
+import { useEffect, useRef, useState } from 'react';
+
+declare global {
+  interface Window {
+    kakao: any;
+  }
+}
 
 export default function LocationPage() {
   const t = useTranslations('CompanyPage');
+  const mapRef = useRef<HTMLDivElement>(null);
+  const [isMapLoaded, setIsMapLoaded] = useState(false);
 
   // Coordinates for: 경기 화성시 양감면 토성로 579-17
-  // Approx: 37.095, 126.935 (Need exact coords, using approx for now)
+  // Approx: 37.0955, 126.9355
   const center = { lat: 37.0955, lng: 126.9355 };
+
+  useEffect(() => {
+    const apiKey = process.env.NEXT_PUBLIC_KAKAO_MAP_CLIENT_ID;
+
+    if (!apiKey) return;
+
+    const script = document.createElement('script');
+    script.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${apiKey}&autoload=false`;
+    script.async = true;
+
+    script.onload = () => {
+      window.kakao.maps.load(() => {
+        if (mapRef.current) {
+          const options = {
+            center: new window.kakao.maps.LatLng(center.lat, center.lng),
+            level: 3,
+          };
+          const map = new window.kakao.maps.Map(mapRef.current, options);
+
+          // Add marker
+          const markerPosition = new window.kakao.maps.LatLng(center.lat, center.lng);
+          const marker = new window.kakao.maps.Marker({
+            position: markerPosition
+          });
+          marker.setMap(map);
+
+          setIsMapLoaded(true);
+        }
+      });
+    };
+
+    document.head.appendChild(script);
+
+    return () => {
+      if (document.head.contains(script)) {
+        document.head.removeChild(script);
+      }
+    };
+  }, []);
 
   return (
     <div className="flex flex-col gap-12">
       <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden">
         {/* Map Section */}
         <div className="w-full h-[400px] md:h-[500px] relative bg-gray-100 dark:bg-gray-700">
-          <NavermapsProvider
-            ncpClientId={process.env.NEXT_PUBLIC_NAVER_MAP_CLIENT_ID || 'YOUR_CLIENT_ID_HERE'}
-          >
-            <MapDiv
-              style={{
-                width: '100%',
-                height: '100%',
-              }}
-            >
-              <NaverMap
-                defaultCenter={center}
-                defaultZoom={15}
-              >
-                <Marker position={center} />
-              </NaverMap>
-            </MapDiv>
-          </NavermapsProvider>
+          <div ref={mapRef} className="w-full h-full" />
 
-          {/* API Key Warning (Visible only if key is missing) */}
-          {!process.env.NEXT_PUBLIC_NAVER_MAP_CLIENT_ID && (
+          {!process.env.NEXT_PUBLIC_KAKAO_MAP_CLIENT_ID && (
+            /* API Key Warning (Visible only if key is missing) */
             <div className="absolute inset-0 flex items-center justify-center bg-black/50 text-white p-4 text-center z-10">
               <div>
-                <p className="font-bold text-lg mb-2">Naver Map API Key Required</p>
-                <p className="text-sm">Please set NEXT_PUBLIC_NAVER_MAP_CLIENT_ID in your .env file.</p>
+                <p className="font-bold text-lg mb-2">Kakao Map API Key Required</p>
+                <p className="text-sm">Please set NEXT_PUBLIC_KAKAO_MAP_CLIENT_ID in your .env file.</p>
               </div>
             </div>
           )}
