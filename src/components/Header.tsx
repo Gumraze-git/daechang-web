@@ -33,7 +33,7 @@ export function Header() {
   ];
 
   const LanguageSwitcher = () => (
-    <div className="flex space-x-1 border rounded-full p-1 bg-gray-100 dark:bg-gray-800">
+    <div className="flex space-x-1 rounded-full p-1 bg-gray-100 dark:bg-gray-800">
       <Link href={`/ko${pathname.substring(3)}`}>
         <span className={cn(
           "px-3 py-1 rounded-full text-xs font-bold transition-all inline-block",
@@ -50,10 +50,10 @@ export function Header() {
   );
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-white/80 backdrop-blur-md shadow-sm dark:bg-black/80">
-      <div className="w-full flex h-20 items-center justify-between px-4 md:px-8 max-w-[1600px] mx-auto">
+    <header className="sticky top-0 z-50 w-full bg-white/80 backdrop-blur-md shadow-sm dark:bg-black/80">
+      <div className="w-full flex h-24 items-center justify-between px-4 md:px-8 max-w-[1600px] mx-auto">
         <Link href="/" className="mr-6 flex items-center space-x-2">
-          <Image src="/logo_small.png" alt="Daechang Logo" width={240} height={64} className="h-12 w-auto" unoptimized />
+          <Image src="/logo_small.png" alt="Daechang Logo" width={320} height={80} className="h-16 w-auto" unoptimized />
         </Link>
 
         {/* Desktop Navigation - Centered */}

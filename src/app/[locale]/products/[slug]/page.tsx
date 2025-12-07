@@ -5,12 +5,11 @@ import Link from 'next/link';
 import { Card, CardContent } from '@/components/ui/card';
 import { getTranslations } from 'next-intl/server';
 
-type ProductDetailProps = {
-  params: Promise<{ slug: string; locale: string }>;
-};
+interface ProductDetailProps {
+  params: { slug: string; locale: string };
+}
 
-export default async function ProductDetailPage({ params }: ProductDetailProps) {
-  const { slug, locale } = await params;
+export default async function ProductDetailPage({ params: { slug, locale } }: ProductDetailProps) {
 
   const t = await getTranslations({ locale, namespace: 'ProductPage' });
   const tIndex = await getTranslations({ locale, namespace: 'Index' }); // For product titles from Index namespace
