@@ -87,7 +87,7 @@ export default function Home() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {notices.map((notice, index) => (
             <Link key={index} href={`/${locale}${notice.href}`} className="group">
-              <Card className="h-full transition-all duration-300 hover:shadow-lg hover:border-primary/50 overflow-hidden">
+              <Card className="h-full transition-all duration-300 hover:shadow-lg overflow-hidden">
                 {/* Image Placeholder */}
                 <div className="w-full aspect-video bg-gray-200 flex items-center justify-center text-gray-400 group-hover:bg-gray-100 transition-colors">
                   Notice Image

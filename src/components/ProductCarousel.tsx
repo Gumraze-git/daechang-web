@@ -38,7 +38,7 @@ export function ProductCarousel({ products, locale }: ProductCarouselProps) {
                     {products.map((product, index) => (
                         <div key={index} className="flex-[0_0_100%] md:flex-[0_0_50%] lg:flex-[0_0_33.333%] min-w-0 pl-4">
                             <Link href={`/${locale}${product.href}`} className="block h-full group/card">
-                                <Card className="flex flex-col h-full transition-all duration-300 hover:shadow-lg hover:border-primary/50 group-hover/card:border-primary/50">
+                                <Card className="flex flex-col h-full transition-all duration-300 hover:shadow-lg">
                                     <CardHeader>
                                         <CardTitle className="line-clamp-1 group-hover/card:text-primary transition-colors">{product.title}</CardTitle>
                                         <CardDescription className="line-clamp-2">{product.description}</CardDescription>

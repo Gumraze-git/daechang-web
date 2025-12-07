@@ -50,7 +50,7 @@ export function Header() {
   );
 
   return (
-    <header className="sticky top-0 z-50 w-full bg-white/80 backdrop-blur-md shadow-sm dark:bg-black/80">
+    <header className="sticky top-0 z-50 w-full bg-white/80 backdrop-blur-md dark:bg-black/80 border-none shadow-none">
       <div className="w-full flex h-24 items-center justify-between px-4 md:px-8 max-w-[1600px] mx-auto">
         <Link href="/" className="mr-6 flex items-center space-x-2">
           <Image src="/logo_small.png" alt="Daechang Logo" width={320} height={80} className="h-16 w-auto" unoptimized />
