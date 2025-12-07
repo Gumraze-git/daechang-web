@@ -49,7 +49,7 @@ export function HeroCarousel({
     );
 
     return (
-        <section className="relative h-[60vh] overflow-hidden bg-gray-900">
+        <section className="relative h-[80vh] overflow-hidden bg-gray-900">
             <div className="absolute inset-0 z-0" ref={emblaRef}>
                 <div className="flex h-full">
                     {images.map((src, index) => (

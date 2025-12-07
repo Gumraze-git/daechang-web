@@ -38,17 +38,16 @@ export function ProductCarousel({ products, locale }: ProductCarouselProps) {
                     {products.map((product, index) => (
                         <div key={index} className="flex-[0_0_100%] md:flex-[0_0_50%] lg:flex-[0_0_33.333%] min-w-0 pl-4">
                             <Link href={`/${locale}${product.href}`} className="block h-full group/card">
-                                <Card className="flex flex-col h-full transition-all duration-300 hover:shadow-lg">
-                                    <CardHeader>
-                                        <CardTitle className="line-clamp-1 group-hover/card:text-primary transition-colors">{product.title}</CardTitle>
-                                        <CardDescription className="line-clamp-2">{product.description}</CardDescription>
-                                    </CardHeader>
-                                    <CardContent className="flex-grow">
-                                        {/* Product Image Placeholder */}
-                                        <div className="w-full h-48 bg-gray-200 rounded-md mb-4 flex items-center justify-center text-gray-400 group-hover/card:bg-gray-100 transition-colors">
+                                <Card className="flex flex-col h-full transition-all duration-300 hover:shadow-lg overflow-hidden border border-gray-200 shadow-sm">
+                                    <div className="p-4 pb-0">
+                                        <div className="w-full h-48 bg-gray-200 rounded-md flex items-center justify-center text-gray-400 group-hover/card:bg-gray-100 transition-colors">
                                             Image Placeholder
                                         </div>
-                                    </CardContent>
+                                    </div>
+                                    <CardHeader className="pt-4">
+                                        <CardTitle className="line-clamp-1 text-lg group-hover/card:text-primary transition-colors">{product.title}</CardTitle>
+                                        <CardDescription className="line-clamp-2 mt-2">{product.description}</CardDescription>
+                                    </CardHeader>
                                 </Card>
                             </Link>
                         </div>
