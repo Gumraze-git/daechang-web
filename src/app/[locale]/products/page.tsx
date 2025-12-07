@@ -4,62 +4,88 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { useLocale } from 'next-intl';
 
-export default function ProductsPage() {
+type Props = {
+  searchParams: { [key: string]: string | string[] | undefined };
+};
+
+export default function ProductsPage({ searchParams }: Props) {
   const t = useTranslations('ProductPage');
   const locale = useLocale();
 
-  // Placeholder for product categories
-  const categories = [
-    { nameKey: 'blow_molding_machines', slug: 'blow-molding-machines' },
-    { nameKey: 'extrusion_lines', slug: 'extrusion-lines' },
-  ];
+  // Get current filters
+  const categoryFilter = typeof searchParams.category === 'string' ? searchParams.category : null;
+  const searchTerm = typeof searchParams.q === 'string' ? searchParams.q : '';
 
   // Placeholder products (will be dynamic later)
-  const products = [
+  const allProducts = [
     { id: 'blow-molding-machine-1', category: 'blow-molding-machines', nameKey: 'product1_title', descKey: 'product1_desc', imageUrl: '/product-placeholder.jpg' },
     { id: 'extrusion-line-1', category: 'extrusion-lines', nameKey: 'product2_title', descKey: 'product2_desc', imageUrl: '/product-placeholder.jpg' },
+    { id: 'product-3', category: 'other', nameKey: 'product3_title', descKey: 'product3_desc', imageUrl: '/product-placeholder.jpg' }, // Added dummy product for testing
   ];
 
-  return (
-    <div className="container mx-auto py-8">
-      <h1 className="text-4xl font-bold text-center mb-8">{t('product_list_title')}</h1>
+  // Filter Logic
+  const filteredProducts = allProducts.filter((product) => {
+    // 1. Category Filter
+    if (categoryFilter && product.category !== categoryFilter) {
+      return false;
+    }
+    // 2. Search Filter (by nameKey or ID for now, as we don't have translated names accessible easily on server without extensive setup)
+    // In a real app, you'd filter against the actual content. Here strict matching against keys/ids is a limitation of static data + i18n keys
+    // For demo purposes, we will match against 'category' or 'id' if search term exists
+    if (searchTerm) {
+      const lowerTerm = searchTerm.toLowerCase();
+      return product.id.toLowerCase().includes(lowerTerm) ||
+        product.category.toLowerCase().includes(lowerTerm);
+    }
+    return true;
+  });
 
-      {/* Product Categories */}
-      <section className="mb-12">
-        <h2 className="text-3xl font-bold mb-6 text-center">{t('product_categories')}</h2>
-        <div className="flex flex-wrap justify-center gap-4">
-          {categories.map((category) => (
-            <Link key={category.slug} href={`/${locale}/products?category=${category.slug}`}>
-              <Button variant="outline" className="px-6 py-3 text-lg">
-                {t(category.nameKey)}
-              </Button>
-            </Link>
-          ))}
-        </div>
-      </section>
+  return (
+    <div className="w-full">
+      <div className="mb-8">
+        <h2 className="text-2xl font-bold mb-4">
+          {categoryFilter
+            ? t(categoryFilter.replaceAll('-', '_')) // Simple heuristic to map slug back to key
+            : t('all_products')}
+        </h2>
+        {searchTerm && (
+          <p className="text-gray-500">
+            {t('search_results_for', { term: searchTerm })}
+          </p>
+        )}
+      </div>
 
       {/* Product List */}
       <section>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {products.map((product) => (
-            <Card key={product.id}>
-              <CardHeader>
-                <div className="w-full h-48 bg-gray-200 rounded-md mb-4 flex items-center justify-center">
-                  <img src={product.imageUrl} alt={product.nameKey} className="max-h-full max-w-full object-contain" />
+        {filteredProducts.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {filteredProducts.map((product) => (
+              <Card key={product.id} className="h-full flex flex-col transition-all duration-300 hover:shadow-lg border-gray-200">
+                <CardHeader className="p-0">
+                  <div className="w-full h-48 bg-gray-100 rounded-t-md flex items-center justify-center overflow-hidden">
+                    {/* Use a placeholder div or img */}
+                    <div className="text-gray-400">Image Placeholder</div>
+                  </div>
+                </CardHeader>
+                <div className="p-6 flex-grow flex flex-col">
+                  <CardTitle className="mb-2 text-xl">{t(product.nameKey)}</CardTitle>
+                  <CardContent className="p-0 mb-4 text-sm text-gray-600 flex-grow">
+                    {t(product.descKey)}
+                  </CardContent>
+                  <Link href={`/${locale}/products/${product.id}`} className="mt-auto">
+                    <Button variant="outline" className="w-full hover:bg-blue-50 hover:text-blue-600 border-gray-300">
+                      {t('view_all')}
+                    </Button>
+                  </Link>
                 </div>
-                <CardTitle>{t(product.nameKey)}</CardTitle>
-                <CardContent className="px-0 py-2 text-sm text-gray-600">
-                  {t(product.descKey)}
-                </CardContent>
-              </CardHeader>
-              <div className="p-6 pt-0">
-                <Link href={`/${locale}/products/${product.id}`}>
-                  <Button className="w-full">{t('view_all')}</Button>
-                </Link>
-              </div>
-            </Card>
-          ))}
-        </div>
+              </Card>
+            ))}
+          </div>
+        ) : (
+          <div className="text-center py-12 text-gray-500 bg-gray-50 rounded-lg">
+            {t('no_products_found')}
+          </div>
+        )}
       </section>
     </div>
   );
