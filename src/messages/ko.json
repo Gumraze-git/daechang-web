@@ -74,6 +74,7 @@
     "transport_public_desc": "향남환승터미널에서 택시 이용 (약 15분 소요)"
   },
   "ProductPage": {
+    "products": "제품 소개",
     "product_categories": "제품 카테고리",
     "blow_molding_machines": "블로우 몰딩기",
     "extrusion_lines": "압출 라인",
