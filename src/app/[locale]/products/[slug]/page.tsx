@@ -21,7 +21,11 @@ export default async function ProductDetailPage({ params: { slug, locale } }: Pr
       description: 'Optimized for efficient and high-quality plastic container production.',
       long_description_en: 'This high-performance blow molding machine is designed for maximum efficiency and precision in producing a wide range of plastic containers. Featuring advanced control systems and robust construction, it ensures consistent quality and high output. Ideal for various industries including food & beverage, cosmetics, and pharmaceuticals.',
       long_description_ko: '이 고성능 블로우 몰딩기는 광범위한 플라스틱 용기 생산에서 최대의 효율성과 정밀도를 위해 설계되었습니다. 첨단 제어 시스템과 견고한 구조를 특징으로 하며 일관된 품질과 높은 생산량을 보장합니다. 식품 및 음료, 화장품, 제약 등 다양한 산업에 이상적입니다.',
-      images: ['/product-detail-placeholder-1.jpg', '/product-detail-placeholder-2.jpg', '/product-detail-placeholder-3.jpg'],
+      images: [
+        'https://placehold.co/800x600?text=High+Performance+Blow+Molding+Machine',
+        'https://placehold.co/800x600?text=High+Performance+Blow+Molding+Machine',
+        'https://placehold.co/800x600?text=High+Performance+Blow+Molding+Machine'
+      ],
       specifications: [
         { key: 'specification_item_power', value: '220V/380V, 50/60Hz' },
         { key: 'specification_item_capacity', value: '1000-5000 pcs/hr' },
@@ -60,23 +64,25 @@ export default async function ProductDetailPage({ params: { slug, locale } }: Pr
     notFound();
   }
 
-  const longDescription = locale === 'en' ? product.long_description_en : product.long_description_ko;
+  // Description text is removed from UI but variable kept if needed elsewhere, or could be removed.
+  // const longDescription = locale === 'en' ? product.long_description_en : product.long_description_ko;
 
   return (
     <div className="container mx-auto py-8">
-      <h1 className="text-4xl font-bold text-center mb-8">{t('product_detail_title')}</h1>
+      {/* 1. Main Title: Product Name */}
+      <h1 className="text-4xl font-bold text-center mb-12">{tIndex(product.nameKey)}</h1>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
-        {/* Product Gallery (Carousel) */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-start">
+        {/* Left Column: Product Photo (Carousel) */}
         <div>
-          <h2 className="text-2xl font-semibold mb-4">{t('gallery')}</h2>
-          <Carousel className="w-full max-w-xs mx-auto">
+          <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-gray-100">{t('product_photo')}</h2>
+          <Carousel className="w-full max-w-sm mx-auto">
             <CarouselContent>
               {product.images.map((image, index) => (
                 <CarouselItem key={index}>
                   <div className="p-1">
-                    <Card>
-                      <CardContent className="flex aspect-square items-center justify-center p-6">
+                    <Card className="overflow-hidden border-gray-200">
+                      <CardContent className="flex aspect-square items-center justify-center p-0 bg-gray-50">
                         <img src={image} alt={`${tIndex(product.nameKey)} ${index + 1}`} className="max-h-full max-w-full object-contain" />
                       </CardContent>
                     </Card>
@@ -89,32 +95,45 @@ export default async function ProductDetailPage({ params: { slug, locale } }: Pr
           </Carousel>
         </div>
 
-        {/* Product Information */}
-        <div>
-          <h2 className="text-3xl font-bold mb-4">{tIndex(product.nameKey)}</h2>
-          <p className="text-gray-700 dark:text-gray-300 mb-6">{longDescription}</p>
+        {/* Right Column: Information */}
+        <div className="space-y-8">
+          {/* Note: Description text removed as requested */}
 
-          {/* Specifications */}
-          <h3 className="text-2xl font-semibold mb-3">{t('specifications')}</h3>
-          <ul className="list-disc list-inside mb-6">
-            {product.specifications.map((spec, index) => (
-              <li key={index}>{t(spec.key)}: {spec.value}</li>
-            ))}
-          </ul>
+          {/* 2. Specifications */}
+          <div>
+            <h3 className="text-2xl font-semibold mb-4 border-b pb-2">{t('specifications')}</h3>
+            <ul className="grid grid-cols-1 sm:grid-cols-2 gap-y-2 gap-x-4">
+              {product.specifications.map((spec, index) => (
+                <li key={index} className="flex flex-col sm:flex-row sm:justify-between border-b sm:border-none border-gray-100 py-2 sm:py-0">
+                  <span className="font-medium text-gray-900 dark:text-gray-100">{t(spec.key)}</span>
+                  <span className="text-gray-600 dark:text-gray-400 sm:text-right">{spec.value}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
 
-          {/* Features */}
-          <h3 className="text-2xl font-semibold mb-3">{t('features')}</h3>
-          <ul className="list-disc list-inside mb-8">
-            {product.features.map((feature, index) => (
-              <li key={index}>{t(feature.key)}: {locale === 'en' ? feature.desc_en : feature.desc_ko}</li>
-            ))}
-          </ul>
+          {/* 3. Features */}
+          <div>
+            <h3 className="text-2xl font-semibold mb-4 border-b pb-2">{t('features')}</h3>
+            <ul className="space-y-3">
+              {product.features.map((feature, index) => (
+                <li key={index} className="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg">
+                  <span className="font-bold block mb-1 text-gray-900 dark:text-white">{t(feature.key)}</span>
+                  <span className="text-gray-600 dark:text-gray-300 text-sm">
+                    {locale === 'en' ? feature.desc_en : feature.desc_ko}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </div>
 
-          <Link href={`/${locale}/support?product=${slug}`}>
-            <Button size="lg" className="bg-blue-600 hover:bg-blue-700 text-white">
-              {t('inquiry_product')}
-            </Button>
-          </Link>
+          <div className="pt-4">
+            <Link href={`/${locale}/support?product=${slug}`} className="block w-full">
+              <Button size="lg" className="w-full bg-blue-600 hover:bg-blue-700 text-white py-6 text-lg">
+                {t('inquiry_product')}
+              </Button>
+            </Link>
+          </div>
         </div>
       </div>
     </div>

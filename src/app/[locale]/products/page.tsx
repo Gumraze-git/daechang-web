@@ -20,7 +20,6 @@ export default function ProductsPage({ searchParams }: Props) {
   const allProducts = [
     { id: 'blow-molding-machine-1', category: 'blow-molding-machines', nameKey: 'product1_title', descKey: 'product1_desc', imageUrl: '/product-placeholder.jpg' },
     { id: 'extrusion-line-1', category: 'extrusion-lines', nameKey: 'product2_title', descKey: 'product2_desc', imageUrl: '/product-placeholder.jpg' },
-    { id: 'product-3', category: 'other', nameKey: 'product3_title', descKey: 'product3_desc', imageUrl: '/product-placeholder.jpg' }, // 테스트용 더미 제품 추가
   ];
 
   // 필터 로직
