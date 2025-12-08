@@ -12,8 +12,6 @@ export default function FacilitiesPage() {
 
   return (
     <div className="container mx-auto py-8">
-      <h1 className="text-4xl font-bold text-center mb-8">{t('facilities_title')}</h1>
-
       {/* Main Equipment Section */}
       <section className="mb-12">
         <h2 className="text-3xl font-bold text-center mb-6">{t('equipment_section_title')}</h2>
