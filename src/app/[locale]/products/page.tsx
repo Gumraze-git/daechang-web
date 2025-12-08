@@ -61,9 +61,9 @@ export default function ProductsPage({ searchParams }: Props) {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {filteredProducts.map((product) => (
               <Link href={`/${locale}/products/${product.id}`} key={product.id} className="block h-full group">
-                <Card className="h-full flex flex-col transition-all duration-300 group-hover:shadow-lg border-gray-200 group-hover:border-blue-200">
+                <Card className="h-full flex flex-col transition-all duration-300 group-hover:shadow-lg border-gray-200 group-hover:border-blue-200 p-0 gap-0 overflow-hidden">
                   <CardHeader className="p-0">
-                    <div className="w-full h-48 bg-gray-100 rounded-t-md flex items-center justify-center overflow-hidden group-hover:bg-blue-50 transition-colors">
+                    <div className="w-full h-48 bg-gray-100 flex items-center justify-center group-hover:bg-blue-50 transition-colors">
                       {/* Use a placeholder div or img */}
                       <div className="text-gray-400 group-hover:text-blue-400">Image Placeholder</div>
                     </div>
