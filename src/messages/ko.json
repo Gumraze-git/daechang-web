@@ -92,7 +92,12 @@
     "product1_title": "고성능 블로우 몰딩기",
     "product1_desc": "효율적이고 고품질의 플라스틱 용기 생산에 최적화.",
     "product2_title": "첨단 PVC 압출 라인",
-    "product2_desc": "다양한 PVC 프로파일 및 파이프를 위한 정밀 엔지니어링."
+    "product2_desc": "다양한 PVC 프로파일 및 파이프를 위한 정밀 엔지니어링.",
+    "all_products": "전체 제품",
+    "search_placeholder": "제품 검색",
+    "view_all": "모두 보기",
+    "product3_title": "고효율 사출 성형기",
+    "product3_desc": "에너지 절감형 및 고속 사이클 타임 실현."
   },
   "FacilitiesPage": {
     "facilities_title": "설비 현황",

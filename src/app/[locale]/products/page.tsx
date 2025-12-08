@@ -60,25 +60,22 @@ export default function ProductsPage({ searchParams }: Props) {
         {filteredProducts.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {filteredProducts.map((product) => (
-              <Card key={product.id} className="h-full flex flex-col transition-all duration-300 hover:shadow-lg border-gray-200">
-                <CardHeader className="p-0">
-                  <div className="w-full h-48 bg-gray-100 rounded-t-md flex items-center justify-center overflow-hidden">
-                    {/* Use a placeholder div or img */}
-                    <div className="text-gray-400">Image Placeholder</div>
+              <Link href={`/${locale}/products/${product.id}`} key={product.id} className="block h-full group">
+                <Card className="h-full flex flex-col transition-all duration-300 group-hover:shadow-lg border-gray-200 group-hover:border-blue-200">
+                  <CardHeader className="p-0">
+                    <div className="w-full h-48 bg-gray-100 rounded-t-md flex items-center justify-center overflow-hidden group-hover:bg-blue-50 transition-colors">
+                      {/* Use a placeholder div or img */}
+                      <div className="text-gray-400 group-hover:text-blue-400">Image Placeholder</div>
+                    </div>
+                  </CardHeader>
+                  <div className="p-4 flex-grow flex flex-col">
+                    <CardTitle className="mb-1 text-xl group-hover:text-blue-600 transition-colors">{t(product.nameKey)}</CardTitle>
+                    <CardContent className="p-0 mb-2 text-sm text-gray-600 flex-grow">
+                      {t(product.descKey)}
+                    </CardContent>
                   </div>
-                </CardHeader>
-                <div className="p-6 flex-grow flex flex-col">
-                  <CardTitle className="mb-2 text-xl">{t(product.nameKey)}</CardTitle>
-                  <CardContent className="p-0 mb-4 text-sm text-gray-600 flex-grow">
-                    {t(product.descKey)}
-                  </CardContent>
-                  <Link href={`/${locale}/products/${product.id}`} className="mt-auto">
-                    <Button variant="outline" className="w-full hover:bg-blue-50 hover:text-blue-600 border-gray-300">
-                      {t('view_all')}
-                    </Button>
-                  </Link>
-                </div>
-              </Card>
+                </Card>
+              </Link>
             ))}
           </div>
         ) : (
