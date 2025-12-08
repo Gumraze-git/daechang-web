@@ -111,7 +111,17 @@
     "equipment_item1_desc": "핵심 부품을 위한 고정밀 가공.",
     "equipment_item2_name": "대규모 조립 라인",
     "equipment_item2_desc": "중공업 기계의 효율적인 조립.",
-    "factory_view_desc_placeholder": "현대적이고 최적화된 생산 환경을 통해 모든 단계에서 품질을 보장합니다."
+    "factory_view_desc_placeholder": "현대적이고 최적화된 생산 환경을 통해 모든 단계에서 품질을 보장합니다.",
+    "precision": "정밀도",
+    "capacity": "생산 능력",
+    "automation_level": "자동화 수준",
+    "stat_production": "연간 생산량",
+    "stat_production_value": "500만 개+",
+    "stat_facilities": "보유 설비",
+    "stat_facilities_value": "50여 대",
+    "stat_area": "공장 면적",
+    "stat_area_value": "3,300 m²",
+    "close": "닫기"
   },
   "SupportPage": {
     "support_title": "고객 지원",
