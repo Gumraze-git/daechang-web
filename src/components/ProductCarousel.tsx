@@ -56,10 +56,11 @@ export function ProductCarousel({ products, locale }: ProductCarouselProps) {
             </div>
 
             {/* Navigation Buttons */}
+            {/* Navigation Buttons */}
             <Button
                 variant="outline"
                 size="icon"
-                className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1/2 z-10 hidden group-hover:flex bg-white/80 backdrop-blur-sm shadow-md rounded-full"
+                className="absolute -left-4 md:-left-12 top-1/2 -translate-y-1/2 z-10 hidden md:flex bg-white hover:bg-gray-50 text-gray-800 shadow-md border-gray-200 rounded-full w-10 h-10 md:w-12 md:h-12"
                 onClick={scrollPrev}
             >
                 <ChevronLeft className="h-6 w-6" />
@@ -69,7 +70,7 @@ export function ProductCarousel({ products, locale }: ProductCarouselProps) {
             <Button
                 variant="outline"
                 size="icon"
-                className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 z-10 hidden group-hover:flex bg-white/80 backdrop-blur-sm shadow-md rounded-full"
+                className="absolute -right-4 md:-right-12 top-1/2 -translate-y-1/2 z-10 hidden md:flex bg-white hover:bg-gray-50 text-gray-800 shadow-md border-gray-200 rounded-full w-10 h-10 md:w-12 md:h-12"
                 onClick={scrollNext}
             >
                 <ChevronRight className="h-6 w-6" />
