@@ -3,14 +3,8 @@
 import { useTranslations } from 'next-intl';
 import Image from 'next/image';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { useState } from 'react';
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetDescription,
-} from "@/components/ui/sheet"
+import { useState, useEffect } from 'react';
+import { Factory, Cog, Ruler, X } from 'lucide-react';
 
 interface EquipmentSpec {
   labelKey: string;
@@ -27,6 +21,19 @@ interface EquipmentItem {
 export default function FacilitiesPage() {
   const t = useTranslations('FacilitiesPage');
   const [selectedEquipment, setSelectedEquipment] = useState<EquipmentItem | null>(null);
+
+  // Prevent scrolling when modal is open
+  useEffect(() => {
+    if (selectedEquipment) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [selectedEquipment]);
 
   const equipmentList: EquipmentItem[] = [
     {
@@ -149,50 +156,66 @@ export default function FacilitiesPage() {
         </div>
       </section>
 
-      {/* Equipment Detail Sheet (Side Drawer) */}
-      <Sheet open={!!selectedEquipment} onOpenChange={(open) => !open && setSelectedEquipment(null)}>
-        <SheetContent className="overflow-y-auto sm:max-w-lg w-full">
-          {selectedEquipment && (
-            <>
-              <SheetHeader className="mb-6">
-                <SheetTitle className="text-2xl font-bold text-gray-900">{t(selectedEquipment.nameKey)}</SheetTitle>
-                <SheetDescription className="text-gray-500">
+      {/* Custom Equipment Detail Modal */}
+      {selectedEquipment && (
+        <div
+          className="fixed inset-0 z-[100] flex items-start justify-center pt-[55vh] p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200"
+          onClick={() => setSelectedEquipment(null)}
+        >
+          <div
+            className="bg-white dark:bg-gray-900 rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto relative flex flex-col md:flex-row animate-in zoom-in-95 duration-200"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Close Button */}
+            <button
+              className="absolute top-4 right-4 p-2 bg-gray-100 dark:bg-gray-800 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors z-10"
+              onClick={() => setSelectedEquipment(null)}
+            >
+              <X className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+            </button>
+
+            {/* Image Section */}
+            <div className="w-full md:w-1/2 bg-gray-50 dark:bg-gray-800 flex items-center justify-center p-8">
+              <img
+                src={selectedEquipment.imageUrl}
+                alt={t(selectedEquipment.nameKey)}
+                className="max-w-full max-h-80 object-contain drop-shadow-md"
+              />
+            </div>
+
+            {/* Info Section */}
+            <div className="w-full md:w-1/2 p-8 flex flex-col">
+              <div className="mb-6">
+                <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">{t(selectedEquipment.nameKey)}</h3>
+                <p className="text-gray-500 dark:text-gray-400 leading-relaxed">
                   {t('equipment_desc_placeholder')}
-                </SheetDescription>
-              </SheetHeader>
+                </p>
+              </div>
 
-              <div className="space-y-8">
-                <div className="w-full bg-gray-50 rounded-lg overflow-hidden border border-gray-100 p-8 flex items-center justify-center">
-                  <img
-                    src={selectedEquipment.imageUrl}
-                    alt={t(selectedEquipment.nameKey)}
-                    className="max-w-full max-h-60 object-contain drop-shadow-md"
-                  />
-                </div>
-
+              <div className="flex-grow space-y-8">
                 <div>
-                  <h4 className="text-sm font-semibold text-gray-900 uppercase tracking-widest mb-3 border-b pb-2">Description</h4>
-                  <p className="text-gray-600 leading-relaxed">
+                  <h4 className="text-sm font-semibold text-gray-900 dark:text-gray-200 uppercase tracking-widest mb-3 border-b border-gray-100 dark:border-gray-700 pb-2">Description</h4>
+                  <p className="text-gray-600 dark:text-gray-400 leading-relaxed text-sm">
                     {t(selectedEquipment.descKey)}
                   </p>
                 </div>
 
                 <div>
-                  <h4 className="text-sm font-semibold text-gray-900 uppercase tracking-widest mb-3 border-b pb-2">Technical Specs</h4>
-                  <dl className="space-y-4">
+                  <h4 className="text-sm font-semibold text-gray-900 dark:text-gray-200 uppercase tracking-widest mb-3 border-b border-gray-100 dark:border-gray-700 pb-2">Technical Specs</h4>
+                  <dl className="space-y-3">
                     {selectedEquipment.specs.map((spec, i) => (
-                      <div key={i} className="flex justify-between items-center py-2 border-b border-gray-50 last:border-0">
-                        <dt className="text-gray-500 font-medium">{t(spec.labelKey)}</dt>
-                        <dd className="font-semibold text-gray-900">{spec.value}</dd>
+                      <div key={i} className="flex justify-between items-center py-2 border-b border-gray-50 dark:border-gray-800 last:border-0 border-dashed">
+                        <dt className="text-gray-500 dark:text-gray-400 font-medium text-sm">{t(spec.labelKey)}</dt>
+                        <dd className="font-semibold text-gray-900 dark:text-gray-100 text-sm bg-gray-50 dark:bg-gray-800 px-2 py-1 rounded">{spec.value}</dd>
                       </div>
                     ))}
                   </dl>
                 </div>
               </div>
-            </>
-          )}
-        </SheetContent>
-      </Sheet>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
