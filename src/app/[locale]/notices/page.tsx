@@ -94,7 +94,7 @@ export default function NoticesPage() {
       </div>
 
       {/* Category Tabs */}
-      <div className="flex justify-center mb-8 space-x-2 overflow-x-auto pb-2">
+      <div className="flex justify-center mb-8 space-x-2 overflow-x-auto py-2 px-1">
         {categories.map((cat) => (
           <button
             key={cat.id}
