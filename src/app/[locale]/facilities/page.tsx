@@ -25,7 +25,14 @@ export default function FacilitiesPage() {
   // Prevent scrolling when modal is open
   useEffect(() => {
     if (selectedEquipment) {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      const section = document.getElementById('equipment-section');
+      if (section) {
+        // 원하는 만큼 위치를 조정하세요. (마이너스: 위로, 플러스: 아래로 스크롤)
+        const yOffset = -100; // 예: -100px 만큼 위쪽 여백을 두고 스크롤
+        const y = section.getBoundingClientRect().top + window.scrollY + yOffset;
+
+        window.scrollTo({ top: y, behavior: 'smooth' });
+      }
       document.body.style.overflow = 'hidden';
     } else {
       document.body.style.overflow = 'unset';
@@ -65,7 +72,7 @@ export default function FacilitiesPage() {
   return (
     <div className="flex flex-col min-h-screen">
       {/* Main Equipment Section */}
-      <section className="bg-white py-16 border-b border-gray-100">
+      <section id="equipment-section" className="bg-white py-16 border-b border-gray-100">
         <div className="container mx-auto px-4">
           <h2 className="text-3xl font-bold text-center mb-6 text-gray-900 dark:text-gray-100">{t('equipment_section_title')}</h2>
           <p className="text-lg text-center text-gray-600 dark:text-gray-400 mb-12 max-w-2xl mx-auto">
