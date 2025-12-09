@@ -60,7 +60,7 @@ export function ProductCarousel({ products, locale }: ProductCarouselProps) {
             <Button
                 variant="outline"
                 size="icon"
-                className="absolute -left-4 md:-left-12 top-1/2 -translate-y-1/2 z-10 hidden md:flex bg-white hover:bg-gray-50 text-gray-800 shadow-md border-gray-200 rounded-full w-10 h-10 md:w-12 md:h-12"
+                className="absolute -left-4 md:-left-12 top-1/2 -translate-y-1/2 z-10 hidden md:flex bg-white/90 backdrop-blur-sm hover:bg-white text-gray-700 hover:text-blue-600 shadow-lg hover:shadow-xl border-gray-100 hover:border-blue-100 rounded-full w-10 h-10 md:w-14 md:h-14 transition-all duration-300 hover:scale-110 active:scale-95"
                 onClick={scrollPrev}
             >
                 <ChevronLeft className="h-6 w-6" />
@@ -70,7 +70,7 @@ export function ProductCarousel({ products, locale }: ProductCarouselProps) {
             <Button
                 variant="outline"
                 size="icon"
-                className="absolute -right-4 md:-right-12 top-1/2 -translate-y-1/2 z-10 hidden md:flex bg-white hover:bg-gray-50 text-gray-800 shadow-md border-gray-200 rounded-full w-10 h-10 md:w-12 md:h-12"
+                className="absolute -right-4 md:-right-12 top-1/2 -translate-y-1/2 z-10 hidden md:flex bg-white/90 backdrop-blur-sm hover:bg-white text-gray-700 hover:text-blue-600 shadow-lg hover:shadow-xl border-gray-100 hover:border-blue-100 rounded-full w-10 h-10 md:w-14 md:h-14 transition-all duration-300 hover:scale-110 active:scale-95"
                 onClick={scrollNext}
             >
                 <ChevronRight className="h-6 w-6" />
