@@ -100,10 +100,10 @@ export default function NoticesPage() {
             key={cat.id}
             onClick={() => handleTabChange(cat.id)}
             className={cn(
-              "px-4 py-2 rounded-full text-sm font-medium transition-colors whitespace-nowrap",
+              "px-6 py-2.5 rounded-full text-sm font-semibold transition-all duration-200 whitespace-nowrap",
               activeTab === cat.id
-                ? "bg-primary text-primary-foreground"
-                : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                ? "bg-blue-600 text-white shadow-md transform scale-105"
+                : "bg-white text-gray-500 border border-gray-200 hover:bg-gray-50 hover:text-gray-900 hover:border-gray-300"
             )}
           >
             {cat.label}
