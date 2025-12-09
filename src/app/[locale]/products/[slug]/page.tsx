@@ -1,11 +1,9 @@
 import { notFound } from 'next/navigation';
 import { Button } from '@/components/ui/button';
-import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
 import Link from 'next/link';
-import { Card, CardContent } from '@/components/ui/card';
 import { getTranslations } from 'next-intl/server';
 import { NoticeCard } from '@/components/NoticeCard';
-
+import { ProductGallery } from '@/components/ProductGallery';
 
 interface ProductDetailProps {
   params: Promise<{ slug: string; locale: string }>;
@@ -95,24 +93,7 @@ export default async function ProductDetailPage({ params }: ProductDetailProps) 
         {/* Left Column: Product Photo (Carousel) */}
         <div>
           <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-gray-100">{t('product_photo')}</h2>
-          <Carousel className="w-full max-w-sm mx-auto">
-            <CarouselContent>
-              {product.images.map((image, index) => (
-                <CarouselItem key={index}>
-                  <div className="p-1">
-                    <Card className="overflow-hidden border-gray-200">
-                      <CardContent className="flex aspect-square items-center justify-center p-0 bg-gray-50">
-                        {/* Use real images if available */}
-                        <img src={image} alt={`Product ${index + 1}`} className="max-h-full max-w-full object-contain" />
-                      </CardContent>
-                    </Card>
-                  </div>
-                </CarouselItem>
-              ))}
-            </CarouselContent>
-            <CarouselPrevious />
-            <CarouselNext />
-          </Carousel>
+          <ProductGallery images={product.images} productName={tIndex(product.nameKey)} />
         </div>
 
         {/* Right Column: Information */}
