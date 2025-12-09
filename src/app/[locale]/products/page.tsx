@@ -20,6 +20,8 @@ export default function ProductsPage({ searchParams }: Props) {
   const allProducts = [
     { id: 'blow-molding-machine-1', category: 'blow-molding-machines', nameKey: 'product1_title', descKey: 'product1_desc', imageUrl: '/product-placeholder.jpg' },
     { id: 'extrusion-line-1', category: 'extrusion-lines', nameKey: 'product2_title', descKey: 'product2_desc', imageUrl: '/product-placeholder.jpg' },
+    { id: 'reducer-1', category: 'reducers', nameKey: 'product_reducer_title', descKey: 'product_reducer_desc', imageUrl: '/product-placeholder.jpg' },
+    { id: 'power-take-off-1', category: 'ptos', nameKey: 'product_pto_title', descKey: 'product_pto_desc', imageUrl: '/product-placeholder.jpg' },
   ];
 
   // 필터 로직

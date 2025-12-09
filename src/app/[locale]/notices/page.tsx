@@ -7,7 +7,8 @@ import { Button } from '@/components/ui/button';
 import { useLocale } from 'next-intl';
 import { useState } from 'react';
 import { cn } from '@/lib/utils';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight, LayoutGrid, List } from 'lucide-react';
+import { NoticeCard } from '@/components/NoticeCard';
 
 export default function NoticesPage() {
   const t = useTranslations('SupportPage');
@@ -16,6 +17,7 @@ export default function NoticesPage() {
   const locale = useLocale();
   const [activeTab, setActiveTab] = useState('all');
   const [currentPage, setCurrentPage] = useState(1);
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const itemsPerPage = 7;
 
   // Placeholder notices data with categories
@@ -63,7 +65,33 @@ export default function NoticesPage() {
 
   return (
     <div className="container mx-auto py-8">
-      <h1 className="text-4xl font-bold text-center mb-8">{t('notices_list_title')}</h1>
+      <div className="flex flex-col md:flex-row justify-between items-center mb-8 relative">
+        <h1 className="text-4xl font-bold text-center md:text-left w-full md:w-auto mb-4 md:mb-0">{t('notices_list_title')}</h1>
+
+        {/* View Toggle - Absolute on desktop to align right, relative on mobile */}
+        <div className="flex bg-gray-100 p-1 rounded-lg">
+          <button
+            onClick={() => setViewMode('grid')}
+            className={cn(
+              "p-2 rounded-md transition-all",
+              viewMode === 'grid' ? "bg-white shadow-sm text-primary" : "text-gray-500 hover:text-gray-700"
+            )}
+            aria-label="Grid View"
+          >
+            <LayoutGrid size={20} />
+          </button>
+          <button
+            onClick={() => setViewMode('list')}
+            className={cn(
+              "p-2 rounded-md transition-all",
+              viewMode === 'list' ? "bg-white shadow-sm text-primary" : "text-gray-500 hover:text-gray-700"
+            )}
+            aria-label="List View"
+          >
+            <List size={20} />
+          </button>
+        </div>
+      </div>
 
       {/* Category Tabs */}
       <div className="flex justify-center mb-8 space-x-2 overflow-x-auto pb-2">
@@ -83,33 +111,45 @@ export default function NoticesPage() {
         ))}
       </div>
 
-      {/* Notices List */}
-      <div className="grid gap-6 mb-8">
+      {/* Notices List/Grid */}
+      <div className={cn(
+        "mb-8",
+        viewMode === 'grid' ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6" : "flex flex-col gap-4"
+      )}>
         {currentNotices.length > 0 ? (
           currentNotices.map((notice, index) => (
-            <Card key={`${notice.id}-${index}`} className="hover:shadow-md transition-shadow">
-              <CardHeader>
-                <div className="flex justify-between items-start">
-                  <div>
-                    <span className="inline-block px-2 py-1 text-xs font-semibold bg-blue-100 text-blue-800 rounded mb-2">
-                      {tCats(notice.category)}
-                    </span>
-                    <CardTitle>{tIndex(notice.titleKey)}</CardTitle>
+            viewMode === 'grid' ? (
+              <NoticeCard
+                key={`${notice.id}-${index}`}
+                title={tIndex(notice.titleKey)}
+                date={tIndex(notice.dateKey)}
+                category={tCats(notice.category)}
+                href={`/${locale}/notices/${notice.id}`}
+                locale={locale}
+              />
+            ) : (
+              <Link key={`${notice.id}-${index}`} href={`/${locale}/notices/${notice.id}`} className="group block">
+                <div className="bg-white border border-gray-100 rounded-lg p-4 flex flex-col md:flex-row items-start md:items-center gap-4 transition-all hover:shadow-md hover:border-gray-200">
+                  <span className="shrink-0 w-24 text-sm text-gray-500">{tIndex(notice.dateKey)}</span>
+                  <div className="flex-grow min-w-0">
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="text-xs font-semibold bg-blue-50 text-blue-700 px-2 py-0.5 rounded">
+                        {tCats(notice.category)}
+                      </span>
+                    </div>
+                    <h3 className="text-lg font-medium text-gray-900 group-hover:text-primary transition-colors truncate">
+                      {tIndex(notice.titleKey)}
+                    </h3>
                   </div>
-                  <CardDescription>{tIndex(notice.dateKey)}</CardDescription>
+                  <div className="shrink-0 text-sm font-medium text-muted-foreground group-hover:text-primary flex items-center self-end md:self-center">
+                    {tIndex('view_all')} <span className="ml-1 transition-transform group-hover:translate-x-1">→</span>
+                  </div>
                 </div>
-              </CardHeader>
-              <CardContent>
-                <Link href={`/${locale}/notices/${notice.id}`}>
-                  <Button variant="link" className="px-0">
-                    {tIndex('view_all')}
-                  </Button>
-                </Link>
-              </CardContent>
-            </Card>
+              </Link>
+            )
           ))
         ) : (
-          <div className="text-center py-12 text-gray-500">
+          <div className="text-center py-12 text-gray-500 col-span-full">
             게시글이 없습니다.
           </div>
         )}

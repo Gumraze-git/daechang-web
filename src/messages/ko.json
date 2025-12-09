@@ -18,7 +18,11 @@
     "notice2_date": "2025-11-20",
     "notice3_title": "연간 정기 보수 일정",
     "notice3_date": "2025-11-15",
-    "view_all": "모두 보기"
+    "view_all": "모두 보기",
+    "product_reducer_title": "감속기",
+    "product_reducer_desc": "중장비 및 산업 기계를 위한 고정밀 선회 감속 어셈블리 솔루션.",
+    "product_pto_title": "동력 인출 장치",
+    "product_pto_desc": "다목적 산업 장비를 위한 고효율 동력 인출 장치."
   },
   "Common": {
     "home": "홈",
@@ -100,7 +104,12 @@
     "search_placeholder": "제품 검색",
     "view_all": "모두 보기",
     "product3_title": "고효율 사출 성형기",
-    "product3_desc": "에너지 절감형 및 고속 사이클 타임 실현."
+    "product3_desc": "에너지 절감형 및 고속 사이클 타임 실현.",
+    "product_reducer_title": "감속기",
+    "product_reducer_desc": "중장비 및 산업 기계를 위한 고정밀 선회 감속 어셈블리 솔루션.",
+    "product_pto_title": "동력 인출 장치",
+    "product_pto_desc": "다목적 산업 장비를 위한 고효율 동력 인출 장치.",
+    "reducers": "감속기"
   },
   "FacilitiesPage": {
     "facilities_title": "설비 현황",
