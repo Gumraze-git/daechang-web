@@ -58,7 +58,8 @@ const noticesData: Record<string, { titleKey: string; dateKey: string; content: 
 
 
 
-export default function NoticeDetailPage({ params: { id, locale } }: { params: { id: string; locale: string } }) {
+export default async function NoticeDetailPage({ params }: { params: Promise<{ id: string; locale: string }> }) {
+  const { id, locale } = await params;
   const t = useTranslations('Index');
   const tDetail = useTranslations('NoticeDetail');
 

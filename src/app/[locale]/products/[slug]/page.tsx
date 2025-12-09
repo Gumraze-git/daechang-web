@@ -6,10 +6,11 @@ import { Card, CardContent } from '@/components/ui/card';
 import { getTranslations } from 'next-intl/server';
 
 interface ProductDetailProps {
-  params: { slug: string; locale: string };
+  params: Promise<{ slug: string; locale: string }>;
 }
 
-export default async function ProductDetailPage({ params: { slug, locale } }: ProductDetailProps) {
+export default async function ProductDetailPage({ params }: ProductDetailProps) {
+  const { slug, locale } = await params;
 
   const t = await getTranslations({ locale, namespace: 'ProductPage' });
   const tIndex = await getTranslations({ locale, namespace: 'Index' }); // For product titles from Index namespace
