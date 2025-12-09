@@ -1,4 +1,6 @@
 import { useTranslations } from 'next-intl';
+import { Calendar } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 interface HistoryEvent {
   month: string;
@@ -52,28 +54,53 @@ export default function HistoryPage() {
   const t = useTranslations('Common');
 
   return (
-    <div className="max-w-4xl mx-auto">
-      <div className="relative border-l-2 border-gray-200 dark:border-gray-700 ml-4 md:ml-6 space-y-12">
-        {historyData.map((yearGroup) => (
-          <div key={yearGroup.year} className="relative pl-8 md:pl-12">
-            {/* Year Marker */}
-            <span className="absolute -left-[9px] top-0 h-5 w-5 rounded-full bg-blue-600 border-4 border-white dark:border-gray-900" />
+    <div className="max-w-4xl mx-auto py-16 px-6 md:px-12">
+      {/* Header */}
+      <div className="mb-16 text-center animate-in fade-in slide-in-from-bottom-8 duration-1000">
 
-            <h3 className="text-3xl font-bold text-blue-900 dark:text-blue-400 mb-6">
-              {yearGroup.year}
-            </h3>
+        <h2 className="text-3xl md:text-4xl font-black text-gray-900 dark:text-white tracking-tight mb-4">
+          {t('company_history')}
+        </h2>
+        <p className="text-lg text-gray-500 dark:text-gray-400 max-w-2xl mx-auto font-light">
+          대창기계산업이 걸어온 혁신과 도전의 발자취를 소개합니다.
+        </p>
+      </div>
 
-            <div className="space-y-8">
-              {yearGroup.events.map((event, index) => (
-                <div key={index} className="flex flex-col md:flex-row md:items-start gap-2 md:gap-8 group">
-                  <div className="flex items-center md:w-24 flex-shrink-0">
-                    <span className="text-xl font-semibold text-gray-500 dark:text-gray-400">
-                      {event.month}
+      <div className="flex flex-col gap-0 border-l border-gray-100 dark:border-gray-800 md:border-l-0">
+        {historyData.map((yearGroup, index) => (
+          <div
+            key={yearGroup.year}
+            className="group grid grid-cols-1 md:grid-cols-12 gap-6 md:gap-10 py-10 md:py-16 border-b border-gray-100 dark:border-gray-800 last:border-0"
+          >
+            {/* Sticky Year Column */}
+            <div className="md:col-span-4 pl-6 md:pl-0 z-10">
+              <div className="sticky top-24 transition-all duration-500 bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm md:bg-transparent md:backdrop-blur-none py-2 md:py-0">
+                <h3 className="text-5xl md:text-7xl font-black text-gray-100 dark:text-gray-800/50 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-500 select-none tracking-tighter">
+                  {yearGroup.year}
+                </h3>
+                <div className="hidden md:block w-8 h-1 bg-blue-600 mt-3 origin-left transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500" />
+              </div>
+            </div>
+
+            {/* Content Column */}
+            <div className="md:col-span-8 space-y-6 pl-6 md:pl-0 z-0">
+              {yearGroup.events.map((event, eventIndex) => (
+                <div
+                  key={eventIndex}
+                  className="relative flex flex-col sm:flex-row gap-4 sm:gap-6 animate-in fade-in slide-in-from-bottom-4 duration-700"
+                  style={{ animationDelay: `${eventIndex * 100}ms` }}
+                >
+                  {/* Month */}
+                  <div className="flex-shrink-0 pt-1">
+                    <span className="text-lg font-bold text-gray-900 dark:text-white inline-block border-b-2 border-gray-900 dark:border-white pb-0.5">
+                      {event.month}월
                     </span>
                   </div>
-                  <div className="flex-grow pb-6 border-b border-gray-100 dark:border-gray-800 last:border-0 last:pb-0">
+
+                  {/* Description */}
+                  <div className="flex-grow space-y-2">
                     {event.description.map((desc, i) => (
-                      <p key={i} className="text-lg text-gray-700 dark:text-gray-300 leading-relaxed mb-1 last:mb-0">
+                      <p key={i} className="text-base md:text-lg text-gray-600 dark:text-gray-300 leading-relaxed font-medium">
                         {desc}
                       </p>
                     ))}
