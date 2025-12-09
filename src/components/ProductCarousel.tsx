@@ -55,25 +55,24 @@ export function ProductCarousel({ products, locale }: ProductCarouselProps) {
                 </div>
             </div>
 
-            {/* Navigation Buttons */}
-            {/* Navigation Buttons */}
+            {/* 네비게이션 버튼 */}
             <Button
-                variant="outline"
+                variant="ghost"
                 size="icon"
-                className="absolute -left-4 md:-left-12 top-1/2 -translate-y-1/2 z-10 hidden md:flex bg-white/90 backdrop-blur-sm hover:bg-white text-gray-700 hover:text-blue-600 shadow-lg hover:shadow-xl border-gray-100 hover:border-blue-100 rounded-full w-10 h-10 md:w-14 md:h-14 transition-all duration-300 hover:scale-110 active:scale-95"
+                className="absolute -left-4 md:-left-20 top-1/2 -translate-y-1/2 z-10 hidden md:flex bg-transparent hover:bg-transparent text-gray-400 hover:text-blue-600 border-none shadow-none !w-24 !h-24 md:!w-32 md:!h-32 pr-4 md:pr-5 transition-all duration-300 hover:scale-125 active:scale-95"
                 onClick={scrollPrev}
             >
-                <ChevronLeft className="h-6 w-6" />
+                <ChevronLeft className="!h-10 !w-10 md:!h-14 md:!w-14" />
                 <span className="sr-only">Previous slide</span>
             </Button>
 
             <Button
-                variant="outline"
+                variant="ghost"
                 size="icon"
-                className="absolute -right-4 md:-right-12 top-1/2 -translate-y-1/2 z-10 hidden md:flex bg-white/90 backdrop-blur-sm hover:bg-white text-gray-700 hover:text-blue-600 shadow-lg hover:shadow-xl border-gray-100 hover:border-blue-100 rounded-full w-10 h-10 md:w-14 md:h-14 transition-all duration-300 hover:scale-110 active:scale-95"
+                className="absolute -right-4 md:-right-20 top-1/2 -translate-y-1/2 z-10 hidden md:flex bg-transparent hover:bg-transparent text-gray-400 hover:text-blue-600 border-none shadow-none !w-24 !h-24 md:!w-32 md:!h-32 pl-4 md:pl-5 transition-all duration-300 hover:scale-125 active:scale-95"
                 onClick={scrollNext}
             >
-                <ChevronRight className="h-6 w-6" />
+                <ChevronRight className="!h-10 !w-10 md:!h-14 md:!w-14" />
                 <span className="sr-only">Next slide</span>
             </Button>
         </div >
