@@ -116,7 +116,7 @@ export default async function ProductDetailPage({ params }: ProductDetailProps) 
         </div>
 
         {/* Right Column: Information */}
-        <div className="space-y-8">
+        <div className="space-y-4">
 
           {/* 2. Specifications */}
           <div>
@@ -147,7 +147,7 @@ export default async function ProductDetailPage({ params }: ProductDetailProps) 
             </ul>
           </div>
 
-          <div className="pt-4">
+          <div className="pt-0">
             <Link href={`/${locale}/support?product=${slug}`} className="block w-full">
               <Button size="lg" className="w-full bg-blue-600 hover:bg-blue-700 text-white py-6 text-lg">
                 {t('inquiry_product')}
