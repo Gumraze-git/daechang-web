@@ -2,9 +2,10 @@
 
 import { useTranslations } from 'next-intl';
 import Image from 'next/image';
+import Link from 'next/link';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useState, useEffect } from 'react';
-import { Factory, Cog, Ruler, X } from 'lucide-react';
+import { Factory, Cog, Ruler, X, ChevronRight } from 'lucide-react';
 
 interface EquipmentSpec {
   labelKey: string;
@@ -46,7 +47,7 @@ export default function FacilitiesPage() {
     {
       nameKey: 'equipment_item1_name',
       descKey: 'equipment_item1_desc',
-      imageUrl: '/equipment-placeholder-1.jpg',
+      imageUrl: '/facilities/cnc_milling.png',
       specs: [
         { labelKey: 'precision', value: '±0.01mm' },
         { labelKey: 'automation_level', value: 'Semi-Auto' }
@@ -55,7 +56,7 @@ export default function FacilitiesPage() {
     {
       nameKey: 'equipment_item2_name',
       descKey: 'equipment_item2_desc',
-      imageUrl: '/equipment-placeholder-2.jpg',
+      imageUrl: '/facilities/assembly_line.png',
       specs: [
         { labelKey: 'capacity', value: '100 units/hr' },
         { labelKey: 'automation_level', value: 'Full-Auto' }
@@ -78,32 +79,40 @@ export default function FacilitiesPage() {
           <p className="text-lg text-center text-gray-600 dark:text-gray-400 mb-12 max-w-2xl mx-auto">
             {t('equipment_desc_placeholder')}
           </p>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {equipmentList.map((item, index) => (
               <Card
                 key={index}
-                className="flex flex-col group hover:shadow-xl transition-all duration-300 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 cursor-pointer overflow-hidden"
+                className="relative flex flex-col h-[500px] transition-all duration-500 hover:shadow-2xl overflow-hidden border-0 rounded-2xl group/image cursor-pointer"
                 onClick={() => setSelectedEquipment(item)}
               >
-                <CardHeader>
-                  <div className="w-full h-48 bg-gray-50 dark:bg-gray-700 rounded-md mb-4 flex items-center justify-center overflow-hidden relative">
-                    <img
-                      src={item.imageUrl}
-                      alt={t(item.nameKey)}
-                      className="max-h-full max-w-full object-contain transition-transform duration-500 group-hover:scale-110"
-                    />
-                    {/* Overlay Hint */}
-                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors flex items-center justify-center">
-                      <span className="opacity-0 group-hover:opacity-100 bg-white/90 text-gray-800 text-xs px-2 py-1 rounded-full shadow-sm transition-opacity">
-                        Click for Details
-                      </span>
-                    </div>
+                {/* Background Image */}
+                <div className="absolute inset-0 w-full h-full">
+                  <Image
+                    src={item.imageUrl}
+                    alt={t(item.nameKey)}
+                    fill
+                    className="object-cover transition-transform duration-700 group-hover/image:scale-110"
+                  />
+                </div>
+
+                {/* Overlay Gradient */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent opacity-80 group-hover/image:opacity-90 transition-opacity duration-300" />
+
+                {/* Content */}
+                <div className="relative z-10 mt-auto px-8 pt-8 pb-6">
+                  <CardHeader className="p-0 flex flex-col gap-0.5">
+                    <CardTitle className="text-2xl font-bold text-white leading-tight group-hover/image:text-blue-100 transition-colors">
+                      {t(item.nameKey)}
+                    </CardTitle>
+                    <p className="text-gray-300 line-clamp-2 text-base font-medium">
+                      {t(item.descKey)}
+                    </p>
+                  </CardHeader>
+                  <div className="mt-3 flex items-center text-blue-300 text-sm font-semibold hover:text-blue-200 transition-colors">
+                    {t('view_details')} <ChevronRight className="w-4 h-4 ml-1 group-hover/image:translate-x-1 transition-transform" />
                   </div>
-                  <CardTitle className="group-hover:text-blue-600 transition-colors duration-300">{t(item.nameKey)}</CardTitle>
-                </CardHeader>
-                <CardContent className="flex-grow">
-                  <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-2">{t(item.descKey)}</p>
-                </CardContent>
+                </div>
               </Card>
             ))}
           </div>
