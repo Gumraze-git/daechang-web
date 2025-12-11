@@ -72,7 +72,7 @@ function ContactForm() {
   }
 
   return (
-    <div className="min-h-screen bg-white dark:bg-gray-950 py-20 px-4 sm:px-6">
+    <div className="min-h-screen bg-white dark:bg-gray-950 px-4 sm:px-6">
       <div className="max-w-3xl mx-auto space-y-12">
 
         {/* Header: Left Aligned & Refined */}
