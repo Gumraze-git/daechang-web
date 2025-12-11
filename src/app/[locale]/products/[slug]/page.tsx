@@ -19,6 +19,7 @@ export default async function ProductDetailPage({ params }: ProductDetailProps) 
   const productData = {
     'blow-molding-machine-1': {
       nameKey: 'product1_title',
+      category: 'blow-molding-machines',
       description: 'Optimized for efficient and high-quality plastic container production.',
       long_description_en: 'This high-performance blow molding machine is...',
       long_description_ko: '이 고성능 블로우 몰딩기는...',
@@ -52,6 +53,7 @@ export default async function ProductDetailPage({ params }: ProductDetailProps) 
     },
     'extrusion-line-1': {
       nameKey: 'product2_title',
+      category: 'extrusion-lines',
       description: 'Precision engineering for various PVC profiles and pipes.',
       long_description_en: 'Our advanced PVC extrusion line...',
       long_description_ko: '당사의 첨단 PVC 압출 라인은...',
@@ -129,7 +131,7 @@ export default async function ProductDetailPage({ params }: ProductDetailProps) 
           </div>
 
           <div className="pt-0">
-            <Link href={`/${locale}/support?product=${slug}`} className="block w-full">
+            <Link href={`/${locale}/support/contact?type=product&category=${product.category || ''}`} className="block w-full">
               <Button size="lg" className="w-full bg-blue-600 hover:bg-blue-700 text-white py-6 text-lg">
                 {t('inquiry_product')}
               </Button>
