@@ -160,7 +160,20 @@
     "form_option_other": "기타",
     "form_privacy_consent": "개인정보 수집 및 이용에 동의합니다.",
     "form_submit_button": "문의 제출",
-    "form_success_message": "문의가 성공적으로 제출되었습니다. 곧 연락 드리겠습니다."
+    "form_success_message": "문의가 성공적으로 제출되었습니다. 곧 연락 드리겠습니다.",
+    "form_title": "문의 작성",
+    "form_required_guides": "필수 항목(*)을 모두 입력해 주세요.",
+    "placeholder_company": "회사 이름을 입력해 주세요",
+    "placeholder_name": "담당자 성함을 입력해 주세요",
+    "placeholder_email": "이메일 주소를 입력해 주세요 (예: example@company.com)",
+    "placeholder_phone": "전화번호를 입력해 주세요 (예: 010-1234-5678)",
+    "placeholder_message": "문의하실 내용을 상세히 적어주세요. (제품명, 수량, 납기일 등)",
+    "submit_success_title": "문의가 성공적으로 접수되었습니다",
+    "submit_success_desc": "담당자가 확인 후 입력하신 이메일로 빠르게 연락드리겠습니다.",
+    "btn_submit_more": "추가 문의하기",
+    "mail_inquiry_title": "이메일 문의",
+    "mail_inquiry_desc": "폼 작성이 불편하시다면 이메일로 직접 문의주세요.",
+    "btn_mail_inquiry": "메일로 문의하기"
   },
   "Footer": {
     "address_road": "경기 화성시 양감면 토성로 579-17",

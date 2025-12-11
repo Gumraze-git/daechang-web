@@ -8,8 +8,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Loader2, CheckCircle2 } from 'lucide-react';
+import { Card, CardContent } from '@/components/ui/card'; // Title/Header removed from Card for cleaner look
+import { Loader2, CheckCircle2, Send } from 'lucide-react';
 
 export default function ContactPage() {
   const t = useTranslations('SupportPage');
@@ -19,124 +19,170 @@ export default function ContactPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-
-    // Simulate API call
     await new Promise((resolve) => setTimeout(resolve, 1500));
-
     setIsSubmitting(false);
     setIsSuccess(true);
   };
 
   if (isSuccess) {
     return (
-      <div className="max-w-2xl mx-auto py-12 px-4">
-        <Card className="border-none shadow-lg bg-green-50 dark:bg-green-900/20">
-          <CardContent className="flex flex-col items-center justify-center py-16 text-center">
-            <div className="w-20 h-20 bg-green-100 dark:bg-green-800 rounded-full flex items-center justify-center mb-6">
-              <CheckCircle2 className="w-10 h-10 text-green-600 dark:text-green-300" />
-            </div>
-            <h2 className="text-2xl font-bold text-green-800 dark:text-green-300 mb-2">
-              {t('form_success_message')}
-            </h2>
-            <p className="text-green-700 dark:text-green-400 mb-8">
-              담당자가 확인 후 입력하신 이메일로 연락드리겠습니다.
-            </p>
-            <Button
-              onClick={() => setIsSuccess(false)}
-              className="bg-green-600 hover:bg-green-700 text-white"
-            >
-              추가 문의하기
-            </Button>
-          </CardContent>
-        </Card>
+      <div className="container mx-auto py-32 px-4">
+        <div className="max-w-lg mx-auto bg-white dark:bg-gray-800 rounded-3xl p-12 shadow-2xl text-center border border-gray-100 dark:border-gray-700">
+          <div className="w-24 h-24 bg-blue-50 dark:bg-blue-900/30 rounded-full flex items-center justify-center mb-8 mx-auto animate-in zoom-in-50 duration-500">
+            <CheckCircle2 className="w-12 h-12 text-blue-600 dark:text-blue-400" />
+          </div>
+          <h2 className="text-3xl font-extrabold text-gray-900 dark:text-white mb-4 tracking-tight">
+            {t('submit_success_title')}
+          </h2>
+          <p className="text-lg text-gray-500 dark:text-gray-400 mb-10 leading-relaxed">
+            {t('submit_success_desc')}
+          </p>
+          <Button
+            onClick={() => setIsSuccess(false)}
+            size="lg"
+            className="w-full h-14 text-lg bg-gray-900 hover:bg-black text-white rounded-xl transition-all"
+          >
+            {t('btn_submit_more')}
+          </Button>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="max-w-3xl mx-auto py-8 px-4">
-      <div className="mb-10">
-        <h2 className="text-3xl font-bold mb-4 text-gray-900 dark:text-white">{t('contact_form_title')}</h2>
-        <p className="text-gray-600 dark:text-gray-300">
-          {t('contact_form_description')}
-        </p>
-      </div>
+    <div className="min-h-screen bg-white dark:bg-gray-950 px-4 sm:px-6">
+      <div className="max-w-3xl mx-auto space-y-12">
 
-      <Card className="shadow-lg border-gray-100 dark:border-gray-800">
-        <CardHeader className="bg-gray-50 dark:bg-gray-800/50 border-b border-gray-100 dark:border-gray-800">
-          <CardTitle className="text-xl">문의 작성</CardTitle>
-          <CardDescription>필수 항목(*)을 모두 입력해 주세요.</CardDescription>
-        </CardHeader>
-        <CardContent className="p-6 md:p-8">
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-2">
-                <Label htmlFor="company">{t('form_field_company_name')}</Label>
-                <Input id="company" placeholder="대창기계산업" />
+        {/* Header: Left Aligned & Refined */}
+        <div className="max-w-3xl mx-auto pl-2 md:pl-0 pt-8">
+          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-6 tracking-tight">
+            {t('contact_form_title')}
+          </h1>
+          <p className="text-lg text-gray-600 dark:text-gray-400 leading-relaxed font-normal max-w-2xl">
+            {t('contact_form_description')}
+          </p>
+        </div>
+
+        {/* Form Container: Floating, Modern */}
+        <div className="bg-white dark:bg-gray-900 rounded-3xl p-8 md:p-12 shadow-[0_8px_40px_-12px_rgba(0,0,0,0.1)] dark:shadow-none border border-gray-100 dark:border-gray-800">
+
+          <div className="mb-10 text-center md:text-left border-b border-gray-100 dark:border-gray-800 pb-6">
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">{t('form_title')}</h2>
+            <p className="text-gray-400 mt-1">{t('form_required_guides')}</p>
+          </div>
+
+          <form onSubmit={handleSubmit} className="space-y-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <div className="space-y-3 group">
+                <Label htmlFor="company" className="text-sm font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider group-focus-within:text-blue-600 transition-colors">
+                  {t('form_field_company_name')}
+                </Label>
+                <Input
+                  id="company"
+                  placeholder={t('placeholder_company')}
+                  className="h-14 bg-gray-50 dark:bg-gray-800/50 border-transparent hover:bg-gray-100 dark:hover:bg-gray-800 focus:bg-white dark:focus:bg-gray-900 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 rounded-xl text-lg placeholder:text-gray-400/50 dark:placeholder:text-gray-600/50 transition-all duration-300"
+                />
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="name">{t('form_field_person_in_charge')} <span className="text-red-500">*</span></Label>
-                <Input id="name" required placeholder="홍길동" />
+              <div className="space-y-3 group">
+                <Label htmlFor="name" className="text-sm font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider group-focus-within:text-blue-600 transition-colors">
+                  {t('form_field_person_in_charge')} <span className="text-blue-500">*</span>
+                </Label>
+                <Input
+                  id="name"
+                  required
+                  placeholder={t('placeholder_name')}
+                  className="h-14 bg-gray-50 dark:bg-gray-800/50 border-transparent hover:bg-gray-100 dark:hover:bg-gray-800 focus:bg-white dark:focus:bg-gray-900 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 rounded-xl text-lg placeholder:text-gray-400/50 dark:placeholder:text-gray-600/50 transition-all duration-300"
+                />
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-2">
-                <Label htmlFor="email">{t('form_field_email')} <span className="text-red-500">*</span></Label>
-                <Input id="email" type="email" required placeholder="example@company.com" />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <div className="space-y-3 group">
+                <Label htmlFor="email" className="text-sm font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider group-focus-within:text-blue-600 transition-colors">
+                  {t('form_field_email')} <span className="text-blue-500">*</span>
+                </Label>
+                <Input
+                  id="email"
+                  type="email"
+                  required
+                  placeholder={t('placeholder_email')}
+                  className="h-14 bg-gray-50 dark:bg-gray-800/50 border-transparent hover:bg-gray-100 dark:hover:bg-gray-800 focus:bg-white dark:focus:bg-gray-900 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 rounded-xl text-lg placeholder:text-gray-400/50 dark:placeholder:text-gray-600/50 transition-all duration-300"
+                />
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="phone">{t('form_field_phone')} <span className="text-red-500">*</span></Label>
-                <Input id="phone" type="tel" required placeholder="010-1234-5678" />
+              <div className="space-y-3 group">
+                <Label htmlFor="phone" className="text-sm font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider group-focus-within:text-blue-600 transition-colors">
+                  {t('form_field_phone')} <span className="text-blue-500">*</span>
+                </Label>
+                <Input
+                  id="phone"
+                  type="tel"
+                  required
+                  placeholder={t('placeholder_phone')}
+                  className="h-14 bg-gray-50 dark:bg-gray-800/50 border-transparent hover:bg-gray-100 dark:hover:bg-gray-800 focus:bg-white dark:focus:bg-gray-900 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 rounded-xl text-lg placeholder:text-gray-400/50 dark:placeholder:text-gray-600/50 transition-all duration-300"
+                />
               </div>
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="type">{t('form_field_inquiry_type')} <span className="text-red-500">*</span></Label>
+            <div className="space-y-3 group">
+              <Label htmlFor="type" className="text-sm font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider group-focus-within:text-blue-600 transition-colors">
+                {t('form_field_inquiry_type')} <span className="text-blue-500">*</span>
+              </Label>
               <Select defaultValue="product">
-                <SelectTrigger>
-                  <SelectValue placeholder="문의 유형 선택" />
+                <SelectTrigger className="h-14 bg-gray-50 dark:bg-gray-800/50 border-transparent hover:bg-gray-100 dark:hover:bg-gray-800 focus:bg-white dark:focus:bg-gray-900 focus:border-blue-500 rounded-xl text-lg px-4">
+                  <SelectValue placeholder="Select Type" />
                 </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="general">{t('form_option_general_inquiry')}</SelectItem>
-                  <SelectItem value="product">{t('form_option_product_inquiry')}</SelectItem>
-                  <SelectItem value="tech">{t('form_option_technical_support')}</SelectItem>
-                  <SelectItem value="quote">{t('form_option_quotation_request')}</SelectItem>
-                  <SelectItem value="other">{t('form_option_other')}</SelectItem>
+                <SelectContent className="rounded-xl border-gray-100 dark:border-gray-800 shadow-xl">
+                  <SelectItem value="general" className="text-base py-3 cursor-pointer">{t('form_option_general_inquiry')}</SelectItem>
+                  <SelectItem value="product" className="text-base py-3 cursor-pointer">{t('form_option_product_inquiry')}</SelectItem>
+                  <SelectItem value="tech" className="text-base py-3 cursor-pointer">{t('form_option_technical_support')}</SelectItem>
+                  <SelectItem value="quote" className="text-base py-3 cursor-pointer">{t('form_option_quotation_request')}</SelectItem>
+                  <SelectItem value="other" className="text-base py-3 cursor-pointer">{t('form_option_other')}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="message">{t('form_field_message')} <span className="text-red-500">*</span></Label>
+            <div className="space-y-3 group">
+              <Label htmlFor="message" className="text-sm font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider group-focus-within:text-blue-600 transition-colors">
+                {t('form_field_message')} <span className="text-blue-500">*</span>
+              </Label>
               <Textarea
                 id="message"
                 required
-                placeholder="문의하실 내용을 상세히 적어주세요."
-                className="min-h-[150px]"
+                placeholder={t('placeholder_message')}
+                className="min-h-[200px] bg-gray-50 dark:bg-gray-800/50 border-transparent hover:bg-gray-100 dark:hover:bg-gray-800 focus:bg-white dark:focus:bg-gray-900 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 rounded-xl text-lg p-5 resize-none placeholder:text-gray-400/50 dark:placeholder:text-gray-600/50 transition-all duration-300"
               />
             </div>
 
-            <div className="flex items-start space-x-2 pt-2">
-              <Checkbox id="privacy" required />
-              <Label htmlFor="privacy" className="text-sm font-normal leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-                {t('form_privacy_consent')} <span className="text-red-500">*</span>
+            <div className="flex items-center space-x-3 pt-4">
+              <Checkbox id="privacy" required className="w-5 h-5 border-2 border-gray-300 rounded data-[state=checked]:bg-blue-600 data-[state=checked]:border-blue-600 transition-all" />
+              <Label htmlFor="privacy" className="text-sm text-gray-500 dark:text-gray-400 font-medium cursor-pointer select-none">
+                {t('form_privacy_consent')} <span className="text-blue-500">*</span>
               </Label>
             </div>
 
-            <Button type="submit" className="w-full h-12 text-lg" disabled={isSubmitting}>
-              {isSubmitting ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  제출 중...
-                </>
-              ) : (
-                t('form_submit_button')
-              )}
-            </Button>
+            <div className="pt-4">
+              <Button
+                type="submit"
+                className="w-full h-16 text-xl font-bold bg-blue-600 hover:bg-blue-700 text-white rounded-xl shadow-lg shadow-blue-600/30 hover:shadow-blue-600/50 hover:-translate-y-1 transition-all duration-300 flex items-center justify-center gap-2"
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? (
+                  <>
+                    <Loader2 className="h-6 w-6 animate-spin" />
+                    Processing...
+                  </>
+                ) : (
+                  <>
+                    {t('form_submit_button')}
+                    <Send className="w-5 h-5 ml-1" />
+                  </>
+                )}
+              </Button>
+            </div>
+
           </form>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     </div>
   );
 }

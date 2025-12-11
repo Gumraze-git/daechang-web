@@ -105,6 +105,19 @@
     "form_option_other": "Other",
     "form_privacy_consent": "I agree to the collection and use of personal information.",
     "form_submit_button": "Submit Inquiry",
-    "form_success_message": "Your inquiry has been submitted successfully. We will contact you soon."
+    "form_success_message": "Your inquiry has been submitted successfully. We will contact you soon.",
+    "form_title": "Write Inquiry",
+    "form_required_guides": "Please fill in all required fields (*).",
+    "placeholder_company": "Please enter your company name",
+    "placeholder_name": "Please enter your name",
+    "placeholder_email": "Please enter your email",
+    "placeholder_phone": "Please enter your phone number",
+    "placeholder_message": "Please describe your inquiry in detail. (Product name, Quantity, Due date, etc.)",
+    "submit_success_title": "Inquiry Submitted Successfully",
+    "submit_success_desc": "We will check your inquiry and contact you at the email address provided.",
+    "btn_submit_more": "Submit Another Inquiry",
+    "mail_inquiry_title": "Email Inquiry",
+    "mail_inquiry_desc": "Prefer email? Contact us directly via email.",
+    "btn_mail_inquiry": "Inquire via Email"
   }
 }
