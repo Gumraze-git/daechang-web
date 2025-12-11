@@ -62,6 +62,24 @@ export default function FacilitiesPage() {
         { labelKey: 'automation_level', value: 'Full-Auto' }
       ]
     },
+    {
+      nameKey: 'equipment_item3_name',
+      descKey: 'equipment_item3_desc',
+      imageUrl: '/facilities/welding_robot.png',
+      specs: [
+        { labelKey: 'precision', value: '±0.05mm' },
+        { labelKey: 'automation_level', value: '6-Axis' }
+      ]
+    },
+    {
+      nameKey: 'equipment_item4_name',
+      descKey: 'equipment_item4_desc',
+      imageUrl: '/facilities/cmm_machine.png',
+      specs: [
+        { labelKey: 'precision', value: '0.001mm' },
+        { labelKey: 'capacity', value: '3D Scan' }
+      ]
+    },
   ];
 
   const stats = [
@@ -79,7 +97,7 @@ export default function FacilitiesPage() {
           <p className="text-lg text-center text-gray-600 dark:text-gray-400 mb-12 max-w-2xl mx-auto">
             {t('equipment_desc_placeholder')}
           </p>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {equipmentList.map((item, index) => (
               <Card
                 key={index}

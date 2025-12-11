@@ -80,6 +80,10 @@
     "equipment_item1_desc": "High precision machining for critical components.",
     "equipment_item2_name": "Large-scale Assembly Line",
     "equipment_item2_desc": "Efficient assembly of heavy industrial machinery.",
+    "equipment_item3_name": "Industrial Welding Robot",
+    "equipment_item3_desc": "Automated welding system for consistent quality.",
+    "equipment_item4_name": "3D CMM",
+    "equipment_item4_desc": "High precision measurement for quality assurance.",
     "factory_view_desc_placeholder": "A glimpse into our modern and optimized production environment, ensuring quality at every step."
   },
   "SupportPage": {
