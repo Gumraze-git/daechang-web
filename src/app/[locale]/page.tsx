@@ -17,21 +17,25 @@ export default function Home() {
       title: t('product1_title'),
       description: t('product1_desc'),
       href: '/products/blow-molding-machine-1',
+      image: '/products/blow_molding_machine.png',
     },
     {
       title: t('product2_title'),
       description: t('product2_desc'),
       href: '/products/pvc-extrusion-line-1',
+      image: '/products/pvc_extrusion_line.png',
     },
     {
       title: t('product_reducer_title'),
       description: t('product_reducer_desc'),
       href: '/products/reducer-1',
+      image: '/products/reducer.png',
     },
     {
       title: t('product_pto_title'),
       description: t('product_pto_desc'),
       href: '/products/power-take-off-1',
+      image: '/products/pto.png',
     },
   ];
 
@@ -59,16 +63,16 @@ export default function Home() {
 
       {/* Product Summary Section */}
       <section className="container mx-auto py-16 px-4">
-        <h2 className="text-3xl font-bold text-left mb-12">
+        <h2 className="text-3xl font-bold text-left mb-6">
           {t('latest_products')}
         </h2>
         <ProductCarousel products={products} locale={locale} />
       </section>
 
       {/* Notices Section */}
-      <section className="w-full py-16 bg-white border-t border-gray-100">
+      <section className="w-full py-8 bg-white border-t border-gray-100">
         <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold text-left mb-12">
+          <h2 className="text-3xl font-bold text-left mb-6">
             {t('latest_notices')}
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">

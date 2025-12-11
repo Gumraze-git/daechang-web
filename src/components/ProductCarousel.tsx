@@ -8,10 +8,13 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 
+import Image from 'next/image';
+
 type Product = {
     title: string;
     description: string;
     href: string;
+    image?: string;
 };
 
 interface ProductCarouselProps {
@@ -38,16 +41,38 @@ export function ProductCarousel({ products, locale }: ProductCarouselProps) {
                     {products.map((product, index) => (
                         <div key={index} className="flex-[0_0_100%] md:flex-[0_0_50%] lg:flex-[0_0_33.333%] min-w-0 pl-4">
                             <Link href={`/${locale}${product.href}`} className="block h-full group/card">
-                                <Card className="flex flex-col h-full transition-all duration-300 hover:shadow-lg overflow-hidden border border-gray-200 shadow-sm">
-                                    <div className="p-4 pb-0">
-                                        <div className="w-full h-48 bg-gray-200 rounded-md flex items-center justify-center text-gray-400 group-hover/card:bg-gray-100 transition-colors">
-                                            Image Placeholder
+                                <Card className="relative flex flex-col h-[500px] transition-all duration-500 hover:shadow-2xl overflow-hidden border-0 rounded-2xl group/image">
+                                    {/* Background Image */}
+                                    <div className="absolute inset-0 w-full h-full">
+                                        {product.image ? (
+                                            <Image
+                                                src={product.image}
+                                                alt={product.title}
+                                                fill
+                                                className="object-cover transition-transform duration-700 group-hover/image:scale-110"
+                                            />
+                                        ) : (
+                                            <div className="w-full h-full bg-gray-200" />
+                                        )}
+                                    </div>
+
+                                    {/* Overlay Gradient */}
+                                    <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent opacity-80 group-hover/card:opacity-90 transition-opacity duration-300" />
+
+                                    {/* Content */}
+                                    <div className="relative z-10 mt-auto px-8 pt-8 pb-6">
+                                        <CardHeader className="p-0 flex flex-col gap-0.5">
+                                            <CardTitle className="text-2xl font-bold text-white leading-tight group-hover/card:text-blue-100 transition-colors">
+                                                {product.title}
+                                            </CardTitle>
+                                            <CardDescription className="text-gray-300 line-clamp-2 text-base font-medium">
+                                                {product.description}
+                                            </CardDescription>
+                                        </CardHeader>
+                                        <div className="mt-3 flex items-center text-blue-300 text-sm font-semibold hover:text-blue-200 transition-colors">
+                                            {t('view_details')} <ChevronRight className="w-4 h-4 ml-1 group-hover/card:translate-x-1 transition-transform" />
                                         </div>
                                     </div>
-                                    <CardHeader className="pt-4">
-                                        <CardTitle className="line-clamp-1 text-lg group-hover/card:text-primary transition-colors">{product.title}</CardTitle>
-                                        <CardDescription className="line-clamp-2 mt-2">{product.description}</CardDescription>
-                                    </CardHeader>
                                 </Card>
                             </Link>
                         </div>
