@@ -35,7 +35,7 @@
     "support_notices": "Notices",
     "support_resources": "Resources",
     "support_contact": "Contact Us",
-    "description": "We are here to help. Explore our resources or contact us for assistance."
+    "description": "Global Top Tier Machinery Industry Partner"
   },
   "CompanyPage": {
     "ceo_message_title": "A Message from Our CEO",
@@ -131,5 +131,25 @@
     "mail_inquiry_title": "Email Inquiry",
     "mail_inquiry_desc": "Prefer email? Contact us directly via email.",
     "btn_mail_inquiry": "Inquire via Email"
+  },
+  "Footer": {
+    "address_road": "579-17, Toseong-ro, Yanggam-myeon, Hwaseong-si, Gyeonggi-do, Republic of Korea",
+    "address_lot": "San 70, Songsan-ri, Yanggam-myeon, Hwaseong-si, Gyeonggi-do, Republic of Korea",
+    "zip_code": "18628",
+    "contact_info": "Contact Info",
+    "quick_links": "Quick Links",
+    "privacy_policy": "Privacy Policy",
+    "terms_of_service": "Terms of Service"
+  },
+  "NoticeDetail": {
+    "back_to_list": "Back to List",
+    "next_post": "Next Post",
+    "prev_post": "Previous Post"
+  },
+  "NoticeCategories": {
+    "all": "All",
+    "news": "News",
+    "exhibition": "Exhibition",
+    "maintenance": "Maintenance"
   }
 }
