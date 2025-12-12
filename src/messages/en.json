@@ -135,6 +135,9 @@
   "Footer": {
     "address_road": "579-17, Toseong-ro, Yanggam-myeon, Hwaseong-si, Gyeonggi-do, Republic of Korea",
     "address_lot": "San 70, Songsan-ri, Yanggam-myeon, Hwaseong-si, Gyeonggi-do, Republic of Korea",
+    "label_road": "Road",
+    "label_lot": "Lot",
+    "label_zip": "Zip",
     "zip_code": "18628",
     "contact_info": "Contact Info",
     "quick_links": "Quick Links",

@@ -190,6 +190,9 @@
   "Footer": {
     "address_road": "경기 화성시 양감면 토성로 579-17",
     "address_lot": "경기 화성시 양감면 송산리 산70",
+    "label_road": "도로명",
+    "label_lot": "지번",
+    "label_zip": "우편번호",
     "zip_code": "18628",
     "contact_info": "연락처",
     "quick_links": "바로가기",

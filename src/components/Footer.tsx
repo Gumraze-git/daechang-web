@@ -28,15 +28,15 @@ export function Footer() {
             </h3>
             <div className="flex flex-col space-y-2 text-sm">
               <p>
-                <span className="font-medium text-gray-400 mr-2">도로명:</span>
+                <span className="font-medium text-gray-400 mr-2">{tFooter('label_road')}:</span>
                 {tFooter('address_road')}
               </p>
               <p>
-                <span className="font-medium text-gray-400 mr-2">지번:</span>
+                <span className="font-medium text-gray-400 mr-2">{tFooter('label_lot')}:</span>
                 {tFooter('address_lot')}
               </p>
               <p>
-                <span className="font-medium text-gray-400 mr-2">우편번호:</span>
+                <span className="font-medium text-gray-400 mr-2">{tFooter('label_zip')}:</span>
                 {tFooter('zip_code')}
               </p>
             </div>
