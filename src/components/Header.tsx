@@ -12,7 +12,7 @@ import {
 } from '@/components/ui/navigation-menu';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
-import { MenuIcon, Phone } from 'lucide-react'; // Need to install lucide-react
+import { MenuIcon, Phone, Globe, ChevronRight } from 'lucide-react';
 
 import Image from 'next/image'; // Add Image import
 import { cn } from '@/lib/utils';
@@ -103,42 +103,58 @@ export function Header() {
                 <span className="sr-only">Toggle menu</span>
               </Button>
             </SheetTrigger>
-            <SheetContent side="right" className="w-[300px] sm:w-[400px]">
-              <div className="flex flex-col space-y-6 pt-10">
-                <div className="flex flex-col space-y-2">
+            <SheetContent side="right" className="w-[300px] sm:w-[400px] flex flex-col p-0 border-l border-gray-100 dark:border-gray-800 bg-white/95 backdrop-blur-xl dark:bg-gray-950/95">
+              {/* Mobile Menu Header with Logo */}
+              <div className="p-6 border-b border-gray-100 dark:border-gray-800">
+                <Link href="/" className="flex items-center space-x-2" onClick={() => document.body.click()}>
+                  <Image src="/logo_small.png" alt="Daechang Logo" width={160} height={40} className="h-8 w-auto" unoptimized />
+                </Link>
+              </div>
+
+              <div className="flex-1 overflow-y-auto py-6 px-4">
+                <nav className="flex flex-col space-y-1">
                   {navItems.map((item) => {
                     const isActive = pathname.startsWith(`/${currentLocale}${item.href}`);
                     return (
-                      <Button
+                      <Link
                         key={item.name}
-                        asChild
-                        variant={isActive ? "secondary" : "ghost"}
+                        href={`/${currentLocale}${item.href}`}
                         className={cn(
-                          "w-full justify-start text-lg h-12",
-                          isActive && "bg-blue-50 text-blue-600 dark:bg-blue-900/20 dark:text-blue-400"
+                          "flex items-center px-4 py-3 rounded-xl text-base font-medium transition-all duration-200 group relative overflow-hidden",
+                          isActive
+                            ? "bg-blue-50 text-blue-600 dark:bg-blue-900/20 dark:text-blue-400 font-semibold"
+                            : "text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white"
                         )}
                       >
-                        <Link href={`/${currentLocale}${item.href}`}>
+                        {isActive && (
+                          <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-blue-600 rounded-r-full" />
+                        )}
+                        <span className={cn("relative z-10", isActive ? "translate-x-2" : "group-hover:translate-x-1 transition-transform")}>
                           {item.name}
-                        </Link>
-                      </Button>
+                        </span>
+                        {isActive && <ChevronRight className="ml-auto w-4 h-4" />}
+                      </Link>
                     );
                   })}
-                </div>
+                </nav>
+              </div>
 
-                <div className="border-t pt-6 space-y-6">
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm font-medium text-gray-500">{t('language')}</span>
-                    <LanguageSwitcher />
+              <div className="mt-auto p-6 border-t border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-900/50 space-y-6">
+                {/* Language Switcher Row */}
+                <div className="flex items-center justify-between p-4 bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-gray-100 dark:border-gray-800">
+                  <div className="flex items-center gap-2 text-sm font-medium text-gray-600 dark:text-gray-400">
+                    <Globe className="w-4 h-4" />
+                    {t('language')}
                   </div>
-
-                  <Button asChild className="w-full rounded-full bg-blue-600 hover:bg-blue-700 text-white h-12 text-lg">
-                    <Link href={`/${currentLocale}/support/contact`}>
-                      <Phone className="w-5 h-5 mr-2" />
-                      {t('support_contact')}
-                    </Link>
-                  </Button>
+                  <LanguageSwitcher />
                 </div>
+
+                <Button asChild className="w-full rounded-xl bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white shadow-lg hover:shadow-blue-500/25 transition-all h-12 text-base font-semibold">
+                  <Link href={`/${currentLocale}/support/contact`}>
+                    <Phone className="w-4 h-4 mr-2" />
+                    {t('support_contact')}
+                  </Link>
+                </Button>
               </div>
             </SheetContent>
           </Sheet>

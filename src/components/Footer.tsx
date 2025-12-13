@@ -1,9 +1,9 @@
-import { useTranslations } from 'next-intl';
+import { getTranslations } from 'next-intl/server';
 
-export function Footer() {
-  const tCommon = useTranslations('Common');
-  const tIndex = useTranslations('Index');
-  const tFooter = useTranslations('Footer');
+export async function Footer() {
+  const tCommon = await getTranslations('Common');
+  const tIndex = await getTranslations('Index');
+  const tFooter = await getTranslations('Footer');
   return (
     <footer className="w-full bg-gray-900 text-gray-300 py-12 border-t border-gray-800">
       <div className="container mx-auto px-4">

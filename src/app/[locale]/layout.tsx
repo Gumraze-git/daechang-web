@@ -2,13 +2,26 @@ import { NextIntlClientProvider } from 'next-intl';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 import { locales, defaultLocale } from '@/config';
-import { getMessages } from 'next-intl/server';
+import { getMessages, getTranslations } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 
 type Props = {
   children: React.ReactNode;
   params: Promise<{ locale: string }>;
 };
+
+export async function generateMetadata({ params }: Omit<Props, 'children'>) {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: 'Index' });
+
+  return {
+    title: t('title'),
+    description: t('description'),
+    icons: {
+      icon: '/favicon_v3.png',
+    },
+  };
+}
 
 export default async function LocaleLayout({ children, params }: Props) {
   const { locale } = await params;
