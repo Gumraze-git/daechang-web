@@ -23,7 +23,8 @@
     "product_reducer_title": "Reducer",
     "product_reducer_desc": "High-precision slew drive assembly solutions for heavy equipment and industrial machinery.",
     "product_pto_title": "Power Take-off (PTO)",
-    "product_pto_desc": "High-efficiency Power Take-off units for versatile industrial applications."
+    "product_pto_desc": "High-efficiency Power Take-off units for versatile industrial applications.",
+    "month_unit": ""
   },
   "Common": {
     "home": "Home",
@@ -72,6 +73,8 @@
     "address_title": "Address",
     "address_road": "579-17, Toseong-ro, Yanggam-myeon, Hwaseong-si, Gyeonggi-do",
     "address_lot": "San 70, Songsan-ri, Yanggam-myeon, Hwaseong-si, Gyeonggi-do",
+    "label_road": "Road Name",
+    "label_lot": "Lot Number",
     "contact_title": "Contact",
     "phone": "Phone",
     "fax": "Fax",
@@ -87,7 +90,21 @@
     "history_year_2": "19YY - Launched first generation Blow Molding Machine.",
     "history_event_2": "Received industry recognition for innovative design.",
     "history_year_3": "20XX - Expanded into Extrusion Line development.",
-    "history_event_3": "Became a leading supplier in global markets."
+    "history_event_3": "Became a leading supplier in global markets.",
+    "history_2009": "Hwaseong Factory Expansion & Relocation",
+    "history_2008_12_1": "Patent Application for Planetary Ball Mill Cooling System",
+    "history_2008_12_2": "Inno-Biz Certification",
+    "history_2008_08": "Development of Planetary Ball Mill Cooling System for Nano Metal Powder Manufacturing",
+    "history_2008_02": "Development of HOIST, AIR WINCH (Supplied to Korea Hoist, Daewoo Shipbuilding, Hyundai Heavy Industries)",
+    "history_2007_12_1": "Venture Business Registration",
+    "history_2007_12_2": "Development of Reducer for Hoist",
+    "history_2007_03": "Development and Supply of Analysis Equipment for Nano Abrasives (Samsung Corning, Technosemichem)",
+    "history_2006": "Sihwa Factory Expansion & Relocation",
+    "history_2004_08": "Development of Reduction Gear Box for Concrete Pump Car (Supplied to KCP Heavy Industries)",
+    "history_2004_05": "Development of P.T.O for Concrete Pump Car (Supplied to KCP Heavy Industries)",
+    "history_2004_03_1": "Establishment of Daechang Machinery Industry Co., Ltd.",
+    "history_2004_03_2": "Italy Import Trade",
+    "history_2004_03_3": "Ring Gear Import Trade"
   },
   "ProductPage": {
     "product_categories": "Product Categories",

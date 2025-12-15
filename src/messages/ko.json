@@ -23,7 +23,8 @@
     "product_reducer_title": "감속기",
     "product_reducer_desc": "중장비 및 산업 기계를 위한 고정밀 선회 감속 어셈블리 솔루션.",
     "product_pto_title": "동력 인출 장치",
-    "product_pto_desc": "다목적 산업 장비를 위한 고효율 동력 인출 장치."
+    "product_pto_desc": "다목적 산업 장비를 위한 고효율 동력 인출 장치.",
+    "month_unit": "월"
   },
   "Common": {
     "home": "홈",
@@ -79,7 +80,23 @@
     "transport_car": "자가용 이용 시",
     "transport_car_desc": "서해안고속도로 발안IC 진출 → 양감면 방향 10분 소요",
     "transport_public": "대중교통 이용 시",
-    "transport_public_desc": "향남환승터미널에서 택시 이용 (약 15분 소요)"
+    "transport_public_desc": "향남환승터미널에서 택시 이용 (약 15분 소요)",
+    "label_road": "도로명",
+    "label_lot": "지번",
+    "history_2009": "화성공장 확장이전",
+    "history_2008_12_1": "유성볼밀 냉각시스템 특허출원",
+    "history_2008_12_2": "이노비즈 기업인증",
+    "history_2008_08": "나노금속분말제조용 유성볼밀 냉각시스템 개발",
+    "history_2008_02": "HOIST, AIR WINCH 개발 (고려호이스트, 대우조선, 현대중공업 납품)",
+    "history_2007_12_1": "벤처기업등록",
+    "history_2007_12_2": "호이스트용 감속기 개발",
+    "history_2007_03": "나노연마재용 분석설비 개발 납품 (삼성코닝, 테크노세미켐)",
+    "history_2006": "시화공장 확장이전",
+    "history_2004_08": "콘크리트 펌프카용 Reduction Gear Box 개발 (KCP중공업 납품)",
+    "history_2004_05": "콘크리트 펌프카용 P.T.O 개발 (KCP중공업 납품)",
+    "history_2004_03_1": "대창기계산업(주) 설립",
+    "history_2004_03_2": "이태리 수입무역",
+    "history_2004_03_3": "Ring Gear 수입무역"
   },
   "ProductPage": {
     "products": "제품 소개",

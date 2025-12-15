@@ -84,8 +84,8 @@ export default function LocationPage() {
               {t('address_title')}
             </h3>
             <div className="space-y-2 text-gray-600 dark:text-gray-300">
-              <p><span className="font-semibold text-gray-900 dark:text-white w-16 inline-block">도로명</span> {t('address_road')}</p>
-              <p><span className="font-semibold text-gray-900 dark:text-white w-16 inline-block">지번</span> {t('address_lot')}</p>
+              <p><span className="font-semibold text-gray-900 dark:text-white w-20 inline-block">{t('label_road')}</span> {t('address_road')}</p>
+              <p><span className="font-semibold text-gray-900 dark:text-white w-20 inline-block">{t('label_lot')}</span> {t('address_lot')}</p>
             </div>
           </div>
 

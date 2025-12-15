@@ -17,42 +17,43 @@ const historyData: HistoryYear[] = [
   {
     year: '2009',
     events: [
-      { month: '08', description: ['화성공장 확장이전'] },
+      { month: '08', description: ['history_2009'] },
     ]
   },
   {
     year: '2008',
     events: [
-      { month: '12', description: ['유성볼밀 냉각시스템 특허출원', '이노비즈 기업인증'] },
-      { month: '08', description: ['나노금속분말제조용 유성볼밀 냉각시스템 개발'] },
-      { month: '02', description: ['HOIST, AIR WINCH 개발 (고려호이스트, 대우조선, 현대중공업 납품)'] },
+      { month: '12', description: ['history_2008_12_1', 'history_2008_12_2'] },
+      { month: '08', description: ['history_2008_08'] },
+      { month: '02', description: ['history_2008_02'] },
     ]
   },
   {
     year: '2007',
     events: [
-      { month: '12', description: ['벤처기업등록', '호이스트용 감속기 개발'] },
-      { month: '03', description: ['나노연마재용 분석설비 개발 납품 (삼성코닝, 테크노세미켐)'] },
+      { month: '12', description: ['history_2007_12_1', 'history_2007_12_2'] },
+      { month: '03', description: ['history_2007_03'] },
     ]
   },
   {
     year: '2006',
     events: [
-      { month: '07', description: ['시화공장 확장이전'] },
+      { month: '07', description: ['history_2006'] },
     ]
   },
   {
     year: '2004',
     events: [
-      { month: '08', description: ['콘크리트 펌프카용 Reduction Gear Box 개발 (KCP중공업 납품)'] },
-      { month: '05', description: ['콘크리트 펌프카용 P.T.O 개발 (KCP중공업 납품)'] },
-      { month: '03', description: ['대창기계산업(주) 설립', '이태리 수입무역', 'Ring Gear 수입무역'] },
+      { month: '08', description: ['history_2004_08'] },
+      { month: '05', description: ['history_2004_05'] },
+      { month: '03', description: ['history_2004_03_1', 'history_2004_03_2', 'history_2004_03_3'] },
     ]
   },
 ];
 
 export default function HistoryPage() {
   const t = useTranslations('Common');
+  const tCompany = useTranslations('CompanyPage');
 
   return (
     <div className="max-w-4xl mx-auto py-12 px-6 md:px-12">
@@ -103,7 +104,7 @@ export default function HistoryPage() {
                   {/* Month */}
                   <div className="flex-shrink-0 pt-1">
                     <span className="text-lg font-bold text-gray-900 dark:text-white inline-block border-b-2 border-gray-900 dark:border-white pb-0.5 animate-in fade-in zoom-in-50 duration-500">
-                      {event.month}월
+                      {event.month}{t('month_unit')}
                     </span>
                   </div>
 
@@ -111,7 +112,7 @@ export default function HistoryPage() {
                   <div className="flex-grow space-y-2">
                     {event.description.map((desc, i) => (
                       <p key={i} className="text-base md:text-lg text-gray-600 dark:text-gray-300 leading-relaxed font-medium hover:text-gray-900 dark:hover:text-white transition-colors">
-                        {desc}
+                        {tCompany(desc)}
                       </p>
                     ))}
                   </div>

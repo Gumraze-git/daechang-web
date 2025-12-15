@@ -1,11 +1,10 @@
-'use client';
 
-import { useTranslations } from 'next-intl';
+
+import { getTranslations } from 'next-intl/server';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, Calendar, Tag } from 'lucide-react';
 import { notFound } from 'next/navigation';
-import { use } from 'react';
 
 // Mock data for notices (in a real app, this would come from an API or database)
 const noticesData: Record<string, { titleKey: string; dateKey: string; content: string; category: string }> = {
@@ -60,8 +59,8 @@ const noticesData: Record<string, { titleKey: string; dateKey: string; content: 
 
 export default async function NoticeDetailPage({ params }: { params: Promise<{ id: string; locale: string }> }) {
   const { id, locale } = await params;
-  const t = useTranslations('Index');
-  const tDetail = useTranslations('NoticeDetail');
+  const t = await getTranslations('Index');
+  const tDetail = await getTranslations('NoticeDetail');
 
   const notice = noticesData[id];
 
