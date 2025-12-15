@@ -95,6 +95,7 @@
     "extrusion_lines": "Extrusion Lines",
     "product_list_title": "Our Products",
     "product_detail_title": "Product Details",
+    "product_photo": "Product Photos",
     "specifications": "Specifications",
     "features": "Features",
     "gallery": "Gallery",
@@ -108,8 +109,17 @@
     "feature_item_durability": "Durability",
     "products": "Products",
     "all_products": "All Products",
+    "search_placeholder": "Search products...",
     "search_results_for": "Search results for \"{term}\"",
-    "no_products_found": "No products found."
+    "no_products_found": "No products found.",
+    "product1_title": "High-Performance Blow Molding Machine",
+    "product1_desc": "Optimized for efficient and high-quality plastic container production.",
+    "product2_title": "Advanced PVC Extrusion Line",
+    "product2_desc": "Precision engineering for various PVC profiles and pipes.",
+    "product_reducer_title": "Reducer",
+    "product_reducer_desc": "High-precision slew drive assembly solutions for heavy equipment and industrial machinery.",
+    "product_pto_title": "Power Take-off (PTO)",
+    "product_pto_desc": "High-efficiency Power Take-off units for versatile industrial applications."
   },
   "FacilitiesPage": {
     "facilities_title": "Our Facilities",
