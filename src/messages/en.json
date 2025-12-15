@@ -23,8 +23,7 @@
     "product_reducer_title": "Reducer",
     "product_reducer_desc": "High-precision slew drive assembly solutions for heavy equipment and industrial machinery.",
     "product_pto_title": "Power Take-off (PTO)",
-    "product_pto_desc": "High-efficiency Power Take-off units for versatile industrial applications.",
-    "month_unit": ""
+    "product_pto_desc": "High-efficiency Power Take-off units for versatile industrial applications."
   },
   "Common": {
     "home": "Home",
@@ -41,7 +40,8 @@
     "support_notices": "Notices",
     "support_resources": "Resources",
     "support_contact": "Contact Us",
-    "description": "Global Top Tier Machinery Industry Partner"
+    "description": "Global Top Tier Machinery Industry Partner",
+    "month_unit": ""
   },
   "CompanyPage": {
     "ceo_message_title": "A Message from Our CEO",

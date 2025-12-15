@@ -23,14 +23,14 @@
     "product_reducer_title": "감속기",
     "product_reducer_desc": "중장비 및 산업 기계를 위한 고정밀 선회 감속 어셈블리 솔루션.",
     "product_pto_title": "동력 인출 장치",
-    "product_pto_desc": "다목적 산업 장비를 위한 고효율 동력 인출 장치.",
-    "month_unit": "월"
+    "product_pto_desc": "다목적 산업 장비를 위한 고효율 동력 인출 장치."
   },
   "Common": {
     "home": "홈",
     "company": "기업 소개",
     "company_intro": "기업 소개",
     "description": "Global Top Tier 기계 산업 파트너",
+    "month_unit": "월",
     "products": "제품 소개",
     "facilities": "설비 현황",
     "support": "고객 지원",
