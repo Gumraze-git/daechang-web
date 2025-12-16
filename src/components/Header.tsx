@@ -69,16 +69,17 @@ export function Header() {
   };
 
   return (
-    <header className="sticky top-0 z-50 w-full bg-white/80 backdrop-blur-md dark:bg-black/80 border-none shadow-none">
-      <div className="w-full flex h-24 items-center justify-between px-4 md:px-8 max-w-[1600px] mx-auto">
-        <Link href="/" className="mr-6 flex items-center space-x-2">
+    <header className="sticky top-0 z-50 w-full bg-white/80 backdrop-blur-md dark:bg-black/80 border-none shadow-none transition-all duration-300">
+      <div className="w-full flex h-24 items-center px-4 md:px-8 max-w-[1600px] mx-auto gap-4">
+        {/* Logo */}
+        <Link href="/" className="flex-shrink-0 flex items-center">
           <Image src="/logo_small.png" alt="Daechang Logo" width={320} height={80} className="h-10 w-auto" unoptimized />
         </Link>
 
-        {/* Desktop Navigation - Centered */}
-        <div className="hidden md:flex absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+        {/* Desktop Navigation - Flex based centering for safety against overlap */}
+        <div className="hidden md:flex flex-1 justify-center px-4">
           <NavigationMenu>
-            <NavigationMenuList className="gap-2">
+            <NavigationMenuList className="gap-1 lg:gap-2">
               {navItems.map((item) => {
                 const isActive = pathname.startsWith(`/${currentLocale}${item.href}`);
                 return (
@@ -88,7 +89,7 @@ export function Header() {
                       active={isActive}
                       className={cn(
                         navigationMenuTriggerStyle(),
-                        "bg-transparent text-base font-medium transition-colors hover:bg-gray-100 dark:hover:bg-gray-800",
+                        "bg-transparent text-base font-medium transition-colors hover:bg-gray-100 dark:hover:bg-gray-800 focus:bg-gray-100 dark:focus:bg-gray-800",
                         isActive ? "text-blue-600 dark:text-blue-400 font-bold" : "text-gray-700 dark:text-gray-200"
                       )}
                     >
@@ -103,7 +104,8 @@ export function Header() {
           </NavigationMenu>
         </div>
 
-        <div className="flex items-center space-x-4 ml-auto">
+        {/* Desktop Utilities */}
+        <div className="flex items-center space-x-4 flex-shrink-0 ml-auto">
           <div className="hidden md:flex items-center gap-4">
             <LanguageSwitcher />
             <Button asChild className="rounded-full bg-blue-600 hover:bg-blue-700 text-white shadow-md hover:shadow-lg transition-all">
