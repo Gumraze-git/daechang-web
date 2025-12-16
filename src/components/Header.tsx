@@ -70,14 +70,14 @@ export function Header() {
 
   return (
     <header className="sticky top-0 z-50 w-full bg-white/80 backdrop-blur-md dark:bg-black/80 border-none shadow-none transition-all duration-300">
-      <div className="w-full flex h-24 items-center px-4 md:px-8 max-w-[1600px] mx-auto gap-4">
-        {/* Logo */}
-        <Link href="/" className="flex-shrink-0 flex items-center">
+      <div className="w-full grid grid-cols-[1fr_auto_1fr] h-24 items-center px-4 md:px-8 max-w-[1600px] mx-auto gap-4">
+        {/* Logo - Start aligned */}
+        <Link href="/" className="flex items-center justify-self-start">
           <Image src="/logo_small.png" alt="Daechang Logo" width={320} height={80} className="h-10 w-auto" unoptimized />
         </Link>
 
-        {/* Desktop Navigation - Flex based centering for safety against overlap */}
-        <div className="hidden md:flex flex-1 justify-center px-4">
+        {/* Desktop Navigation - Center aligned */}
+        <div className="hidden md:flex justify-center justify-self-center w-full">
           <NavigationMenu>
             <NavigationMenuList className="gap-1 lg:gap-2">
               {navItems.map((item) => {
@@ -104,8 +104,8 @@ export function Header() {
           </NavigationMenu>
         </div>
 
-        {/* Desktop Utilities */}
-        <div className="flex items-center space-x-4 flex-shrink-0 ml-auto">
+        {/* Desktop Utilities - End aligned */}
+        <div className="flex items-center space-x-4 justify-self-end ml-auto md:ml-0">
           <div className="hidden md:flex items-center gap-4">
             <LanguageSwitcher />
             <Button asChild className="rounded-full bg-blue-600 hover:bg-blue-700 text-white shadow-md hover:shadow-lg transition-all">
