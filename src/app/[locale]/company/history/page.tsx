@@ -98,11 +98,11 @@ export default function HistoryPage() {
               {yearGroup.events.map((event, eventIndex) => (
                 <div
                   key={eventIndex}
-                  className="relative flex flex-col sm:flex-row gap-3 sm:gap-6 animate-in fade-in slide-in-from-bottom-4 duration-700"
+                  className="relative flex flex-col sm:flex-row sm:items-baseline gap-3 sm:gap-6 animate-in fade-in slide-in-from-bottom-4 duration-700"
                   style={{ animationDelay: `${eventIndex * 100}ms` }}
                 >
                   {/* Month */}
-                  <div className="flex-shrink-0 pt-1">
+                  <div className="flex-shrink-0">
                     <span className="text-lg font-bold text-gray-900 dark:text-white inline-block border-b-2 border-gray-900 dark:border-white pb-0.5 animate-in fade-in zoom-in-50 duration-500">
                       {event.month}{t('month_unit')}
                     </span>
