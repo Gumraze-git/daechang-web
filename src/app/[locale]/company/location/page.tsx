@@ -104,32 +104,7 @@ export default function LocationPage() {
         </div>
       </div>
 
-      {/* Transport Info */}
-      <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-8 md:p-10">
-        <h3 className="text-xl font-bold mb-6 text-gray-900 dark:text-white">
-          {t('transport_title')}
-        </h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="flex gap-4">
-            <div className="w-12 h-12 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center flex-shrink-0 text-blue-600 dark:text-blue-300">
-              🚗
-            </div>
-            <div>
-              <h4 className="font-bold text-gray-900 dark:text-white mb-1">{t('transport_car')}</h4>
-              <p className="text-gray-600 dark:text-gray-300">{t('transport_car_desc')}</p>
-            </div>
-          </div>
-          <div className="flex gap-4">
-            <div className="w-12 h-12 rounded-full bg-green-100 dark:bg-green-900 flex items-center justify-center flex-shrink-0 text-green-600 dark:text-green-300">
-              🚌
-            </div>
-            <div>
-              <h4 className="font-bold text-gray-900 dark:text-white mb-1">{t('transport_public')}</h4>
-              <p className="text-gray-600 dark:text-gray-300">{t('transport_public_desc')}</p>
-            </div>
-          </div>
-        </div>
-      </div>
+
     </div>
   );
 }
