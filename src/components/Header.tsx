@@ -11,7 +11,7 @@ import {
   navigationMenuTriggerStyle,
 } from '@/components/ui/navigation-menu';
 import { Button } from '@/components/ui/button';
-import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
+import { Sheet, SheetContent, SheetTrigger, SheetTitle } from '@/components/ui/sheet';
 import { MenuIcon, Phone, Globe, ChevronRight } from 'lucide-react';
 
 import Image from 'next/image'; // Add Image import
@@ -104,6 +104,7 @@ export function Header() {
               </Button>
             </SheetTrigger>
             <SheetContent side="right" className="w-[300px] sm:w-[400px] flex flex-col p-0 border-l border-gray-100 dark:border-gray-800 bg-white/95 backdrop-blur-xl dark:bg-gray-950/95">
+              <SheetTitle className="sr-only">Mobile Menu</SheetTitle>
               {/* Mobile Menu Header with Logo */}
               <div className="p-6 border-b border-gray-100 dark:border-gray-800">
                 <Link href="/" className="flex items-center space-x-2" onClick={() => document.body.click()}>
