@@ -14,16 +14,15 @@ export async function createClient() {
                 },
                 setAll(cookiesToSet) {
                     try {
-                        try {
-                            cookiesToSet.forEach(({ name, value, options }) =>
-                                cookieStore.set(name, value, options)
-                            )
-                        } catch {
-                            // `setAll` 메서드는 Server Component에서 호출되었습니다.
-                            // 이 경우 사용자 세션을 갱신하는 미들웨어가 있다면 무시해도 됩니다.
-                        }
-                    },
+                        cookiesToSet.forEach(({ name, value, options }) =>
+                            cookieStore.set(name, value, options)
+                        )
+                    } catch {
+                        // `setAll` 메서드는 Server Component에서 호출되었습니다.
+                        // 이 경우 사용자 세션을 갱신하는 미들웨어가 있다면 무시해도 됩니다.
+                    }
                 },
-            }
+            },
+        }
     )
 }
