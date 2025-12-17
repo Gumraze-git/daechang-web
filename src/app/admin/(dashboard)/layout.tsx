@@ -42,6 +42,10 @@ export default function AdminLayout({
                         <Users className="w-5 h-5" />
                         관리자 계정 관리
                     </Link>
+                    <Link href="/admin/partners" className="flex items-center gap-3 px-4 py-3 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700/50 rounded-xl transition-colors font-medium">
+                        <Users className="w-5 h-5" />
+                        협력사 관리
+                    </Link>
                     <div className="pt-4 mt-4 border-t border-gray-100 dark:border-gray-700">
                         <Link href="/admin/settings" className="flex items-center gap-3 px-4 py-3 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700/50 rounded-xl transition-colors font-medium">
                             <Settings className="w-5 h-5" />
