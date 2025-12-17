@@ -2,6 +2,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { FileText, Settings, LogOut, Menu, LayoutTemplate, Package, Users, Wrench, Calendar } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { logout } from '@/lib/actions/auth';
 
 export default function AdminLayout({
     children,
@@ -50,12 +51,12 @@ export default function AdminLayout({
                 </nav>
 
                 <div className="p-4 border-t border-gray-200 dark:border-gray-700">
-                    <Link href="/admin/login">
+                    <form action={logout} className="w-full">
                         <Button variant="ghost" className="w-full flex items-center justify-start gap-3 text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/10">
                             <LogOut className="w-4 h-4" />
                             로그아웃
                         </Button>
-                    </Link>
+                    </form>
                 </div>
             </aside>
 

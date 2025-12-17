@@ -10,28 +10,21 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter }
 import { Label } from '@/components/ui/label';
 import { Loader2, ArrowRight } from 'lucide-react';
 
+import { login } from '@/lib/actions/auth';
+
 export default function AdminLoginPage() {
-    const router = useRouter();
+    const router = useRouter(); // router might not be needed for redirect in server action, but kept for now or safe removal
     const [isLoading, setIsLoading] = useState(false);
 
-    const handleLogin = async (e: React.FormEvent) => {
-        e.preventDefault();
+    const handleLogin = async (formData: FormData) => {
         setIsLoading(true);
+        // Server Action 호출
+        const result = await login(formData); // login import 필요
 
-        const email = (document.getElementById('email') as HTMLInputElement).value;
-        const password = (document.getElementById('password') as HTMLInputElement).value;
-
-        // Fake login delay
-        await new Promise(resolve => setTimeout(resolve, 1000));
-
-        if ((email === 'admin' || email === 'admin@daechang.com') && password === '1234') {
-            document.cookie = "admin_session=true; path=/; max-age=86400";
-            router.push('/admin');
-        } else {
-            alert('아이디 또는 비밀번호가 올바르지 않습니다.');
+        if (result?.error) {
+            alert(result.error);
+            setIsLoading(false);
         }
-
-        setIsLoading(false);
     };
 
     return (
@@ -48,13 +41,14 @@ export default function AdminLoginPage() {
                             <Image src="/logo_small.png" alt="Daechang Logo" fill className="object-contain" unoptimized priority />
                         </div>
                     </CardHeader>
-                    <form onSubmit={handleLogin}>
+                    <form action={handleLogin}>
                         <CardContent className="space-y-5">
                             <div className="space-y-2">
                                 <Label htmlFor="email" className="text-sm font-medium text-gray-700">이메일</Label>
                                 <div className="relative">
                                     <Input
                                         id="email"
+                                        name="email"
                                         type="text"
                                         placeholder="admin@daechang.com"
                                         required
@@ -71,6 +65,7 @@ export default function AdminLoginPage() {
                                 <div className="relative">
                                     <Input
                                         id="password"
+                                        name="password"
                                         type="password"
                                         required
                                         className="h-11 bg-gray-50/50 border-gray-200 focus:bg-white transition-all pl-10"
