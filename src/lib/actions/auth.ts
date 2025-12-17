@@ -15,7 +15,8 @@ export async function login(formData: FormData) {
     });
 
     if (error) {
-        return { error: '아이디 또는 비밀번호가 올바르지 않습니다.' }; // Korean error message
+        console.error('Login Error:', error);
+        return { error: error.message }; // Return actual error for debugging
     }
 
     redirect('/admin');
