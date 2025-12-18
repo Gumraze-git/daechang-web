@@ -17,7 +17,7 @@ import {
 import { Switch } from '@/components/ui/switch';
 import { Calendar, ChevronLeft, Save, Upload, Trash2 } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
-import { createNotice, type Notice } from '@/lib/actions/notices';
+import { createNotice, updateNotice, type Notice } from '@/lib/actions/notices';
 import Image from 'next/image';
 import DeleteAlertDialog from '@/components/admin/DeleteAlertDialog';
 
@@ -52,8 +52,12 @@ export default function NoticeForm({ initialData, isEdit = false }: NoticeFormPr
                     setShowSuccessDialog(true);
                 }
             } else {
-                // await updateNotice(initialData.id, formData); // TODO: Implement update
-                alert('수정 기능은 아직 구현 중입니다.');
+                if (initialData?.id) {
+                    const result = await updateNotice(initialData.id, formData);
+                    if (result && result.success) {
+                        setShowSuccessDialog(true);
+                    }
+                }
             }
         } catch (error: any) {
             console.error(error);
@@ -236,8 +240,8 @@ export default function NoticeForm({ initialData, isEdit = false }: NoticeFormPr
                 open={showSuccessDialog}
                 onOpenChange={setShowSuccessDialog}
                 onConfirm={() => router.push('/admin/notices')}
-                title="등록 완료"
-                description="공지사항이 성공적으로 등록되었습니다."
+                title={isEdit ? "수정 완료" : "등록 완료"}
+                description={isEdit ? "공지사항이 성공적으로 수정되었습니다." : "공지사항이 성공적으로 등록되었습니다."}
             />
         </>
     );

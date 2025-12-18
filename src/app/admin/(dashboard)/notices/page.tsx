@@ -88,12 +88,11 @@ export default async function NoticesPage() {
                                     </TableCell>
                                     <TableCell className="text-right">
                                         <div className="flex items-center justify-end gap-2">
-                                            {/* Edit - Not implemented yet */}
-                                            {/* <Link href={`/admin/notices/${notice.id}`}>
+                                            <Link href={`/admin/notices/${notice.id}`}>
                                                 <Button variant="ghost" size="icon" className="h-8 w-8 text-gray-400 hover:text-blue-600 hover:bg-blue-50">
                                                     <Pencil className="w-4 h-4" />
                                                 </Button>
-                                            </Link> */}
+                                            </Link>
 
                                             <form action={deleteNotice.bind(null, notice.id)}>
                                                 <Button
