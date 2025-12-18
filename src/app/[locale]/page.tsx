@@ -1,15 +1,29 @@
+import { getTranslations } from 'next-intl/server';
 import Link from 'next/link';
-import { useTranslations } from 'next-intl';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { useLocale } from 'next-intl'; // Import useLocale to get the current locale
+// import { useLocale } from 'next-intl'; // Removed as it is a hook
 import { HeroCarousel } from '@/components/HeroCarousel';
 import { ProductCarousel } from '@/components/ProductCarousel';
 import { NoticeCard } from '@/components/NoticeCard';
+import { getNotices } from '@/lib/actions/notices';
 
-export default function Home() {
-  const t = useTranslations('Index');
-  const locale = useLocale(); // Get the current locale
+export default async function Home({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
+  const t = await getTranslations('Index'); // use getTranslations for Server Components
+  // Actually, in Server Components we should use getTranslations, but useTranslations hook works if provider is set.
+  // However, next-intl recommends getTranslations for async Server Components.
+  // Existing code used useTranslations, so let's check if it needs to change.
+  // src/app/[locale]/layout.tsx sets up NextIntlClientProvider, but this page is server component.
+  // The official way for SC is getTranslations.
+  // But wait, the previous code was `export default function Home() ... useTranslations`. 
+  // It was likely a "Server Component using hooks" which is deprecated/tricky or relying on the provider being up the tree? 
+  // Next.js 13+ SCs can't use hooks. So `page.tsx` MUST have been a Client Component or `next-intl` does magic.
+  // But `getNotices` is a Server Action/function.
+
+  // Let's make this a proper Server Component using `getTranslations`.
+  const allNotices = await getNotices();
+  const recentNotices = allNotices.slice(0, 3);
 
   // Placeholder product data (will be fetched from API later)
   const products = [
@@ -37,13 +51,6 @@ export default function Home() {
       href: '/products/power-take-off-1',
       image: '/products/pto.png',
     },
-  ];
-
-  // Placeholder notices data (will be fetched from API later)
-  const notices = [
-    { titleKey: 'notice1_title', dateKey: 'notice1_date', href: '/support/notices/1' },
-    { titleKey: 'notice2_title', dateKey: 'notice2_date', href: '/support/notices/2' },
-    { titleKey: 'notice3_title', dateKey: 'notice3_date', href: '/support/notices/3' },
   ];
 
   return (
@@ -76,15 +83,35 @@ export default function Home() {
             {t('latest_notices')}
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {notices.map((notice, index) => (
-              <NoticeCard
-                key={index}
-                title={t(notice.titleKey)}
-                date={t(notice.dateKey)}
-                href={`/${locale}${notice.href}`}
-                locale={locale}
-              />
-            ))}
+            {recentNotices.length > 0 ? (
+              recentNotices.map((notice, index) => {
+                const isKo = locale === 'ko';
+                const title = isKo ? notice.title_ko : (notice.title_en || notice.title_ko);
+                // Date formatting
+                const dateLocale = locale === 'ko' ? 'ko-KR' : 'en-US';
+                const date = new Date(notice.published_at).toLocaleDateString(dateLocale, {
+                  year: 'numeric',
+                  month: '2-digit',
+                  day: '2-digit'
+                });
+
+                return (
+                  <NoticeCard
+                    key={notice.id}
+                    title={title}
+                    date={date}
+                    href={`/${locale}/notices/${notice.id}`}
+                    locale={locale}
+                    category={notice.category}
+                    imageUrl={notice.image_url}
+                  />
+                );
+              })
+            ) : (
+              <div className="text-gray-500">
+                {t('no_notices')}
+              </div>
+            )}
           </div>
         </div>
       </section>

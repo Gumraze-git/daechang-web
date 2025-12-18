@@ -1,7 +1,8 @@
 
 import Link from 'next/link';
-import { Card, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import Image from 'next/image';
 import { useTranslations } from 'next-intl';
+import { Card, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 
 interface NoticeCardProps {
     title: string;
@@ -9,17 +10,27 @@ interface NoticeCardProps {
     href: string;
     category?: string;
     locale: string;
+    imageUrl?: string | null;
 }
 
-export function NoticeCard({ title, date, href, category, locale }: NoticeCardProps) {
+export function NoticeCard({ title, date, href, category, locale, imageUrl }: NoticeCardProps) {
     const t = useTranslations('Index');
 
     return (
         <Link href={href} className="group h-full block">
             <Card className="h-full transition-all duration-300 hover:shadow-lg overflow-hidden border border-gray-200 shadow-sm bg-white p-0 gap-0">
-                {/* Image Placeholder */}
-                <div className="w-full aspect-video bg-gray-50 flex items-center justify-center text-gray-400 group-hover:bg-gray-100 transition-colors">
-                    Notice Image
+                {/* Image Placeholder or Actual Image */}
+                <div className="w-full aspect-video bg-gray-50 flex items-center justify-center text-gray-400 group-hover:bg-gray-100 transition-colors relative overflow-hidden">
+                    {imageUrl ? (
+                        <Image
+                            src={imageUrl}
+                            alt={title}
+                            fill
+                            className="object-cover transition-transform duration-500 group-hover:scale-105"
+                        />
+                    ) : (
+                        <span>No Image</span>
+                    )}
                 </div>
 
                 <CardHeader className="p-6">
@@ -28,7 +39,7 @@ export function NoticeCard({ title, date, href, category, locale }: NoticeCardPr
                             {date}
                         </span>
                         {category && (
-                            <span className="text-xs font-semibold bg-blue-100 text-blue-800 px-2 py-1 rounded">
+                            <span className="text-xs font-semibold bg-blue-100 text-blue-800 px-2 py-1 rounded uppercase">
                                 {category}
                             </span>
                         )}

@@ -30,6 +30,7 @@ export default function NoticeForm({ initialData, isEdit = false }: NoticeFormPr
     const router = useRouter();
     const [isLoading, setIsLoading] = useState(false);
     const [showSuccessDialog, setShowSuccessDialog] = useState(false);
+    const [previewUrl, setPreviewUrl] = useState<string | null>(initialData?.image_url || null);
 
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
