@@ -70,7 +70,7 @@ export function Header() {
 
   return (
     <header className="sticky top-0 z-50 w-full bg-white/80 backdrop-blur-md dark:bg-black/80 border-none shadow-none transition-all duration-300">
-      <div className="w-full grid grid-cols-[1fr_auto_1fr] h-24 items-center px-4 md:px-8 max-w-[1600px] mx-auto gap-4">
+      <div className="w-full flex justify-between md:grid md:grid-cols-[1fr_auto_1fr] h-24 items-center px-4 md:px-8 max-w-[1600px] mx-auto gap-4">
         {/* Logo - Start aligned */}
         <Link href="/" className="flex items-center justify-self-start">
           <Image src="/logo_small.png" alt="Daechang Logo" width={320} height={80} className="h-10 w-auto" unoptimized />
