@@ -2,7 +2,7 @@
 
 import { createClient } from '@/lib/supabase/server';
 import { revalidatePath } from 'next/cache';
-import { redirect } from 'next/navigation';
+
 
 export type Partner = {
     id: string;
@@ -72,7 +72,7 @@ export async function createPartner(formData: FormData) {
     }
 
     revalidatePath('/admin/partners');
-    redirect('/admin/partners');
+    return { success: true };
 }
 
 export async function deletePartner(id: string) {

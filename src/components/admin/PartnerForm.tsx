@@ -31,6 +31,11 @@ export default function PartnerForm({ initialData, isEditMode = false }: Partner
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (file) {
+            if (file.size > 1024 * 1024) { // 1MB
+                alert('이미지 크기는 1MB 이하여야 합니다.');
+                e.target.value = '';
+                return;
+            }
             const url = URL.createObjectURL(file);
             setPreviewUrl(url);
         }
@@ -44,7 +49,8 @@ export default function PartnerForm({ initialData, isEditMode = false }: Partner
 
         try {
             await createPartner(formData);
-            // Redirect is handled by the server action
+            router.push('/admin/partners');
+            router.refresh();
         } catch (error) {
             console.error(error);
             alert('오류가 발생했습니다.');
@@ -108,7 +114,7 @@ export default function PartnerForm({ initialData, isEditMode = false }: Partner
                                         onChange={handleImageChange}
                                     />
                                 </Label>
-                                <p className="text-xs text-gray-500">투명 배경의 PNG 이미지를 권장합니다.</p>
+                                <p className="text-xs text-gray-500">투명 배경의 PNG 이미지를 권장합니다. (최대 1MB)</p>
                                 {previewUrl && (
                                     <Button variant="ghost" size="sm" type="button" className="text-red-500 h-8 px-2" onClick={() => setPreviewUrl(null)}>
                                         <Trash2 className="w-3 h-3 mr-1" /> 로고 삭제
@@ -140,7 +146,7 @@ export default function PartnerForm({ initialData, isEditMode = false }: Partner
                             <SelectTrigger>
                                 <SelectValue placeholder="구분 선택" />
                             </SelectTrigger>
-                            <SelectContent className="bg-white dark:bg-gray-800">
+                            <SelectContent className="bg-white dark:bg-gray-800" align="start">
                                 <SelectItem value="client">고객사 (Client)</SelectItem>
                                 <SelectItem value="supplier">공급사 (Supplier)</SelectItem>
                                 <SelectItem value="manufacturer">제조사 (Manufacturer)</SelectItem>
