@@ -14,9 +14,11 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
-import { ChevronLeft, Save, Upload, Plus, X, Check } from 'lucide-react';
+import { ChevronLeft, Save, Upload, Plus, X, Check, Search } from 'lucide-react';
+import { cn } from "@/lib/utils"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Checkbox } from "@/components/ui/checkbox"
 import { createProduct, type Product } from '@/lib/actions/products';
 import { type Partner } from '@/lib/actions/partners';
 import { type Notice } from '@/lib/actions/notices';
@@ -34,6 +36,7 @@ interface ProductFormProps {
 export default function ProductForm({ initialData, isEditMode = false, partners, notices, categories }: ProductFormProps) {
     const router = useRouter();
     const [isLoading, setIsLoading] = useState(false);
+    const [searchTerm, setSearchTerm] = useState("");
 
     // Image State
     const [imageFiles, setImageFiles] = useState<File[]>([]);
@@ -42,6 +45,10 @@ export default function ProductForm({ initialData, isEditMode = false, partners,
     // Relationships State
     const [selectedNoticeIds, setSelectedNoticeIds] = useState<string[]>(
         initialData?.notices?.map(n => n.id) || []
+    );
+
+    const filteredNotices = notices.filter(notice =>
+        notice.title_ko.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -55,33 +62,15 @@ export default function ProductForm({ initialData, isEditMode = false, partners,
     };
 
     const removeImage = (index: number) => {
-        // If it's a new file (beyond initial images length if in edit mode), remove from files
-        // This logic is tricky with mixed existing/new. 
-        // For simplicity in this version: 
-        // We only allow removing NEWly added images or treating all as new uploads for MVP if complex.
-        // Or we just hide the preview.
-        // Ideally: we keep track of which are existing URLs and which are new Files.
-
-        // Simple approach: Just remove from preview. 
-        // Real implementation needs to handle deleting existing images from DB/Storage if requested.
-        // For MVP: We only handle adding new images effectively.
-
-        // Refined approach for MVP:
-        // New files are appended. existing URLs are kept.
-        // We actually need to separate existing URLs and new Files.
-        // But for this step, let's keep it simple: allow adding new images. removing only works for new previews.
-
         setPreviews(prev => prev.filter((_, i) => i !== index));
-        // Also remove from files if it matches index... complex map.
-        // Let's just reset for now if needed or allow append only.
     };
 
-    const toggleNotice = (id: string) => {
-        setSelectedNoticeIds(prev =>
-            prev.includes(id)
-                ? prev.filter(p => p !== id)
-                : [...prev, id]
-        );
+    const toggleNotice = (id: string, checked: boolean | string) => {
+        if (checked === true) {
+            setSelectedNoticeIds(prev => [...prev, id]);
+        } else {
+            setSelectedNoticeIds(prev => prev.filter(p => p !== id));
+        }
     };
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -221,26 +210,50 @@ export default function ProductForm({ initialData, isEditMode = false, partners,
                             <CardDescription>이 제품과 관련된 뉴스나 공지사항을 선택하세요.</CardDescription>
                         </CardHeader>
                         <CardContent>
-                            <div className="flex flex-wrap gap-2">
-                                {notices.length === 0 ? (
-                                    <p className="text-sm text-gray-400">등록된 공지사항이 없습니다.</p>
-                                ) : (
-                                    notices.map((notice) => (
-                                        <div
-                                            key={notice.id}
-                                            onClick={() => toggleNotice(notice.id)}
-                                            className={`
-                                                cursor-pointer px-3 py-1.5 rounded-full border text-sm flex items-center gap-2 transition-all
-                                                ${selectedNoticeIds.includes(notice.id)
-                                                    ? 'bg-blue-50 border-blue-500 text-blue-700 font-medium'
-                                                    : 'bg-white border-gray-200 text-gray-600 hover:border-gray-300'}
-                                            `}
-                                        >
-                                            {selectedNoticeIds.includes(notice.id) && <Check className="w-3 h-3" />}
-                                            {notice.title_ko}
-                                        </div>
-                                    ))
-                                )}
+                            <div className="space-y-4">
+                                {/* Search Filter */}
+                                <div className="relative">
+                                    <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-500" />
+                                    <Input
+                                        placeholder="공지사항 검색..."
+                                        className="pl-9"
+                                        value={searchTerm}
+                                        onChange={(e) => setSearchTerm(e.target.value)}
+                                    />
+                                </div>
+
+                                {/* Scrollable List */}
+                                <div className="border rounded-md h-[250px] overflow-y-auto p-4 space-y-3 bg-gray-50/50">
+                                    {filteredNotices.length === 0 ? (
+                                        <p className="text-sm text-gray-500 text-center py-8">검색 결과가 없습니다.</p>
+                                    ) : (
+                                        filteredNotices.map((notice) => (
+                                            <div key={notice.id} className="flex items-start space-x-3 p-2 hover:bg-white rounded-md transition-colors border border-transparent hover:border-gray-200">
+                                                <Checkbox
+                                                    id={`notice-${notice.id}`}
+                                                    checked={selectedNoticeIds.includes(notice.id)}
+                                                    onCheckedChange={(checked) => toggleNotice(notice.id, checked)}
+                                                />
+                                                <div className="grid gap-1.5 leading-none">
+                                                    <label
+                                                        htmlFor={`notice-${notice.id}`}
+                                                        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
+                                                    >
+                                                        {notice.title_ko}
+                                                    </label>
+                                                    {notice.created_at && (
+                                                        <p className="text-xs text-gray-500">
+                                                            {new Date(notice.created_at).toLocaleDateString()}
+                                                        </p>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        ))
+                                    )}
+                                </div>
+                                <div className="text-xs text-gray-500 text-right">
+                                    선택됨: {selectedNoticeIds.length}개
+                                </div>
                             </div>
                         </CardContent>
                     </Card>
@@ -259,7 +272,7 @@ export default function ProductForm({ initialData, isEditMode = false, partners,
                                     <SelectTrigger>
                                         <SelectValue />
                                     </SelectTrigger>
-                                    <SelectContent>
+                                    <SelectContent align="start">
                                         <SelectItem value="active">공개 (Public)</SelectItem>
                                         <SelectItem value="draft">비공개 (Private)</SelectItem>
                                     </SelectContent>
@@ -272,7 +285,7 @@ export default function ProductForm({ initialData, isEditMode = false, partners,
                                     <SelectTrigger>
                                         <SelectValue placeholder="카테고리 선택" />
                                     </SelectTrigger>
-                                    <SelectContent>
+                                    <SelectContent align="start">
                                         {categories.map((category) => (
                                             <SelectItem key={category.id} value={category.code}>
                                                 {category.name_ko}
@@ -294,7 +307,7 @@ export default function ProductForm({ initialData, isEditMode = false, partners,
                                     <SelectTrigger>
                                         <SelectValue placeholder="협력사 선택 (선택사항)" />
                                     </SelectTrigger>
-                                    <SelectContent>
+                                    <SelectContent align="start">
                                         <SelectItem value="none">선택 안함</SelectItem>
                                         {partners.map(p => (
                                             <SelectItem key={p.id} value={p.id}>
