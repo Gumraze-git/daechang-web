@@ -20,6 +20,7 @@ import { Badge } from '@/components/ui/badge';
 import { createProduct, type Product } from '@/lib/actions/products';
 import { type Partner } from '@/lib/actions/partners';
 import { type Notice } from '@/lib/actions/notices';
+import { type Category } from '@/lib/actions/categories';
 import Image from 'next/image';
 
 interface ProductFormProps {
@@ -27,9 +28,10 @@ interface ProductFormProps {
     isEditMode?: boolean;
     partners: Partner[];
     notices: Notice[];
+    categories: Category[];
 }
 
-export default function ProductForm({ initialData, isEditMode = false, partners, notices }: ProductFormProps) {
+export default function ProductForm({ initialData, isEditMode = false, partners, notices, categories }: ProductFormProps) {
     const router = useRouter();
     const [isLoading, setIsLoading] = useState(false);
 
@@ -258,9 +260,8 @@ export default function ProductForm({ initialData, isEditMode = false, partners,
                                         <SelectValue />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        <SelectItem value="active">판매중</SelectItem>
-                                        <SelectItem value="draft">초안</SelectItem>
-                                        <SelectItem value="hidden">숨김</SelectItem>
+                                        <SelectItem value="active">공개 (Public)</SelectItem>
+                                        <SelectItem value="draft">비공개 (Private)</SelectItem>
                                     </SelectContent>
                                 </Select>
                             </div>
@@ -272,12 +273,18 @@ export default function ProductForm({ initialData, isEditMode = false, partners,
                                         <SelectValue placeholder="카테고리 선택" />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        <SelectItem value="blow_molding">브로우 성형기</SelectItem>
-                                        <SelectItem value="extrusion">압출기</SelectItem>
-                                        <SelectItem value="accessory">주변 기기</SelectItem>
-                                        <SelectItem value="recycling">리사이클링</SelectItem>
+                                        {categories.map((category) => (
+                                            <SelectItem key={category.id} value={category.code}>
+                                                {category.name_ko}
+                                            </SelectItem>
+                                        ))}
                                     </SelectContent>
                                 </Select>
+                                {categories.length === 0 && (
+                                    <p className="text-xs text-red-500">
+                                        * 등록된 카테고리가 없습니다. <Link href="/admin/products" className="underline">관리하기</Link>
+                                    </p>
+                                )}
                             </div>
 
                             {/* Partner Selection */}

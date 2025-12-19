@@ -14,8 +14,12 @@ import { Badge } from '@/components/ui/badge';
 import { Plus, Trash2, Edit } from 'lucide-react';
 import { getProducts, deleteProduct } from '@/lib/actions/products';
 
+import CategoryManager from '@/components/admin/CategoryManager';
+import { getCategories } from '@/lib/actions/categories';
+
 export default async function ProductsPage() {
     const products = await getProducts();
+    const categories = await getCategories();
 
     return (
         <div className="space-y-6">
@@ -94,7 +98,7 @@ export default async function ProductsPage() {
                                             ${product.status === 'draft' ? 'bg-gray-100 text-gray-700 hover:bg-gray-200' : ''}
                                             ${product.status === 'hidden' ? 'bg-red-100 text-red-700 hover:bg-red-200' : ''}
                                         `}>
-                                            {product.status}
+                                            {product.status === 'active' ? '공개' : product.status === 'draft' ? '비공개' : '숨김'}
                                         </Badge>
                                     </TableCell>
                                     <TableCell className="text-right">
@@ -124,6 +128,9 @@ export default async function ProductsPage() {
                     </TableBody>
                 </Table>
             </Card>
+
+            {/* Category Management Section */}
+            <CategoryManager categories={categories} />
         </div>
     );
 }
