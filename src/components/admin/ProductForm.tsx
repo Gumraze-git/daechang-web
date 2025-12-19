@@ -105,7 +105,7 @@ export default function ProductForm({ initialData, isEditMode = false, partners,
     return (
         <form onSubmit={handleSubmit} className="max-w-6xl mx-auto pb-20">
             {/* Header */}
-            <div className="flex items-center justify-between mb-8">
+            <div className="flex items-center justify-between mb-6">
                 <div className="flex items-center gap-4">
                     <Link href="/admin/products">
                         <Button variant="outline" size="icon" className="h-10 w-10 rounded-full" type="button">
@@ -126,16 +126,16 @@ export default function ProductForm({ initialData, isEditMode = false, partners,
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 {/* Main Content (Left Column) */}
-                <div className="lg:col-span-2 space-y-8">
+                <div className="lg:col-span-2 space-y-6">
                     {/* Images */}
                     <Card>
                         <CardHeader>
                             <CardTitle>제품 이미지</CardTitle>
                             <CardDescription>대표 이미지와 상세 갤러리 이미지를 업로드합니다.</CardDescription>
                         </CardHeader>
-                        <CardContent className="space-y-6">
+                        <CardContent className="space-y-4">
                             <div className="space-y-2">
                                 <Label>이미지 업로드</Label>
                                 <Input
@@ -180,8 +180,8 @@ export default function ProductForm({ initialData, isEditMode = false, partners,
                         <CardHeader>
                             <CardTitle>기본 정보</CardTitle>
                         </CardHeader>
-                        <CardContent className="space-y-6">
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <CardContent className="space-y-4">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div className="space-y-2">
                                     <Label htmlFor="name_ko">제품명 (국문) *</Label>
                                     <Input id="name_ko" name="name_ko" placeholder="예: DA 시리즈" defaultValue={initialData?.name_ko} required />
@@ -262,10 +262,12 @@ export default function ProductForm({ initialData, isEditMode = false, partners,
                 {/* Right Column */}
                 <div className="space-y-6">
                     {/* Status & Category */}
+                    {/* Status & Category */}
                     <Card>
-                        <CardContent className="p-6 space-y-6">
-                            <h3 className="font-semibold text-lg mb-4">설정</h3>
-
+                        <CardHeader>
+                            <CardTitle className="text-lg">설정</CardTitle>
+                        </CardHeader>
+                        <CardContent className="space-y-4">
                             <div className="space-y-2">
                                 <Label>상태</Label>
                                 <Select name="status" defaultValue={initialData?.status || "active"}>
