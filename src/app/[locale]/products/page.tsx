@@ -1,79 +1,95 @@
 import Link from 'next/link';
-import { useTranslations } from 'next-intl';
+import { getTranslations } from 'next-intl/server';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { useLocale } from 'next-intl';
+import { getProducts } from '@/lib/actions/products';
+import Image from 'next/image';
 
 type Props = {
-  searchParams: { [key: string]: string | string[] | undefined };
+  params: Promise<{ locale: string }>;
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 };
 
-export default function ProductsPage({ searchParams }: Props) {
-  const t = useTranslations('ProductPage');
-  const locale = useLocale();
+export default async function ProductsPage({ params, searchParams }: Props) {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: 'ProductPage' });
 
-  // 현재 필터 가져오기
-  const categoryFilter = typeof searchParams.category === 'string' ? searchParams.category : null;
-  const searchTerm = typeof searchParams.q === 'string' ? searchParams.q : '';
+  const { category, q } = await searchParams;
+  const categoryFilter = typeof category === 'string' ? category : null;
+  const searchTerm = typeof q === 'string' ? q : '';
 
-  // 임시 제품 데이터 (나중에 동적으로 변경 예정)
-  const allProducts = [
-    { id: 'blow-molding-machine-1', category: 'blow-molding-machines', nameKey: 'product1_title', descKey: 'product1_desc', imageUrl: '/product-placeholder.jpg' },
-    { id: 'extrusion-line-1', category: 'extrusion-lines', nameKey: 'product2_title', descKey: 'product2_desc', imageUrl: '/product-placeholder.jpg' },
-    { id: 'reducer-1', category: 'reducers', nameKey: 'product_reducer_title', descKey: 'product_reducer_desc', imageUrl: '/product-placeholder.jpg' },
-    { id: 'power-take-off-1', category: 'ptos', nameKey: 'product_pto_title', descKey: 'product_pto_desc', imageUrl: '/product-placeholder.jpg' },
-  ];
+  // Fetch real products
+  const allProducts = await getProducts();
 
-  // 필터 로직
+  // Filter Logic
   const filteredProducts = allProducts.filter((product) => {
-    // 1. 카테고리 필터
-    if (categoryFilter && product.category !== categoryFilter) {
-      return false;
+    // 1. Category Filter
+    if (categoryFilter && product.category_code !== categoryFilter) {
+      // Map legacy category slugs if necessary, or ensure category_code matches what's used in URL
+      // URL uses 'blow-molding-machines', DB uses 'blow_molding'?
+      // We should standardise. For now, strict check.
+      // Actually, let's normalize.
+      const normalizedFilter = categoryFilter.replace(/-/g, '_');
+      if (product.category_code !== normalizedFilter && product.category_code !== categoryFilter) return false;
     }
-    // 2. 검색 필터 (서버 설정 없이 현재로서는 번역된 이름에 접근하기 어려우므로 nameKey 또는 ID로 검색)
-    // 실제 앱에서는 실제 콘텐츠를 대상으로 필터링해야 합니다. 여기서는 정적 데이터 + i18n 키의 한계로 인해 엄격한 키/ID 매칭을 사용합니다.
-    // 데모 목적상 검색어가 있는 경우 'category' 또는 'id'와 일치하는지 확인합니다.
+    // 2. Search Filter
     if (searchTerm) {
       const lowerTerm = searchTerm.toLowerCase();
-      return product.id.toLowerCase().includes(lowerTerm) ||
-        product.category.toLowerCase().includes(lowerTerm);
+      return product.name_ko.toLowerCase().includes(lowerTerm) ||
+        product.name_en.toLowerCase().includes(lowerTerm) ||
+        (product.model_no && product.model_no.toLowerCase().includes(lowerTerm));
     }
     return true;
   });
+
+  // Display public/active products only
+  const activeProducts = filteredProducts.filter(p => p.status === 'active');
 
   return (
     <div className="w-full">
       <div className="mb-8">
         <h2 className="text-2xl font-bold mb-4">
           {categoryFilter
-            ? t(categoryFilter.replaceAll('-', '_')) // 슬러그를 키로 다시 매핑하는 간단한 휴리스틱
+            ? (categoryFilter.replace(/-/g, ' ').toUpperCase()) // Simple display for now or use translation if keys align
             : t('all_products')}
         </h2>
         {searchTerm && (
           <p className="text-gray-500">
-            {t('search_results_for', { term: searchTerm })}
+            Search results for "{searchTerm}"
           </p>
         )}
       </div>
 
-      {/* 제품 목록 */}
+      {/* Product List */}
       <section>
-        {filteredProducts.length > 0 ? (
+        {activeProducts.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {filteredProducts.map((product) => (
+            {activeProducts.map((product) => (
               <Link href={`/${locale}/products/${product.id}`} key={product.id} className="block h-full group">
                 <Card className="h-full flex flex-col transition-all duration-300 group-hover:shadow-lg border-gray-200 group-hover:border-blue-200 p-0 gap-0 overflow-hidden">
                   <CardHeader className="p-0">
-                    <div className="w-full h-48 bg-gray-100 flex items-center justify-center group-hover:bg-blue-50 transition-colors">
-                      {/* 플레이스홀더 div 또는 img 사용 */}
-                      <div className="text-gray-400 group-hover:text-blue-400">Image Placeholder</div>
+                    <div className="w-full h-48 bg-gray-100 flex items-center justify-center group-hover:bg-blue-50 transition-colors relative overflow-hidden">
+                      {product.images && product.images.length > 0 ? (
+                        <Image
+                          src={product.images[0]}
+                          alt={product.name_en}
+                          fill
+                          className="object-cover transition-transform duration-500 group-hover:scale-110"
+                        />
+                      ) : (
+                        <div className="text-gray-400 group-hover:text-blue-400">No Image</div>
+                      )}
                     </div>
                   </CardHeader>
                   <div className="p-4 flex-grow flex flex-col">
-                    <CardTitle className="mb-1 text-xl group-hover:text-blue-600 transition-colors">{t(product.nameKey)}</CardTitle>
-                    <CardContent className="p-0 mb-2 text-sm text-gray-600 flex-grow">
-                      {t(product.descKey)}
+                    <CardTitle className="mb-1 text-xl group-hover:text-blue-600 transition-colors">
+                      {locale === 'ko' ? product.name_ko : product.name_en}
+                    </CardTitle>
+                    <CardContent className="p-0 mb-2 text-sm text-gray-600 flex-grow line-clamp-2">
+                      {locale === 'ko' ? product.desc_ko : product.desc_en}
                     </CardContent>
+                    <div className="mt-2 text-xs font-semibold text-blue-600 bg-blue-50 px-2 py-1 rounded w-fit">
+                      {product.model_no}
+                    </div>
                   </div>
                 </Card>
               </Link>

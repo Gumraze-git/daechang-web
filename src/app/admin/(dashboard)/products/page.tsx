@@ -86,11 +86,17 @@ export default async function ProductsPage() {
                                         </Badge>
                                     </TableCell>
                                     <TableCell>
-                                        {product.partner ? (
-                                            <span className="text-sm text-blue-600">{product.partner.name_ko}</span>
-                                        ) : (
-                                            <span className="text-gray-400 text-xs">-</span>
-                                        )}
+                                        <div className="flex flex-wrap gap-1">
+                                            {product.partners && product.partners.length > 0 ? (
+                                                product.partners.map((partner: any) => (
+                                                    <span key={partner.id} className="text-sm text-blue-600 after:content-[','] last:after:content-[''] mr-1">
+                                                        {partner.name_ko}
+                                                    </span>
+                                                ))
+                                            ) : (
+                                                <span className="text-gray-400 text-xs">-</span>
+                                            )}
+                                        </div>
                                     </TableCell>
                                     <TableCell>
                                         <Badge className={`
@@ -104,11 +110,11 @@ export default async function ProductsPage() {
                                     <TableCell className="text-right">
                                         <div className="flex items-center justify-end gap-2">
                                             {/* Edit Link (Not implemented fully yet, but link exists) */}
-                                            {/* <Link href={`/admin/products/${product.id}`}>
+                                            <Link href={`/admin/products/${product.id}`}>
                                                 <Button variant="ghost" size="icon" className="h-8 w-8 text-gray-400 hover:text-blue-600">
                                                     <Edit className="w-4 h-4" />
                                                 </Button>
-                                            </Link> */}
+                                            </Link>
 
                                             <form action={deleteProduct.bind(null, product.id)}>
                                                 <Button

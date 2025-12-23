@@ -1,36 +1,32 @@
-'use client';
-
-import { use, useEffect, useState } from 'react';
 import ProductForm from '@/components/admin/ProductForm';
+import { getProduct } from '@/lib/actions/products';
+import { getPartners } from '@/lib/actions/partners';
+import { getNotices } from '@/lib/actions/notices';
+import { getCategories } from '@/lib/actions/categories';
+import { notFound } from 'next/navigation';
 
-// Mock data fetcher
-const getProduct = async (id: string) => {
-    // Simulate API delay
-    await new Promise(resolve => setTimeout(resolve, 500));
-    return {
-        id,
-        name_ko: 'DA 시리즈',
-        name_en: 'DA Series',
-        desc_ko: 'DA 시리즈는 고성능 브로우 성형기입니다.',
-        desc_en: 'DA Series is a high performance blow molding machine.',
-        status: 'Active',
-        category_code: 'blow_molding',
-        model_no: 'DA-500',
-        capacity: '1000 pcs/hr',
-    };
-};
+export default async function EditProductPage({ params }: { params: Promise<{ id: string }> }) {
+    const { id } = await params;
 
-export default function EditProductPage({ params }: { params: Promise<{ id: string }> }) {
-    const { id } = use(params);
-    const [product, setProduct] = useState<any>(null);
-
-    useEffect(() => {
-        getProduct(id).then(setProduct);
-    }, [id]);
+    // Fetch all data in parallel
+    const [product, partners, notices, categories] = await Promise.all([
+        getProduct(id),
+        getPartners(),
+        getNotices(),
+        getCategories()
+    ]);
 
     if (!product) {
-        return <div className="p-8 text-center text-gray-500">Loading...</div>;
+        notFound();
     }
 
-    return <ProductForm initialData={product} isEditMode={true} />;
+    return (
+        <ProductForm
+            initialData={product}
+            isEditMode={true}
+            partners={partners}
+            notices={notices}
+            categories={categories}
+        />
+    );
 }

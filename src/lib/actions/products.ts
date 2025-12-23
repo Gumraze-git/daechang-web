@@ -14,12 +14,13 @@ export type Product = {
     model_no?: string | null;
     capacity?: string | null;
     specs?: any;
+    features?: any; // New: JSONB
     status: string;
     images: string[];
-    partner_id?: string | null;
+    partner_id?: string | null; // Keep for legacy if needed, but primary will be partners
     created_at: string;
     notices?: { id: string; title_ko: string }[]; // Joined data
-    partner?: { id: string; name_ko: string } | null; // Joined data
+    partners?: { id: string; name_ko: string }[]; // New: Multiple partners
 }
 
 export async function getProducts() {
@@ -28,7 +29,9 @@ export async function getProducts() {
         .from('products')
         .select(`
             *,
-            partner:partners(id, name_ko)
+            product_partners(
+                partner:partners(id, name_ko, logo_url)
+            )
         `)
         .order('created_at', { ascending: false });
 
@@ -37,7 +40,13 @@ export async function getProducts() {
         return [];
     }
 
-    return data as Product[];
+    // Transform joined partners
+    const products = data.map((p: any) => ({
+        ...p,
+        partners: p.product_partners?.map((pp: any) => pp.partner) || []
+    }));
+
+    return products as Product[];
 }
 
 export async function getProduct(id: string) {
@@ -46,7 +55,9 @@ export async function getProduct(id: string) {
         .from('products')
         .select(`
             *,
-            partner:partners(id, name_ko),
+            product_partners(
+                partner:partners(id, name_ko, logo_url)
+            ),
             product_notices(
                 notice:notices(id, title_ko)
             )
@@ -55,14 +66,20 @@ export async function getProduct(id: string) {
         .single();
 
     if (error) {
-        console.error('Error fetching product:', error);
+        // PGRST116: No rows found (when using .single())
+        // 22P02: Invalid UUID format (e.g. visiting /products/some-text-slug)
+        if (error.code === 'PGRST116' || error.code === '22P02') {
+            return null;
+        }
+        console.error('Error fetching product:', JSON.stringify(error, null, 2));
         return null;
     }
 
-    // Transform nested product_notices for easier UI consumption
+    // Transform nested data for easier UI consumption
     const product = {
         ...data,
-        notices: data.product_notices.map((pn: any) => pn.notice)
+        notices: data.product_notices.map((pn: any) => pn.notice),
+        partners: data.product_partners.map((pp: any) => pp.partner)
     };
 
     return product as Product;
@@ -80,11 +97,20 @@ export async function createProduct(formData: FormData) {
     const model_no = formData.get('model_no') as string;
     const capacity = formData.get('capacity') as string;
     const status = formData.get('status') as string;
-    const partner_id = formData.get('partner_id') as string || null;
+    // We will use partner_ids instead of a single partner_id
+    const partnerIdsString = formData.get('partner_ids') as string;
+    const partnerIds = partnerIdsString ? JSON.parse(partnerIdsString) : [];
 
-    // Extract related notices IDs (JSON string or multiple inputs)
+    // Extract related notices IDs
     const noticeIdsString = formData.get('notice_ids') as string;
     const noticeIds = noticeIdsString ? JSON.parse(noticeIdsString) : [];
+
+    // Extract Specs and Features
+    const specsString = formData.get('specs') as string;
+    const specs = specsString ? JSON.parse(specsString) : [];
+
+    const featuresString = formData.get('features') as string;
+    const features = featuresString ? JSON.parse(featuresString) : [];
 
     // Handle Image Uploads
     const images: string[] = [];
@@ -92,7 +118,8 @@ export async function createProduct(formData: FormData) {
 
     for (const file of imageFiles) {
         if (file.size > 0) {
-            const filename = `${Date.now()}-${file.name.replace(/[^a-zA-Z0-9.-]/g, '')}`; // Sanitize filename
+            // ... (image upload logic remains same, skipping for brevity in viewing but needed in full context)
+            const filename = `${Date.now()}-${file.name.replace(/[^a-zA-Z0-9.-]/g, '')}`;
             const { data, error } = await supabase.storage
                 .from('products')
                 .upload(filename, file);
@@ -120,11 +147,13 @@ export async function createProduct(formData: FormData) {
             model_no,
             capacity,
             status,
-            partner_id,
             images,
+            specs,
+            features
         })
         .select()
         .single();
+
 
     if (productError) {
         console.error('Error creating product:', productError);
@@ -144,12 +173,127 @@ export async function createProduct(formData: FormData) {
 
         if (relationError) {
             console.error('Error linking notices:', relationError);
-            // Non-critical error, logic continues
+        }
+    }
+
+    // Insert Product-Partners Relationships
+    if (partnerIds.length > 0 && product) {
+        const productPartners = partnerIds.map((partnerId: string) => ({
+            product_id: product.id,
+            partner_id: partnerId
+        }));
+
+        const { error: partnerError } = await supabase
+            .from('product_partners')
+            .insert(productPartners);
+
+        if (partnerError) {
+            console.error('Error linking partners:', partnerError);
         }
     }
 
     revalidatePath('/admin/products');
-    redirect('/admin/products');
+    return { success: true };
+}
+
+export async function updateProduct(id: string, formData: FormData) {
+    const supabase = await createClient();
+
+    // Extract basic fields
+    const name_ko = formData.get('name_ko') as string;
+    const name_en = formData.get('name_en') as string;
+    const desc_ko = formData.get('desc_ko') as string;
+    const desc_en = formData.get('desc_en') as string;
+    const category_code = formData.get('category_code') as string;
+    const model_no = formData.get('model_no') as string;
+    const capacity = formData.get('capacity') as string;
+    const status = formData.get('status') as string;
+
+    const partnerIdsString = formData.get('partner_ids') as string;
+    const partnerIds = partnerIdsString ? JSON.parse(partnerIdsString) : [];
+
+    const noticeIdsString = formData.get('notice_ids') as string;
+    const noticeIds = noticeIdsString ? JSON.parse(noticeIdsString) : [];
+
+    // Extract Specs and Features
+    const specsString = formData.get('specs') as string;
+    const specs = specsString ? JSON.parse(specsString) : [];
+
+    const featuresString = formData.get('features') as string;
+    const features = featuresString ? JSON.parse(featuresString) : [];
+
+    // Current images from previews (existing ones)
+    const currentImagesString = formData.get('current_images') as string;
+    const currentImages = currentImagesString ? JSON.parse(currentImagesString) : [];
+
+    // Handle New Image Uploads
+    const newImages: string[] = [];
+    const imageFiles = formData.getAll('images') as File[];
+
+    for (const file of imageFiles) {
+        if (file.size > 0) {
+            const filename = `${Date.now()}-${file.name.replace(/[^a-zA-Z0-9.-]/g, '')}`;
+            const { data, error } = await supabase.storage
+                .from('products')
+                .upload(filename, file);
+
+            if (!error) {
+                const { data: { publicUrl } } = supabase.storage
+                    .from('products')
+                    .getPublicUrl(filename);
+                newImages.push(publicUrl);
+            }
+        }
+    }
+
+    const allImages = [...currentImages, ...newImages];
+
+    // Update Product
+    const { error: productError } = await supabase
+        .from('products')
+        .update({
+            name_ko,
+            name_en,
+            desc_ko,
+            desc_en,
+            category_code,
+            model_no,
+            capacity,
+            status,
+            images: allImages,
+            specs,
+            features
+        })
+        .eq('id', id);
+
+
+    if (productError) {
+        throw new Error('제품 수정에 실패했습니다: ' + productError.message);
+    }
+
+    // Update Relationships (Delete old and insert new)
+    // 1. Notices
+    await supabase.from('product_notices').delete().eq('product_id', id);
+    if (noticeIds.length > 0) {
+        const productNotices = noticeIds.map((noticeId: string) => ({
+            product_id: id,
+            notice_id: noticeId
+        }));
+        await supabase.from('product_notices').insert(productNotices);
+    }
+
+    // 2. Partners
+    await supabase.from('product_partners').delete().eq('product_id', id);
+    if (partnerIds.length > 0) {
+        const productPartners = partnerIds.map((partnerId: string) => ({
+            product_id: id,
+            partner_id: partnerId
+        }));
+        await supabase.from('product_partners').insert(productPartners);
+    }
+
+    revalidatePath('/admin/products');
+    return { success: true };
 }
 
 export async function deleteProduct(id: string) {
