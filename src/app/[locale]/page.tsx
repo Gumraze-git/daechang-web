@@ -8,73 +8,51 @@ import { ProductCarousel } from '@/components/ProductCarousel';
 import { NoticeCard } from '@/components/NoticeCard';
 import { getNotices } from '@/lib/actions/notices';
 
+import { getHomeSettings } from '@/lib/actions/home'; // New import
+import { getRecommendedProducts } from '@/lib/actions/products'; // New import (+ type)
+
 export default async function Home({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
-  const t = await getTranslations('Index'); // use getTranslations for Server Components
-  // Actually, in Server Components we should use getTranslations, but useTranslations hook works if provider is set.
-  // However, next-intl recommends getTranslations for async Server Components.
-  // Existing code used useTranslations, so let's check if it needs to change.
-  // src/app/[locale]/layout.tsx sets up NextIntlClientProvider, but this page is server component.
-  // The official way for SC is getTranslations.
-  // But wait, the previous code was `export default function Home() ... useTranslations`. 
-  // It was likely a "Server Component using hooks" which is deprecated/tricky or relying on the provider being up the tree? 
-  // Next.js 13+ SCs can't use hooks. So `page.tsx` MUST have been a Client Component or `next-intl` does magic.
-  // But `getNotices` is a Server Action/function.
+  const t = await getTranslations('Index');
 
-  // Let's make this a proper Server Component using `getTranslations`.
+  // Fetch real data
+  const homeSettings = await getHomeSettings();
+  const recommendedProducts = await getRecommendedProducts();
   const allNotices = await getNotices();
   const recentNotices = allNotices.slice(0, 3);
 
-  // Placeholder product data (will be fetched from API later)
-  const products = [
-    {
-      title: t('product1_title'),
-      description: t('product1_desc'),
-      href: '/products/blow-molding-machine-1',
-      image: '/products/blow_molding_machine.png',
-    },
-    {
-      title: t('product2_title'),
-      description: t('product2_desc'),
-      href: '/products/pvc-extrusion-line-1',
-      image: '/products/pvc_extrusion_line.png',
-    },
-    {
-      title: t('product_reducer_title'),
-      description: t('product_reducer_desc'),
-      href: '/products/reducer-1',
-      image: '/products/reducer.png',
-    },
-    {
-      title: t('product_pto_title'),
-      description: t('product_pto_desc'),
-      href: '/products/power-take-off-1',
-      image: '/products/pto.png',
-    },
-  ];
+  // Map DB products to UI format
+  const products = recommendedProducts.map(p => ({
+    id: p.id, // Ensure ID is passed if component needs it, or just use href
+    title: locale === 'ko' ? p.name_ko : p.name_en,
+    description: (locale === 'ko' ? p.desc_ko : p.desc_en) || '', // Ensure string
+    href: `/products/${p.id}`, // Use ID for now, or Slug if available (we used ID in new code)
+    image: p.images && p.images[0] ? p.images[0] : '/placeholder.jpg',
+  }));
+
+  // Fallback if no products (optional, or just show empty)
+  // If show_products_section is false, we might want to hide it.
 
   return (
     <div className="flex flex-col min-h-screen">
       {/* Hero Section */}
       <HeroCarousel
-        images={[
-          '/hero-bg.png',
-          '/hero-bg-2.png',
-          '/hero-bg-3.png'
-        ]}
-        headline={t('hero_headline')}
-        subheadline={t('hero_subheadline')}
+        images={homeSettings.hero_images && homeSettings.hero_images.length > 0 ? homeSettings.hero_images : ['/hero-bg.png']}
+        headline={homeSettings.hero_headline}
+        subheadline={homeSettings.hero_subheadline}
         ctaText={t('explore_products')}
         ctaLink={`/${locale}/products`}
       />
 
       {/* Product Summary Section */}
-      <section className="container mx-auto py-16 px-4">
-        <h2 className="text-3xl font-bold text-left mb-6">
-          {t('latest_products')}
-        </h2>
-        <ProductCarousel products={products} locale={locale} />
-      </section>
+      {homeSettings.show_products_section && (
+        <section className="container mx-auto py-16 px-4">
+          <h2 className="text-3xl font-bold text-left mb-6">
+            {t('latest_products')}
+          </h2>
+          <ProductCarousel products={products} locale={locale} />
+        </section>
+      )}
 
       {/* Notices Section */}
       <section className="w-full py-8 bg-white border-t border-gray-100">

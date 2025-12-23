@@ -21,6 +21,7 @@ export type Product = {
     created_at: string;
     notices?: { id: string; title_ko: string }[]; // Joined data
     partners?: { id: string; name_ko: string }[]; // New: Multiple partners
+    is_featured: boolean;
 }
 
 export async function getProducts() {
@@ -41,6 +42,36 @@ export async function getProducts() {
     }
 
     // Transform joined partners
+    const products = data.map((p: any) => ({
+        ...p,
+        partners: p.product_partners?.map((pp: any) => pp.partner) || []
+    }));
+
+    return products as Product[];
+}
+
+export async function getRecommendedProducts() {
+    const supabase = await createClient();
+    const { data, error } = await supabase
+        .from('products')
+        .select(`
+            *,
+            product_partners(
+                partner:partners(id, name_ko, logo_url)
+            )
+        `)
+        .eq('status', 'active') // Only active products
+        .eq('is_featured', true)
+        .order('created_at', { ascending: false })
+        .limit(6); // Limit to reasonable number
+
+    if (error) {
+        // Quietly fail for feature flag errors if column doesn't exist yet
+        if (error.code === '42703') return [];
+        console.error('Error fetching recommended products:', error);
+        return [];
+    }
+
     const products = data.map((p: any) => ({
         ...p,
         partners: p.product_partners?.map((pp: any) => pp.partner) || []
@@ -97,6 +128,8 @@ export async function createProduct(formData: FormData) {
     const model_no = formData.get('model_no') as string;
     const capacity = formData.get('capacity') as string;
     const status = formData.get('status') as string;
+    const is_featured = formData.get('is_featured') === 'on';
+
     // We will use partner_ids instead of a single partner_id
     const partnerIdsString = formData.get('partner_ids') as string;
     const partnerIds = partnerIdsString ? JSON.parse(partnerIdsString) : [];
@@ -147,6 +180,7 @@ export async function createProduct(formData: FormData) {
             model_no,
             capacity,
             status,
+            is_featured,
             images,
             specs,
             features
@@ -208,6 +242,7 @@ export async function updateProduct(id: string, formData: FormData) {
     const model_no = formData.get('model_no') as string;
     const capacity = formData.get('capacity') as string;
     const status = formData.get('status') as string;
+    const is_featured = formData.get('is_featured') === 'on';
 
     const partnerIdsString = formData.get('partner_ids') as string;
     const partnerIds = partnerIdsString ? JSON.parse(partnerIdsString) : [];
@@ -260,6 +295,7 @@ export async function updateProduct(id: string, formData: FormData) {
             model_no,
             capacity,
             status,
+            is_featured,
             images: allImages,
             specs,
             features
@@ -312,4 +348,20 @@ export async function deleteProduct(id: string) {
     }
 
     revalidatePath('/admin/products');
+}
+
+export async function toggleProductFeatured(id: string, isFeatured: boolean) {
+    const supabase = await createClient();
+
+    const { error } = await supabase
+        .from('products')
+        .update({ is_featured: isFeatured })
+        .eq('id', id);
+
+    if (error) {
+        throw new Error('상태 변경 실패: ' + error.message);
+    }
+
+    revalidatePath('/admin/home');
+    revalidatePath('/');
 }
