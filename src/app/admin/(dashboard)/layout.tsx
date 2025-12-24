@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import { FileText, Settings, LogOut, Menu, LayoutTemplate, Package, Users, Wrench, Calendar } from 'lucide-react';
+import { FileText, Settings, LogOut, Menu, LayoutTemplate, Package, Users, Wrench, Calendar, Building2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { logout } from '@/lib/actions/auth';
 
@@ -21,6 +21,10 @@ export default function AdminLayout({
                     <Link href="/admin/home" className="flex items-center gap-3 px-4 py-3 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700/50 rounded-xl transition-colors font-medium">
                         <LayoutTemplate className="w-5 h-5" />
                         홈 화면 관리
+                    </Link>
+                    <Link href="/admin/company" className="flex items-center gap-3 px-4 py-3 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700/50 rounded-xl transition-colors font-medium">
+                        <Building2 className="w-5 h-5" />
+                        기업 관리
                     </Link>
                     <Link href="/admin/history" className="flex items-center gap-3 px-4 py-3 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700/50 rounded-xl transition-colors font-medium">
                         <Calendar className="w-5 h-5" />
