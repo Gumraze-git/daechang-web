@@ -2,13 +2,21 @@
 
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
-import { Image as ImageIcon, Save, Plus, Trash2, Search, ChevronLeft, ChevronRight, Loader2 } from 'lucide-react';
+import { Image as ImageIcon, Save, Plus, Trash2, Search, ChevronLeft, ChevronRight, Loader2, Settings } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from "@/components/ui/dialog";
+
 import { Badge } from "@/components/ui/badge";
 import { updateHomeSettings, type HomeSettings } from '@/lib/actions/home';
 import { toggleProductFeatured, type Product } from '@/lib/actions/products';
@@ -23,6 +31,15 @@ type ImageItem = {
     url: string; // Display URL (remote or data-url)
     file: File | null; // File if new, null if existing
     isNew: boolean;
+};
+
+// Category code mapping for Korean display
+const CATEGORY_MAP: Record<string, string> = {
+    'blow_molding': '블로우 몰딩기',
+    'extrusion_line': '압출 라인',
+    'injection_molding': '사출 성형기',
+    'reducer': '감속기',
+    'pto': '동력 인출 장치'
 };
 
 export default function HomeSettingsForm({ initialSettings, products }: HomeSettingsFormProps) {
@@ -113,11 +130,7 @@ export default function HomeSettingsForm({ initialSettings, products }: HomeSett
             formData.append('new_images', file);
         });
 
-        if (settings.show_products_section) {
-            formData.set('show_products_section', 'on');
-        } else {
-            formData.delete('show_products_section');
-        }
+
 
         try {
             await updateHomeSettings(formData);
@@ -143,10 +156,14 @@ export default function HomeSettingsForm({ initialSettings, products }: HomeSett
         }
     };
 
+    const getCategoryName = (code: string) => {
+        return CATEGORY_MAP[code] || code;
+    };
+
     return (
         <form onSubmit={handleSubmit} className="space-y-8 pb-20">
-            <fieldset disabled={isLoading} className="group space-y-8 disabled:opacity-80">
-                <div className="flex items-center justify-between sticky top-0 z-10 bg-white/80 backdrop-blur-md py-4 border-b -mx-6 px-6 mb-8 transition-all">
+            <fieldset disabled={isLoading} className="space-y-8 disabled:opacity-80">
+                <div className="flex items-center justify-between py-4 border-b -mx-6 px-6 mb-8">
                     <div>
                         <h1 className="text-3xl font-bold">홈 화면 관리</h1>
                         <p className="text-gray-500 dark:text-gray-400 mt-1">홈페이지의 주요 섹션과 콘텐츠를 관리합니다.</p>
@@ -207,7 +224,7 @@ export default function HomeSettingsForm({ initialSettings, products }: HomeSett
                                 <Label>배경 이미지 목록 (드래그하여 순서 변경이 불가하므로 버튼을 사용하세요)</Label>
                                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                                     {imageItems.map((item, i) => (
-                                        <div key={item.id} className="aspect-video bg-gray-100 rounded-lg relative group overflow-hidden border border-gray-200">
+                                        <div key={item.id} className="aspect-video bg-gray-100 rounded-lg relative group/hero overflow-hidden border border-gray-200">
                                             <Image
                                                 src={item.url}
                                                 alt={`배너 이미지 ${i + 1}`}
@@ -218,7 +235,7 @@ export default function HomeSettingsForm({ initialSettings, products }: HomeSett
 
                                             {/* Overlay Actions - Only show if not disabled */}
                                             {!isLoading && (
-                                                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-2">
+                                                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover/hero:opacity-100 transition-opacity flex flex-col items-center justify-center gap-2">
                                                     <div className="flex items-center gap-2">
                                                         <Button
                                                             type="button"
@@ -268,103 +285,143 @@ export default function HomeSettingsForm({ initialSettings, products }: HomeSett
                         </CardContent>
                     </Card>
 
-                    {/* Product Section Management */}
+                    {/* Product Section Management - Displayed Products */}
                     <Card>
-                        <CardHeader>
-                            <CardTitle className="flex items-center gap-2">
-                                <ImageIcon className="w-5 h-5 text-green-500" />
-                                제품 섹션 설정
-                            </CardTitle>
-                            <CardDescription>홈 화면에 노출될 추천 제품을 관리합니다.</CardDescription>
-                        </CardHeader>
-                        <CardContent className="space-y-6">
-                            <div className="flex items-center justify-between border-b pb-4">
-                                <div className="space-y-0.5">
-                                    <Label className="text-base">제품 섹션 노출</Label>
-                                    <p className="text-sm text-gray-500">홈 화면에서 제품 목록 표시 여부를 설정합니다.</p>
-                                </div>
-                                <Switch
-                                    checked={settings.show_products_section}
-                                    onCheckedChange={checked => setSettings({ ...settings, show_products_section: checked })}
-                                    disabled={isLoading}
-                                />
+                        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
+                            <div className="space-y-1">
+                                <CardTitle className="flex items-center gap-2">
+                                    <ImageIcon className="w-5 h-5 text-green-500" />
+                                    홈 화면 노출 제품
+                                </CardTitle>
+                                <CardDescription>현재 홈 화면에 표시되고 있는 제품입니다. ({featuredProducts.length}개)</CardDescription>
                             </div>
+                            <Dialog>
+                                <DialogTrigger asChild>
+                                    <Button size="sm" className="gap-2 bg-blue-600 hover:bg-blue-700 text-white">
+                                        <Settings className="w-4 h-4" />
+                                        제품 관리
+                                    </Button>
+                                </DialogTrigger>
+                                <DialogContent className="sm:max-w-3xl w-full max-h-[85vh] flex flex-col">
+                                    <DialogHeader>
+                                        <DialogTitle>홈 화면 노출 제품 관리</DialogTitle>
+                                        <DialogDescription>
+                                            홈 화면에 노출할 제품을 선택하세요. 스위치를 켜면 노출되고, 끄면 숨겨집니다.
+                                        </DialogDescription>
+                                    </DialogHeader>
+                                    <div className="flex-1 overflow-y-auto pr-2 mt-4">
+                                        <div className="grid grid-cols-1 gap-4 pb-4">
+                                            {products.map((product) => (
+                                                <div key={product.id} className="relative flex h-32 bg-white rounded-lg border border-gray-200 overflow-hidden group/product-modal hover:border-blue-300 transition-colors">
+                                                    {/* Image Section - Full Height */}
+                                                    <div className="w-32 relative flex-shrink-0 bg-gray-100 border-r border-gray-200">
+                                                        {product.images && product.images[0] ? (
+                                                            <Image src={product.images[0]} alt={product.name_ko} fill className="object-cover" />
+                                                        ) : (
+                                                            <ImageIcon className="w-10 h-10 text-gray-400 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2" />
+                                                        )}
+                                                    </div>
 
-                            <div className="space-y-4">
-                                <div className="flex justify-between items-center">
-                                    <h3 className="text-sm font-medium text-gray-700">추천 제품 목록 ({featuredProducts.length})</h3>
-                                    <Dialog>
-                                        <DialogTrigger asChild>
-                                            <Button variant="outline" size="sm" disabled={isLoading}>
-                                                <Plus className="w-4 h-4 mr-2" /> 제품 추가
-                                            </Button>
-                                        </DialogTrigger>
-                                        <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
-                                            <DialogHeader>
-                                                <DialogTitle>추천 제품 추가</DialogTitle>
-                                            </DialogHeader>
-                                            <div className="grid gap-4 py-4">
-                                                {availableProducts.length > 0 ? (
-                                                    availableProducts.map((product) => (
-                                                        <div key={product.id} className="flex items-center justify-between p-3 border rounded-lg hover:bg-gray-50">
-                                                            <div className="flex items-center gap-3">
-                                                                {product.images && product.images[0] ? (
-                                                                    <div className="relative w-12 h-12 rounded overflow-hidden">
-                                                                        <Image src={product.images[0]} alt={product.name_ko} fill className="object-cover" />
-                                                                    </div>
-                                                                ) : (
-                                                                    <div className="w-12 h-12 bg-gray-200 rounded flex items-center justify-center text-xs text-gray-500">No Img</div>
-                                                                )}
-                                                                <div>
-                                                                    <p className="font-medium">{product.name_ko}</p>
-                                                                    <p className="text-xs text-gray-500">{product.model_no || product.category_code}</p>
-                                                                </div>
+                                                    {/* Content Section */}
+                                                    <div className="flex-1 min-w-0 p-3 flex flex-col justify-center gap-1">
+                                                        <div className="flex items-center text-sm">
+                                                            <div className="w-[72px] flex-shrink-0 flex justify-between items-center text-gray-500 font-normal mr-2">
+                                                                <span>제품명</span>
+                                                                <span className="h-3 w-px bg-gray-300" aria-hidden="true" />
                                                             </div>
-                                                            <Button size="sm" onClick={() => handleToggleFeatured(product.id, false)}>
-                                                                선택
-                                                            </Button>
+                                                            <span className="font-bold text-gray-900 truncate flex-1 min-w-0">{product.name_ko}</span>
                                                         </div>
-                                                    ))
-                                                ) : (
-                                                    <p className="text-center text-gray-500 py-8">추가 가능한 활성 제품이 없습니다.</p>
-                                                )}
-                                            </div>
-                                        </DialogContent>
-                                    </Dialog>
-                                </div>
+                                                        <div className="flex items-center text-sm">
+                                                            <div className="w-[72px] flex-shrink-0 flex justify-between items-center text-gray-400 font-normal mr-2">
+                                                                <span>카테고리</span>
+                                                                <span className="h-3 w-px bg-gray-300" aria-hidden="true" />
+                                                            </div>
+                                                            <span className="text-gray-600 truncate font-medium flex-1 min-w-0">{getCategoryName(product.category_code)}</span>
+                                                        </div>
+                                                        <div className="flex items-center text-sm">
+                                                            <div className="w-[72px] flex-shrink-0 flex justify-between items-center text-gray-400 mr-2">
+                                                                <span>제품 코드</span>
+                                                                <span className="h-3 w-px bg-gray-300" aria-hidden="true" />
+                                                            </div>
+                                                            <span className="text-gray-500 truncate flex-1 min-w-0">{product.model_no}</span>
+                                                        </div>
+                                                    </div>
 
-                                {featuredProducts.length > 0 ? (
-                                    featuredProducts.map((product) => (
-                                        <div key={product.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-100">
-                                            <div className="flex items-center gap-3">
-                                                <div className="w-12 h-12 bg-gray-200 rounded-md overflow-hidden flex items-center justify-center relative">
-                                                    {product.images && product.images[0] ? (
-                                                        <Image src={product.images[0]} alt={product.name_ko} fill className="object-cover" />
-                                                    ) : (
-                                                        <ImageIcon className="w-6 h-6 text-gray-400" />
-                                                    )}
-                                                </div>
-                                                <div>
-                                                    <p className="font-medium">{product.name_ko}</p>
-                                                    <div className="flex gap-2 text-xs text-gray-500">
-                                                        <Badge variant="secondary" className="text-[10px] h-5">{product.category_code}</Badge>
-                                                        <span>{product.model_no}</span>
+                                                    {/* Absolute Switch */}
+                                                    <div className="absolute top-1/2 right-6 -translate-y-1/2">
+                                                        <Switch
+                                                            checked={product.is_featured}
+                                                            onCheckedChange={(checked) => handleToggleFeatured(product.id, !checked)}
+                                                            disabled={isLoading}
+                                                        />
                                                     </div>
                                                 </div>
-                                            </div>
-                                            <Switch
-                                                checked={true}
-                                                onCheckedChange={() => handleToggleFeatured(product.id, true)}
-                                                disabled={isLoading}
-                                            />
+                                            ))}
                                         </div>
-                                    ))
-                                ) : (
-                                    <div className="text-center py-8 text-gray-400 border-2 border-dashed rounded-lg">
-                                        추천할 제품을 추가해주세요.
                                     </div>
-                                )}
-                            </div>
+                                </DialogContent>
+                            </Dialog>
+                        </CardHeader>
+                        <CardContent>
+                            {featuredProducts.length > 0 ? (
+                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                                    {featuredProducts.map((product) => (
+                                        <div key={product.id} className="relative flex h-32 bg-white rounded-lg border border-gray-200 overflow-hidden group/product">
+                                            {/* Image Section - Full Height */}
+                                            <div className="w-32 relative flex-shrink-0 bg-gray-100 border-r border-gray-200">
+                                                {product.images && product.images[0] ? (
+                                                    <Image src={product.images[0]} alt={product.name_ko} fill className="object-cover" />
+                                                ) : (
+                                                    <ImageIcon className="w-10 h-10 text-gray-400 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2" />
+                                                )}
+                                            </div>
+
+                                            {/* Content Section */}
+                                            <div className="flex-1 min-w-0 p-3 flex flex-col justify-center gap-1">
+                                                <div className="flex items-center text-sm">
+                                                    <div className="w-[72px] flex-shrink-0 flex justify-between items-center text-gray-500 font-normal mr-2">
+                                                        <span>제품명</span>
+                                                        <span className="h-3 w-px bg-gray-300" aria-hidden="true" />
+                                                    </div>
+                                                    <span className="font-bold text-gray-900 truncate flex-1 min-w-0">{product.name_ko}</span>
+                                                </div>
+                                                <div className="flex items-center text-sm">
+                                                    <div className="w-[72px] flex-shrink-0 flex justify-between items-center text-gray-400 font-normal mr-2">
+                                                        <span>카테고리</span>
+                                                        <span className="h-3 w-px bg-gray-300" aria-hidden="true" />
+                                                    </div>
+                                                    <span className="text-gray-600 truncate font-medium flex-1 min-w-0">{getCategoryName(product.category_code)}</span>
+                                                </div>
+                                                <div className="flex items-center text-sm">
+                                                    <div className="w-[72px] flex-shrink-0 flex justify-between items-center text-gray-400 mr-2">
+                                                        <span>제품 코드</span>
+                                                        <span className="h-3 w-px bg-gray-300" aria-hidden="true" />
+                                                    </div>
+                                                    <span className="text-gray-500 truncate flex-1 min-w-0">{product.model_no}</span>
+                                                </div>
+                                            </div>
+
+                                            {/* Absolute Delete Button */}
+                                            <Button
+                                                type="button"
+                                                variant="ghost"
+                                                size="icon"
+                                                onClick={() => handleToggleFeatured(product.id, true)}
+                                                className="absolute top-1/2 right-4 -translate-y-1/2 text-gray-400 hover:text-red-600 hover:bg-red-50"
+                                                title="노출 해제"
+                                                disabled={isLoading}
+                                            >
+                                                <Trash2 className="w-5 h-5" />
+                                            </Button>
+                                        </div>
+                                    ))}
+                                </div>
+                            ) : (
+                                <div className="text-center py-12 text-gray-400 border-2 border-dashed rounded-lg bg-gray-50/50">
+                                    <p>현재 노출 중인 제품이 없습니다.</p>
+                                    <p className="text-sm mt-1">상단의 '제품 관리' 버튼을 눌러 제품을 추가해주세요.</p>
+                                </div>
+                            )}
                         </CardContent>
                     </Card>
                 </div>

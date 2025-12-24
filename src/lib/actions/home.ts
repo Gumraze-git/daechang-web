@@ -97,7 +97,7 @@ export async function updateHomeSettings(formData: FormData) {
         return item; // It's an existing URL
     }).filter(url => url !== null) as string[];
 
-    const show_products_section = formData.get('show_products_section') === 'on';
+    const show_products_section = true; // Always show per user request
 
     // We assume there's only one row, so we update the one with ID=1 or the first one found.
     // Or we can just update all rows if there's only supposed to be one.

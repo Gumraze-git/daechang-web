@@ -45,14 +45,13 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
       />
 
       {/* Product Summary Section */}
-      {homeSettings.show_products_section && (
-        <section className="container mx-auto py-16 px-4">
-          <h2 className="text-3xl font-bold text-left mb-6">
-            {t('latest_products')}
-          </h2>
-          <ProductCarousel products={products} locale={locale} />
-        </section>
-      )}
+      {/* Product Summary Section */}
+      <section className="container mx-auto py-16 px-4">
+        <h2 className="text-3xl font-bold text-left mb-6">
+          {t('latest_products')}
+        </h2>
+        <ProductCarousel products={products} locale={locale} />
+      </section>
 
       {/* Notices Section */}
       <section className="w-full py-8 bg-white border-t border-gray-100">
