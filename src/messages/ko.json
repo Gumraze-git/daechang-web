@@ -83,6 +83,8 @@
     "transport_public_desc": "향남환승터미널에서 택시 이용 (약 15분 소요)",
     "label_road": "도로명",
     "label_lot": "지번",
+    "label_zip": "우편번호",
+    "zip_code": "18628",
     "history_2009": "화성공장 확장이전",
     "history_2008_12_1": "유성볼밀 냉각시스템 특허출원",
     "history_2008_12_2": "이노비즈 기업인증",
