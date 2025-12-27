@@ -21,8 +21,10 @@ export type Product = {
     created_at: string;
     notices?: { id: string; title_ko: string }[]; // Joined data
     partners?: { id: string; name_ko: string }[]; // New: Multiple partners
+    category?: { code: string; name_ko: string }; // New: Joined category
     is_featured: boolean;
 }
+
 
 export async function getProducts() {
     const supabase = await createClient();
@@ -32,7 +34,8 @@ export async function getProducts() {
             *,
             product_partners(
                 partner:partners(id, name_ko, logo_url)
-            )
+            ),
+            category:product_categories(code, name_ko)
         `)
         .order('created_at', { ascending: false });
 
@@ -44,7 +47,13 @@ export async function getProducts() {
     // Transform joined partners
     const products = data.map((p: any) => ({
         ...p,
-        partners: p.product_partners?.map((pp: any) => pp.partner) || []
+        partners: p.product_partners?.map((pp: any) => pp.partner) || [],
+        // category is already an object { code, name_ko } thanks to the query alias, but Supabase might return it as array if not 1:1, but here it is M:1 so it returns object if referenced correctly or array?
+        // Actually for Many-to-One, it usually returns object if hinted or single? 
+        // Let's check runtime. Normally: category:object.
+        // But referencing foreign key directly. 
+        // If it's an array, take the first one.
+        category: Array.isArray(p.category) ? p.category[0] : p.category
     }));
 
     return products as Product[];

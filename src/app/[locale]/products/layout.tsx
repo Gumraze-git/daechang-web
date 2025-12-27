@@ -1,16 +1,21 @@
-import { useTranslations } from 'next-intl';
-import { useLocale } from 'next-intl';
+import { getTranslations } from 'next-intl/server';
+
 import { ProductSidebar } from '@/components/ProductSidebar';
 
-// This data could be moved to a shared config or fetched from an API
-const categories = [
-    { nameKey: 'blow_molding_machines', slug: 'blow-molding-machines' },
-    { nameKey: 'extrusion_lines', slug: 'extrusion-lines' },
-];
+import { getCategories } from '@/lib/actions/categories'; // Import action
 
-export default function ProductLayout({ children }: { children: React.ReactNode }) {
-    const t = useTranslations('Common');
-    const locale = useLocale();
+
+export default async function ProductLayout({ children, params }: { children: React.ReactNode; params: Promise<{ locale: string }> }) {
+    const categories = await getCategories(); // Fetch real data
+    const { locale } = await params;
+    const t = await getTranslations({ locale, namespace: 'ProductPage' });
+    const commonT = await getTranslations({ locale, namespace: 'Common' }); // Keep Common for existing usage if any
+
+    const sidebarTranslations = {
+        products: t('products'),
+        search_placeholder: t('search_placeholder'),
+        all_products: t('all_products'),
+    };
 
     return (
         <div className="flex flex-col min-h-screen">
@@ -20,9 +25,9 @@ export default function ProductLayout({ children }: { children: React.ReactNode 
                 {/* Placeholder banner image, can be replaced with specific product banner */}
                 <div className="absolute inset-0 bg-[url('/images/products_banner.png')] bg-cover bg-center" />
                 <div className="relative z-10 text-center text-white">
-                    <h1 className="text-4xl md:text-5xl font-bold mb-4">{t('products')}</h1>
+                    <h1 className="text-4xl md:text-5xl font-bold mb-4">{commonT('products')}</h1>
                     <p className="text-lg md:text-xl text-gray-300 max-w-2xl mx-auto px-4">
-                        {t('description')}
+                        {commonT('description')}
                     </p>
                 </div>
             </div>
@@ -31,7 +36,7 @@ export default function ProductLayout({ children }: { children: React.ReactNode 
             <div className="container mx-auto py-12 px-4 md:px-8">
                 <div className="flex flex-col md:flex-row gap-12">
                     {/* Sidebar */}
-                    <ProductSidebar categories={categories} locale={locale} />
+                    <ProductSidebar categories={categories} locale={locale} translations={sidebarTranslations} />
 
                     {/* Main Content Area */}
                     <main className="w-full md:w-3/4 lg:w-4/5 min-h-[500px]">

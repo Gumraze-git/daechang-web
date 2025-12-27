@@ -82,7 +82,7 @@ export default async function ProductsPage() {
                                     </TableCell>
                                     <TableCell>
                                         <Badge variant="outline" className="font-normal capitalize">
-                                            {product.category_code}
+                                            {product.category?.name_ko || product.category_code}
                                         </Badge>
                                     </TableCell>
                                     <TableCell>

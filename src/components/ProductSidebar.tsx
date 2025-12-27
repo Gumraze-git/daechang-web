@@ -1,6 +1,7 @@
 'use client';
 
-import { useTranslations } from 'next-intl';
+// import { useTranslations } from 'next-intl'; // Removing hook usage
+
 import Link from 'next/link';
 import { useSearchParams, useRouter, usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
@@ -10,12 +11,20 @@ import { useState, useEffect } from 'react';
 import { useDebounce } from '@/hooks/use-debounce'; // Assuming this hook exists or I will implement a simple one
 
 type Category = {
-    nameKey: string;
-    slug: string;
+    code: string;
+    name_ko: string;
+    name_en: string | null;
 };
 
-export function ProductSidebar({ categories, locale }: { categories: Category[], locale: string }) {
-    const t = useTranslations('ProductPage');
+type Translations = {
+    products: string;
+    search_placeholder: string;
+    all_products: string;
+};
+
+export function ProductSidebar({ categories, locale, translations }: { categories: Category[], locale: string, translations: Translations }) {
+    // const t = useTranslations('ProductPage');
+
     const searchParams = useSearchParams();
     const router = useRouter();
     const pathname = usePathname();
@@ -47,7 +56,7 @@ export function ProductSidebar({ categories, locale }: { categories: Category[],
             <nav className="flex flex-col space-y-6 sticky top-24">
                 {/* Title */}
                 <h2 className="text-xl font-bold px-4 text-gray-900 dark:text-white border-b-2 border-gray-900 dark:border-white pb-2">
-                    {t('products')}
+                    {translations.products}
                 </h2>
 
                 {/* Search Input */}
@@ -55,7 +64,7 @@ export function ProductSidebar({ categories, locale }: { categories: Category[],
                     <div className="relative">
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
                         <Input
-                            placeholder={t('search_placeholder')}
+                            placeholder={translations.search_placeholder}
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
                             className="pl-9 bg-white"
@@ -74,15 +83,16 @@ export function ProductSidebar({ categories, locale }: { categories: Category[],
                                 : 'text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-blue-600 dark:hover:text-blue-400'
                         )}
                     >
-                        {t('all_products')}
+                        {translations.all_products}
                     </Link>
 
                     {categories.map((category) => {
-                        const isActive = currentCategory === category.slug;
+                        const isActive = currentCategory === category.code;
+                        const name = locale === 'ko' ? category.name_ko : (category.name_en || category.name_ko);
                         return (
                             <Link
-                                key={category.slug}
-                                href={`/${locale}/products?category=${category.slug}`}
+                                key={category.code}
+                                href={`/${locale}/products?category=${category.code}`}
                                 className={cn(
                                     'px-4 py-3 rounded-lg text-base font-medium transition-all duration-200',
                                     isActive
@@ -90,7 +100,7 @@ export function ProductSidebar({ categories, locale }: { categories: Category[],
                                         : 'text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-blue-600 dark:hover:text-blue-400'
                                 )}
                             >
-                                {t(category.nameKey)}
+                                {name}
                             </Link>
                         );
                     })}

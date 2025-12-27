@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { getTranslations } from 'next-intl/server';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { getProducts } from '@/lib/actions/products';
+import { getCategories } from '@/lib/actions/categories'; // Import getCategories
 import Image from 'next/image';
 
 type Props = {
@@ -17,8 +18,18 @@ export default async function ProductsPage({ params, searchParams }: Props) {
   const categoryFilter = typeof category === 'string' ? category : null;
   const searchTerm = typeof q === 'string' ? q : '';
 
-  // Fetch real products
+  // Fetch real products and categories
   const allProducts = await getProducts();
+  const allCategories = await getCategories();
+
+  // Find current category name
+  const currentCategoryObj = categoryFilter
+    ? allCategories.find(c => c.code === categoryFilter)
+    : null;
+
+  const categoryTitle = currentCategoryObj
+    ? (locale === 'ko' ? currentCategoryObj.name_ko : (currentCategoryObj.name_en || currentCategoryObj.name_ko))
+    : (categoryFilter ? categoryFilter.toUpperCase() : t('all_products'));
 
   // Filter Logic
   const filteredProducts = allProducts.filter((product) => {
@@ -48,9 +59,7 @@ export default async function ProductsPage({ params, searchParams }: Props) {
     <div className="w-full">
       <div className="mb-8">
         <h2 className="text-2xl font-bold mb-4">
-          {categoryFilter
-            ? (categoryFilter.replace(/-/g, ' ').toUpperCase()) // Simple display for now or use translation if keys align
-            : t('all_products')}
+          {categoryTitle}
         </h2>
         {searchTerm && (
           <p className="text-gray-500">
