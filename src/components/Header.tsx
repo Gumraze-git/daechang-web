@@ -70,9 +70,9 @@ export function Header() {
 
   return (
     <header className="sticky top-0 z-50 w-full bg-white/80 backdrop-blur-md dark:bg-black/80 border-none shadow-none transition-all duration-300">
-      <div className="w-full flex justify-between min-[800px]:grid min-[800px]:grid-cols-[1fr_auto_1fr] h-24 items-center px-4 md:px-8 max-w-[1600px] mx-auto gap-4">
+      <div className="w-full flex justify-between lg:grid lg:grid-cols-[1fr_auto_1fr] h-24 items-center px-4 md:px-8 max-w-[1600px] mx-auto gap-4">
         {/* Logo - Start aligned */}
-        <Link href="/" className="flex items-center justify-self-start">
+        <Link href="/" className="flex items-center justify-self-start shrink-0">
           <Image
             src="/logo_small.png"
             alt="Daechang Logo"
@@ -84,9 +84,9 @@ export function Header() {
         </Link>
 
         {/* Desktop Navigation - Center aligned */}
-        <div className="hidden min-[800px]:flex justify-center justify-self-center w-full">
+        <div className="hidden lg:flex justify-center justify-self-center w-full">
           <NavigationMenu>
-            <NavigationMenuList className="gap-1 min-[800px]:gap-2">
+            <NavigationMenuList className="gap-1 lg:gap-2">
               {navItems.map((item) => {
                 const isActive = pathname.startsWith(`/${currentLocale}${item.href}`);
                 return (
@@ -112,8 +112,8 @@ export function Header() {
         </div>
 
         {/* Desktop Utilities - End aligned */}
-        <div className="flex items-center space-x-4 justify-self-end ml-auto min-[800px]:ml-0">
-          <div className="hidden min-[800px]:flex items-center gap-4">
+        <div className="flex items-center space-x-4 justify-self-end ml-auto lg:ml-0">
+          <div className="hidden lg:flex items-center gap-4">
             <LanguageSwitcher />
             <Button asChild className="rounded-full bg-blue-600 hover:bg-blue-700 text-white shadow-md hover:shadow-lg transition-all">
               <Link href={`/${currentLocale}/support/contact`}>
@@ -126,7 +126,7 @@ export function Header() {
           {/* Mobile Navigation */}
           <Sheet open={isOpen} onOpenChange={setIsOpen}>
             <SheetTrigger asChild>
-              <Button variant="ghost" size="icon" className="min-[800px]:hidden" suppressHydrationWarning>
+              <Button variant="ghost" size="icon" className="lg:hidden" suppressHydrationWarning>
                 <MenuIcon className="h-6 w-6" />
                 <span className="sr-only">Toggle menu</span>
               </Button>
