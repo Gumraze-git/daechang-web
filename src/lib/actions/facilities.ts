@@ -37,7 +37,7 @@ export async function createFacility(formData: FormData) {
     const name_en = formData.get('name_en') as string;
     const type = formData.get('type') as string;
     const specs = formData.get('specs') as string;
-    const status = formData.get('status') as string;
+    const status = (formData.get('status') as string) || 'active'; // Default to active if not provided
 
     // Image Upload
     const imageFile = formData.get('image') as File;

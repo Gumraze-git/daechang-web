@@ -13,9 +13,11 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
-import { ChevronLeft, Save, Wrench } from 'lucide-react';
+import { ChevronLeft, Save, Wrench, Upload, X } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
+import { createFacility } from '@/lib/actions/facilities';
+import Image from 'next/image';
 
 interface FacilityFormProps {
     initialData?: any;
@@ -25,18 +27,43 @@ interface FacilityFormProps {
 export default function FacilityForm({ initialData, isEditMode = false }: FacilityFormProps) {
     const router = useRouter();
     const [isLoading, setIsLoading] = useState(false);
+    const [preview, setPreview] = useState<string | null>(initialData?.image_url || null);
 
-    const handleSubmit = async (e: React.FormEvent) => {
+    const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (file) {
+            const url = URL.createObjectURL(file);
+            setPreview(url);
+        }
+    };
+
+    const handleRemoveImage = () => {
+        setPreview(null);
+        // Reset file input value if possible, or just rely on state logic if we were using a ref
+        const fileInput = document.getElementById('image') as HTMLInputElement;
+        if (fileInput) fileInput.value = '';
+    };
+
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         setIsLoading(true);
 
-        // Simulate API call
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        const formData = new FormData(e.currentTarget);
 
-        alert(isEditMode ? '설비 정보가 수정되었습니다. (Mock)' : '설비가 성공적으로 등록되었습니다. (Mock)');
-        // Redirect back to list
-        router.push('/admin/facilities');
-        setIsLoading(false);
+        try {
+            if (isEditMode) {
+                // Update logic (Not implemented fully in this turn, but structure is here)
+                // await updateFacility(initialData.id, formData);
+                alert("수정 기능은 아직 구현되지 않았습니다.");
+            } else {
+                await createFacility(formData);
+                // Redirect handled in action, but we can do it here too if action doesn't redirect
+            }
+        } catch (error: any) {
+            console.error(error);
+            alert(error.message || '설비 저장에 실패했습니다.');
+            setIsLoading(false);
+        }
     };
 
     return (
@@ -69,45 +96,66 @@ export default function FacilityForm({ initialData, isEditMode = false }: Facili
                     <CardDescription>설비의 기본 정보와 사양을 입력합니다.</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6">
-                    <div className="space-y-2">
-                        <Label htmlFor="name">설비명</Label>
-                        <Input id="name" placeholder="예: Hanger Shot Blast Machine" defaultValue={initialData?.name} required />
+                    {/* Image Upload */}
+                    <div className="space-y-4">
+                        <Label>설비 이미지</Label>
+                        <Input
+                            id="image"
+                            name="image"
+                            type="file"
+                            accept="image/*"
+                            onChange={handleImageChange}
+                            className="hidden"
+                        />
+                        <Label htmlFor="image" className="block">
+                            <div className="border-2 border-dashed border-gray-200 rounded-lg p-8 flex flex-col items-center justify-center text-gray-500 hover:bg-gray-50 hover:border-blue-500 hover:text-blue-500 transition-colors cursor-pointer group">
+                                <Upload className="w-8 h-8 mb-2 group-hover:scale-110 transition-transform" />
+                                <span className="text-sm font-medium">이미지 추가 (클릭)</span>
+                                <span className="text-xs text-gray-400 mt-1">권장 사이즈: 800x600px 이상</span>
+                            </div>
+                        </Label>
+
+                        {/* Preview */}
+                        {preview && (
+                            <div className="relative w-40 h-40 bg-gray-100 rounded-lg border border-gray-200 overflow-hidden group">
+                                <Image
+                                    src={preview}
+                                    alt="Preview"
+                                    fill
+                                    className="object-cover"
+                                />
+                                <button
+                                    type="button"
+                                    onClick={handleRemoveImage}
+                                    className="absolute top-1 right-1 bg-black/50 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                                >
+                                    <X className="w-3 h-3" />
+                                </button>
+                            </div>
+                        )}
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                            <Label htmlFor="name_ko">설비명 (국문)</Label>
+                            <Input id="name_ko" name="name_ko" placeholder="예: Hanger Shot Blast Machine" defaultValue={initialData?.name_ko} required />
+                        </div>
+                        <div className="space-y-2">
+                            <Label htmlFor="name_en">설비명 (영문)</Label>
+                            <Input id="name_en" name="name_en" placeholder="e.g. Hanger Shot Blast Machine" defaultValue={initialData?.name_en} />
+                        </div>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div className="space-y-2">
                             <Label htmlFor="type">유형</Label>
-                            <Select defaultValue={initialData?.type_code || "welding"}>
-                                <SelectTrigger>
-                                    <SelectValue placeholder="유형 선택" />
-                                </SelectTrigger>
-                                <SelectContent className="bg-white dark:bg-gray-800">
-                                    <SelectItem value="welding">용접 (Welding)</SelectItem>
-                                    <SelectItem value="inspection">검사 (Inspection)</SelectItem>
-                                    <SelectItem value="machining">가공 (Machining)</SelectItem>
-                                    <SelectItem value="painting">도장 (Painting)</SelectItem>
-                                    <SelectItem value="assembly">조립 (Assembly)</SelectItem>
-                                </SelectContent>
-                            </Select>
-                        </div>
-                        <div className="space-y-2">
-                            <Label htmlFor="status">상태</Label>
-                            <Select defaultValue={initialData?.status?.toLowerCase() || "active"}>
-                                <SelectTrigger>
-                                    <SelectValue placeholder="상태 선택" />
-                                </SelectTrigger>
-                                <SelectContent className="bg-white dark:bg-gray-800" align="end">
-                                    <SelectItem value="active">가동중 (Active)</SelectItem>
-                                    <SelectItem value="maintenance">점검중 (Maintenance)</SelectItem>
-                                    <SelectItem value="inactive">비가동 (Inactive)</SelectItem>
-                                </SelectContent>
-                            </Select>
+                            <Input id="type" name="type" placeholder="예: 주요 생산 설비, 검사 장비" defaultValue={initialData?.type} />
                         </div>
                     </div>
 
                     <div className="space-y-2">
                         <Label htmlFor="specs">제원/사양 (Specs)</Label>
-                        <Textarea id="specs" placeholder="설비의 상세 사양을 입력하세요." defaultValue={initialData?.specs} rows={4} />
+                        <Textarea id="specs" name="specs" placeholder="설비의 상세 사양을 입력하세요." defaultValue={initialData?.specs} rows={6} />
                     </div>
                 </CardContent>
             </Card>
