@@ -19,8 +19,8 @@ export type Product = {
     images: string[];
     partner_id?: string | null; // Keep for legacy if needed, but primary will be partners
     created_at: string;
-    notices?: { id: string; title_ko: string }[]; // Joined data
-    partners?: { id: string; name_ko: string }[]; // New: Multiple partners
+    notices?: { id: string; title_ko: string; title_en?: string | null }[]; // Joined data
+    partners?: { id: string; name_ko: string; name_en?: string | null }[]; // New: Multiple partners
     category?: { code: string; name_ko: string }; // New: Joined category
     is_featured: boolean;
 }
@@ -33,7 +33,7 @@ export async function getProducts() {
         .select(`
             *,
             product_partners(
-                partner:partners(id, name_ko, logo_url)
+                partner:partners(id, name_ko, name_en, logo_url)
             ),
             category:product_categories(code, name_ko)
         `)
@@ -66,7 +66,7 @@ export async function getRecommendedProducts() {
         .select(`
             *,
             product_partners(
-                partner:partners(id, name_ko, logo_url)
+                partner:partners(id, name_ko, name_en, logo_url)
             )
         `)
         .eq('status', 'active') // Only active products
@@ -96,10 +96,10 @@ export async function getProduct(id: string) {
         .select(`
             *,
             product_partners(
-                partner:partners(id, name_ko, logo_url)
+                partner:partners(id, name_ko, name_en, logo_url)
             ),
             product_notices(
-                notice:notices(id, title_ko)
+                notice:notices(id, title_ko, title_en)
             )
         `)
         .eq('id', id)

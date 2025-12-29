@@ -209,6 +209,7 @@
     "btn_submit_more": "추가 문의하기",
     "mail_inquiry_title": "이메일 문의",
     "mail_inquiry_desc": "폼 작성이 불편하시다면 이메일로 직접 문의주세요.",
+    "no_posts": "게시글이 없습니다.",
     "btn_mail_inquiry": "메일로 문의하기"
   },
   "Footer": {

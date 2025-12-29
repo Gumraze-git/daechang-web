@@ -212,6 +212,7 @@
     "btn_submit_more": "Submit Another Inquiry",
     "mail_inquiry_title": "Email Inquiry",
     "mail_inquiry_desc": "Prefer email? Contact us directly via email.",
+    "no_posts": "No posts found.",
     "btn_mail_inquiry": "Inquire via Email"
   },
   "Footer": {

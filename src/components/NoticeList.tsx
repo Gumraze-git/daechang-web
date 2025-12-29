@@ -168,7 +168,7 @@ export default function NoticeList({ initialNotices, locale }: NoticeListProps) 
                     })
                 ) : (
                     <div className="text-center py-12 text-gray-500 col-span-full">
-                        게시글이 없습니다.
+                        {t('no_posts')}
                     </div>
                 )}
             </div>

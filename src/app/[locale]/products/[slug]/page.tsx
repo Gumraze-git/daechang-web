@@ -132,7 +132,7 @@ export default async function ProductDetailPage({ params }: ProductDetailProps) 
                     Notice
                   </span>
                   <h3 className="text-lg font-medium text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors inline-block">
-                    {notice.title_ko}
+                    {getLocText(notice.title_ko, notice.title_en)}
                   </h3>
                 </div>
               </Link>
@@ -154,7 +154,7 @@ export default async function ProductDetailPage({ params }: ProductDetailProps) 
                   <div className="relative w-full h-20 px-6 flex items-center justify-center">
                     <Image
                       src={partner.logo_url}
-                      alt={partner.name_ko}
+                      alt={getLocText(partner.name_ko, partner.name_en) || ''}
                       width={120}
                       height={60}
                       className="object-contain max-h-16 w-auto"
@@ -163,7 +163,7 @@ export default async function ProductDetailPage({ params }: ProductDetailProps) 
                 ) : (
                   <div className="bg-gray-100 dark:bg-gray-800 rounded-lg px-6 py-4 flex items-center justify-center group-hover:bg-white dark:group-hover:bg-gray-700 border border-transparent group-hover:border-gray-200 dark:group-hover:border-gray-600 transition-all shadow-sm">
                     <span className="text-base font-bold text-gray-600 group-hover:text-gray-900 dark:group-hover:text-white text-center">
-                      {partner.name_ko}
+                      {getLocText(partner.name_ko, partner.name_en)}
                     </span>
                   </div>
                 )}
