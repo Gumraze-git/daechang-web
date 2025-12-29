@@ -1,6 +1,6 @@
 'use client';
 
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 import { useEffect, useRef, useState } from 'react';
 
 declare global {
@@ -11,6 +11,7 @@ declare global {
 
 export default function LocationPage() {
   const t = useTranslations('CompanyPage');
+  const locale = useLocale();
   const mapRef = useRef<HTMLDivElement>(null);
   const [isMapLoaded, setIsMapLoaded] = useState(false);
 
@@ -28,15 +29,21 @@ export default function LocationPage() {
       if (window.naver && window.naver.maps && mapRef.current) {
         try {
           // Check if map is already initialized in this container to prevent duplicates
+          // If we are reloading for language change, we might want to clear it first
           if (mapRef.current.hasChildNodes()) {
-            setIsMapLoaded(true);
-            return true;
+            // If the language changed, we might need to recreate the map instance? 
+            // Actually, the API script change should handle the tiles/labels. 
+            // But we need to make sure the map instance uses the new resources.
+            // Simpler to just clear and re-render if we suspect a change, 
+            // but checking hasChildNodes is usually for initial load.
+            // Let's assume on script reload the previous instance might be invalid or we just create a new one.
+            mapRef.current.innerHTML = '';
           }
 
           const location = new window.naver.maps.LatLng(center.lat, center.lng);
           const mapOptions = {
             center: location,
-            zoom: 18,
+            zoom: 17, // Adjusted zoom slightly
             minZoom: 10,
             zoomControl: true,
             zoomControlOptions: {
@@ -55,35 +62,48 @@ export default function LocationPage() {
           return true; // Success
         } catch (e) {
           console.error("Map initialization failed", e);
-          return false; // Failed, might retry?
+          return false;
         }
       }
       return false; // Not ready yet
     };
 
-    // Load script if not exists
+    // Script Loading Logic
     const scriptId = 'naver-map-script';
+    const targetLanguage = locale === 'ko' ? 'ko' : 'en';
+    const scriptSrc = `https://oapi.map.naver.com/openapi/v3/maps.js?ncpKeyId=${clientId}&language=${targetLanguage}`;
+
     let script = document.getElementById(scriptId) as HTMLScriptElement;
+
+    if (script) {
+      // If script exists but source URL (language) is different, remove it to reload
+      if (script.src !== scriptSrc) {
+        document.head.removeChild(script);
+        script = null as any;
+        // Clean up global object if we are reloading script
+        // This forces re-initialization
+        // window.naver = undefined; // Be careful with this, but it might be needed.
+      }
+    }
 
     if (!script) {
       script = document.createElement('script');
       script.id = scriptId;
-      script.src = `https://oapi.map.naver.com/openapi/v3/maps.js?ncpKeyId=${clientId}`;
+      script.src = scriptSrc;
       script.async = true;
       document.head.appendChild(script);
     }
 
-    // Try initializing immediately (in case script is already loaded from cache)
+    // Try initializing immediately 
     if (initMap()) return;
 
-    // Polling strategy: Check every 100ms
+    // Polling strategy
     const intervalId = setInterval(() => {
       if (initMap()) {
         clearInterval(intervalId);
       }
     }, 100);
 
-    // Safety timeout: stop polling after 10 seconds
     const timeoutId = setTimeout(() => {
       clearInterval(intervalId);
     }, 10000);
@@ -92,7 +112,7 @@ export default function LocationPage() {
       clearInterval(intervalId);
       clearTimeout(timeoutId);
     };
-  }, []);
+  }, [locale]); // Re-run effect when locale changes
 
   return (
     <div className="flex flex-col gap-12">
