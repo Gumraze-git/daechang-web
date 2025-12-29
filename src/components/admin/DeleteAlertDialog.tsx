@@ -11,12 +11,15 @@ import {
     AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 
+import { cn } from '@/lib/utils';
+
 interface DeleteAlertDialogProps {
     open: boolean;
     onOpenChange: (open: boolean) => void;
     onConfirm: () => void;
     title?: string;
     description?: string;
+    className?: string; // Add className prop
 }
 
 export default function DeleteAlertDialog({
@@ -25,10 +28,11 @@ export default function DeleteAlertDialog({
     onConfirm,
     title = '정말로 삭제하시겠습니까?',
     description = '이 작업은 되돌릴 수 없습니다. 데이터가 영구적으로 삭제됩니다.',
+    className,
 }: DeleteAlertDialogProps) {
     return (
         <AlertDialog open={open} onOpenChange={onOpenChange}>
-            <AlertDialogContent className="bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700">
+            <AlertDialogContent className={cn("bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700", className)}>
                 <AlertDialogHeader>
                     <AlertDialogTitle>{title}</AlertDialogTitle>
                     <AlertDialogDescription>{description}</AlertDialogDescription>

@@ -263,6 +263,7 @@ export default function HistoryAdminPage() {
                 open={!!deleteId}
                 onOpenChange={(open) => !open && setDeleteId(null)}
                 onConfirm={confirmDelete}
+                className="!top-[15vh] !translate-y-0 !rounded-2xl !shadow-2xl"
             />
         </div>
     );
