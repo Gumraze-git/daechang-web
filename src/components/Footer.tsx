@@ -1,9 +1,11 @@
-import { getTranslations } from 'next-intl/server';
+import { getTranslations, getLocale } from 'next-intl/server';
 
 export async function Footer() {
   const tCommon = await getTranslations('Common');
   const tIndex = await getTranslations('Index');
   const tFooter = await getTranslations('Footer');
+  const locale = await getLocale();
+
   return (
     <footer className="w-full bg-gray-900 text-gray-300 py-12 border-t border-gray-800">
       <div className="container mx-auto px-4">
@@ -48,13 +50,13 @@ export async function Footer() {
               {tFooter('quick_links')}
             </h3>
             <div className="flex flex-col space-y-2 text-sm">
-              <a href="#" className="hover:text-white transition-colors">
+              <a href={`/${locale}/privacy`} className="hover:text-white transition-colors">
                 {tFooter('privacy_policy')}
               </a>
-              <a href="#" className="hover:text-white transition-colors">
+              <a href={`/${locale}/terms`} className="hover:text-white transition-colors">
                 {tFooter('terms_of_service')}
               </a>
-              <a href={`/ko/support`} className="hover:text-white transition-colors">
+              <a href={`/${locale}/support`} className="hover:text-white transition-colors">
                 {tCommon('support')}
               </a>
             </div>

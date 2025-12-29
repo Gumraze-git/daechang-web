@@ -233,5 +233,43 @@
     "news": "News",
     "exhibition": "Exhibition",
     "maintenance": "Maintenance"
+  },
+  "PrivacyPolicy": {
+    "title": "Privacy Policy",
+    "last_updated": "Last Updated: December 29, 2025",
+    "section1_title": "1. Purpose of Collection and Use of Personal Information",
+    "section1_content": "Daechang Machine Ind. Co., Ltd. collects personal information for the following purposes, and the collected information is not used for purposes other than those intended.",
+    "section1_list1": "Product quotation and purchase consultation",
+    "section1_list2": "Responding to customer inquiries",
+    "section2_title": "2. Items of Personal Information Collected",
+    "section2_content": "The company collects the following personal information for smooth customer consultation.",
+    "section2_list1": "Required: Contact Person, Email, Phone Number, Message",
+    "section2_list2": "Optional: Company Name, Product Category",
+    "section3_title": "3. Period of Retention and Use of Personal Information",
+    "section3_content": "In principle, after the purpose of collecting and using personal information is achieved, the information is destroyed without delay. However, if it is necessary to preserve it under the relevant laws and regulations, the company retains the information for a certain period set by the relevant laws and regulations.",
+    "section3_list1": "Records on consumer complaints or dispute handling: 3 years",
+    "section4_title": "4. Use of Personal Information and Provision to Third Parties",
+    "section4_content": "The company does not provide users' personal information to the outside in principle. However, exceptions are made in cases where users have agreed in advance or in accordance with the provisions of laws and regulations.",
+    "section5_title": "5. Personal Information Protection Officer",
+    "section5_content": "The company designates a Personal Information Protection Officer as follows to oversee business related to personal information processing and to handle complaints and damage relief of data subjects related to personal information processing.",
+    "section5_info_name": "Officer: Manager",
+    "section5_info_contact": "Contact: +82-31-353-1596 / daechang@daechang100.com"
+  },
+  "TermsOfService": {
+    "title": "Terms of Service",
+    "last_updated": "Last Updated: December 29, 2025",
+    "intro": "These terms and conditions aim to prescribe the conditions and procedures for using the website service provided by Daechang Machine Ind. Co., Ltd., and the rights, obligations, and responsibilities of the company and users.",
+    "section1_title": "Article 1 (Purpose)",
+    "section1_content": "These terms and conditions aim to prescribe the rights, obligations, and responsibilities of the company and users in using the internet-related services provided by the website operated by the company.",
+    "section2_title": "Article 2 (Definition)",
+    "section2_content": "'User' refers to members and non-members who access the website and receive services provided by the company in accordance with these terms and conditions.",
+    "section3_title": "Article 3 (Clarification and Amendment of Terms)",
+    "section3_content": "The company posts the contents of these terms, company name, business address, representative's name, business registration number, and contact information on the initial service screen of the site so that users can know them.",
+    "section4_title": "Article 4 (Provision and Change of Service)",
+    "section4_content": "The company performs the work of providing product information and other tasks determined by the company.",
+    "section5_title": "Article 5 (Limitation of Liability)",
+    "section5_content": "The company is exempted from responsibility for providing services if it cannot provide services due to natural disasters or force majeure equivalent thereto.",
+    "section6_title": "Article 6 (Copyright Ownership and Restrictions on Use)",
+    "section6_content": "Copyright and other intellectual property rights for works created by the company belong to the company. Users shall not use the information obtained by using the service for profit by copying, transmitting, publishing, distributing, broadcasting, or other methods without the prior consent of the company, or allow a third party to use it."
   }
 }

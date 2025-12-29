@@ -9,16 +9,16 @@ const intlMiddleware = createMiddleware({
 });
 
 export async function middleware(request: NextRequest) {
-    // 1. Admin Authentication Check via Supabase
-    // updateSession handles token refresh and redirects for protected routes
-    return await updateSession(request);
+    const { pathname } = request.nextUrl;
 
-    // Note: We are currently delegating all middleware logic to Supabase 'updateSession'.
-    // If you need next-intl middleware to run AFTER auth check, you need to combine them.
-    // However, updateSession already returns a response.
-    // For now, let's prioritize Admin Auth. 
-    // If public pages need i18n middleware, we need to merge the logic in src/lib/supabase/middleware.ts
-    // or chain them here.
+    // 1. Admin Routes: Use Supabase Authentication
+    if (pathname.startsWith('/admin')) {
+        return await updateSession(request);
+    }
+
+    // 2. Public Routes: Use next-intl Middleware (i18n)
+    // This handles redirects (e.g., / -> /ko) and locale cookies
+    return intlMiddleware(request);
 }
 
 export const config = {
