@@ -72,7 +72,7 @@ export default async function HistoryPage() {
           </h2>
           <div className="w-16 h-1 bg-blue-500 rounded-full mb-6" />
           <p className="text-lg md:text-xl text-gray-200 font-light max-w-xl animate-in fade-in slide-in-from-bottom-6 duration-700 delay-100">
-            대창기계산업이 걸어온 혁신과 도전의 발자취를 소개합니다.
+            {tCompany('history_intro_desc')}
           </p>
         </div>
       </div>
