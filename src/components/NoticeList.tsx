@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { useState } from 'react';
 import { cn } from '@/lib/utils';
-import { ChevronLeft, ChevronRight, LayoutGrid, List } from 'lucide-react';
+import { ChevronLeft, ChevronRight, LayoutGrid, List, Pin } from 'lucide-react';
 import { NoticeCard } from '@/components/NoticeCard';
 import type { Notice } from '@/lib/actions/notices';
 import Image from 'next/image';
@@ -137,25 +137,43 @@ export default function NoticeList({ initialNotices, locale }: NoticeListProps) 
                                 href={`/${locale}/notices/${notice.id}`}
                                 locale={locale}
                                 imageUrl={notice.image_url}
+                                isPinned={notice.is_pinned}
                             />
                         ) : (
                             <Link key={notice.id} href={`/${locale}/notices/${notice.id}`} className="group block">
-                                <div className="bg-white border border-gray-100 rounded-lg p-4 flex flex-col md:flex-row items-start md:items-center gap-4 transition-all hover:shadow-md hover:border-gray-200">
-                                    <div className="shrink-0 w-24 h-16 relative bg-gray-100 rounded overflow-hidden">
+                                <div className={cn(
+                                    "border rounded-lg p-4 flex flex-col md:flex-row items-start md:items-center gap-4 transition-all hover:shadow-md",
+                                    notice.is_pinned
+                                        ? "bg-blue-50/50 border-blue-100 border-l-[3px] border-l-blue-500 dark:bg-blue-900/20 dark:border-blue-800"
+                                        : "bg-white border-gray-100 hover:border-gray-200 dark:bg-gray-900 dark:border-gray-800 dark:hover:border-gray-700"
+                                )}>
+                                    <div className="shrink-0 w-24 h-16 relative bg-gray-100 dark:bg-gray-800 rounded overflow-hidden">
                                         {notice.image_url ? (
                                             <Image src={notice.image_url} alt={title} fill className="object-cover" />
                                         ) : (
                                             <div className="flex items-center justify-center h-full text-xs text-gray-400">No Image</div>
                                         )}
+                                        {/* Optional: Small dot for pinned items in list view if needed, but background distinguishes it enough? Or keep badge? */}
+                                        {/* Let's keep it clean as requested. Maybe just icon in text area. */}
                                     </div>
                                     <div className="flex-grow min-w-0">
                                         <div className="flex items-center gap-2 mb-1">
-                                            <span className="text-xs font-semibold bg-blue-50 text-blue-700 px-2 py-0.5 rounded uppercase">
+                                            {notice.is_pinned && (
+                                                <Pin size={12} className="text-blue-600 fill-current" />
+                                            )}
+                                            <span className="text-xs text-gray-500 dark:text-gray-400">{date}</span>
+                                            <span className="text-gray-300 dark:text-gray-600">|</span>
+                                            <span className={cn(
+                                                "text-xs font-semibold px-1.5 py-0.5 rounded uppercase",
+                                                "bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-300"
+                                            )}>
                                                 {notice.category}
                                             </span>
-                                            <span className="text-xs text-gray-500">{date}</span>
                                         </div>
-                                        <h3 className="text-lg font-medium text-gray-900 group-hover:text-primary transition-colors truncate">
+                                        <h3 className={cn(
+                                            "text-lg font-medium transition-colors truncate",
+                                            notice.is_pinned ? "text-gray-900 dark:text-white" : "text-gray-700 dark:text-gray-200 group-hover:text-primary"
+                                        )}>
                                             {title}
                                         </h3>
                                     </div>

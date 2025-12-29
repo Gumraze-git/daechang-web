@@ -3,6 +3,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 import { Card, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Pin } from 'lucide-react';
 
 interface NoticeCardProps {
     title: string;
@@ -11,9 +12,10 @@ interface NoticeCardProps {
     category?: string;
     locale: string;
     imageUrl?: string | null;
+    isPinned?: boolean;
 }
 
-export function NoticeCard({ title, date, href, category, locale, imageUrl }: NoticeCardProps) {
+export function NoticeCard({ title, date, href, category, locale, imageUrl, isPinned }: NoticeCardProps) {
     const t = useTranslations('Index');
 
     return (
@@ -31,6 +33,11 @@ export function NoticeCard({ title, date, href, category, locale, imageUrl }: No
                     ) : (
                         <span>No Image</span>
                     )}
+                    {isPinned && (
+                        <div className="absolute top-3 right-3 bg-blue-600 text-white p-2 rounded-full shadow-md z-10 flex items-center justify-center">
+                            <Pin size={14} className="fill-current" />
+                        </div>
+                    )}
                 </div>
 
                 <CardHeader className="p-6">
@@ -39,7 +46,7 @@ export function NoticeCard({ title, date, href, category, locale, imageUrl }: No
                             {date}
                         </span>
                         {category && (
-                            <span className="text-xs font-semibold bg-blue-100 text-blue-800 px-2 py-1 rounded uppercase">
+                            <span className="text-xs font-semibold bg-gray-100 text-gray-600 px-2 py-1 rounded uppercase group-hover:bg-blue-50 group-hover:text-blue-600 transition-colors">
                                 {category}
                             </span>
                         )}
