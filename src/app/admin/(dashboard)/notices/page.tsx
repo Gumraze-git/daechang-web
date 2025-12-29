@@ -12,6 +12,7 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { Plus, Trash2, Pencil, Calendar } from 'lucide-react';
 import { getNotices, deleteNotice } from '@/lib/actions/notices';
+import NoticeDeleteButton from '@/components/admin/NoticeDeleteButton';
 
 export default async function NoticesPage() {
     const notices = await getNotices();
@@ -94,16 +95,7 @@ export default async function NoticesPage() {
                                                 </Button>
                                             </Link>
 
-                                            <form action={deleteNotice.bind(null, notice.id)}>
-                                                <Button
-                                                    variant="ghost"
-                                                    size="icon"
-                                                    className="h-8 w-8 text-gray-400 hover:text-red-600 hover:bg-red-50"
-                                                    type="submit"
-                                                >
-                                                    <Trash2 className="w-4 h-4" />
-                                                </Button>
-                                            </form>
+                                            <NoticeDeleteButton id={notice.id} />
                                         </div>
                                     </TableCell>
                                 </TableRow>
@@ -111,7 +103,7 @@ export default async function NoticesPage() {
                         )}
                     </TableBody>
                 </Table>
-            </Card>
-        </div>
+            </Card >
+        </div >
     );
 }

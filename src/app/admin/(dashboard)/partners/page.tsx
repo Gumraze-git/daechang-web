@@ -13,6 +13,7 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { Plus, Trash2, ExternalLink } from 'lucide-react';
 import { getPartners, deletePartner } from '@/lib/actions/partners';
+import PartnerDeleteButton from '@/components/admin/PartnerDeleteButton';
 
 export default async function PartnersPage() {
     const partners = await getPartners();
@@ -97,16 +98,7 @@ export default async function PartnersPage() {
                                         )}
                                     </TableCell>
                                     <TableCell className="text-right">
-                                        <form action={deletePartner.bind(null, partner.id)}>
-                                            <Button
-                                                variant="ghost"
-                                                size="icon"
-                                                className="h-8 w-8 text-gray-400 hover:text-red-600 hover:bg-red-50"
-                                                type="submit"
-                                            >
-                                                <Trash2 className="w-4 h-4" />
-                                            </Button>
-                                        </form>
+                                        <PartnerDeleteButton id={partner.id} />
                                     </TableCell>
                                 </TableRow>
                             ))

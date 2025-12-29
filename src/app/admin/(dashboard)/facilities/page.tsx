@@ -190,6 +190,7 @@ export default function FacilitiesPage() {
                 open={!!deleteId}
                 onOpenChange={(open) => !open && setDeleteId(null)}
                 onConfirm={confirmDelete}
+                className="!top-[50%] !translate-y-[-50%] !rounded-2xl !shadow-2xl"
             />
         </div>
     );
