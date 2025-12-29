@@ -4,6 +4,7 @@ import { useTranslations } from 'next-intl';
 import Image from 'next/image';
 import { Card, CardHeader, CardTitle } from '@/components/ui/card';
 import { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { ChevronRight, X } from 'lucide-react';
 import { Facility } from '@/lib/actions/facilities';
 
@@ -140,63 +141,68 @@ export default function FacilitiesClient({ facilities, locale }: FacilitiesClien
 
             {/* Custom Equipment Detail Modal */}
             {selectedEquipment && (
-                <div
-                    className="fixed inset-0 z-[100] flex items-start justify-center pt-40 p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200"
-                    onClick={() => setSelectedEquipment(null)}
-                >
-                    <div
-                        className="bg-white dark:bg-gray-900 rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto relative flex flex-col md:flex-row animate-in zoom-in-95 duration-200"
-                        onClick={(e) => e.stopPropagation()}
-                    >
-                        {/* Close Button */}
-                        <button
-                            className="absolute top-4 right-4 p-2 bg-gray-100 dark:bg-gray-800 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors z-10"
+                typeof document !== 'undefined' ? (
+                    createPortal(
+                        <div
+                            className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200"
                             onClick={() => setSelectedEquipment(null)}
                         >
-                            <X className="w-5 h-5 text-gray-600 dark:text-gray-400" />
-                        </button>
+                            <div
+                                className="bg-white dark:bg-gray-900 rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto relative flex flex-col md:flex-row animate-in zoom-in-95 duration-200"
+                                onClick={(e) => e.stopPropagation()}
+                            >
+                                {/* Close Button */}
+                                <button
+                                    className="absolute top-4 right-4 p-2 bg-gray-100 dark:bg-gray-800 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors z-10"
+                                    onClick={() => setSelectedEquipment(null)}
+                                >
+                                    <X className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+                                </button>
 
-                        {/* Image Section */}
-                        <div className="w-full md:w-1/2 bg-gray-50 dark:bg-gray-800 flex items-center justify-center p-8 min-h-[300px]">
-                            {selectedEquipment.image_url ? (
-                                <img
-                                    src={selectedEquipment.image_url}
-                                    alt={locale === 'ko' ? selectedEquipment.name_ko : selectedEquipment.name_en || ''}
-                                    className="max-w-full max-h-80 object-contain drop-shadow-md"
-                                />
-                            ) : (
-                                <span className="text-gray-400">No Image</span>
-                            )}
-                        </div>
-
-                        {/* Info Section */}
-                        <div className="w-full md:w-1/2 p-8 flex flex-col">
-                            <div className="mb-6">
-                                <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">
-                                    {locale === 'ko' ? selectedEquipment.name_ko : (selectedEquipment.name_en || selectedEquipment.name_ko)}
-                                </h3>
-                                <p className="text-gray-500 dark:text-gray-400 leading-relaxed">
-                                    {selectedEquipment.type}
-                                </p>
-                            </div>
-
-                            <div className="flex-grow space-y-8">
-                                <div>
-                                    <h4 className="text-sm font-semibold text-gray-900 dark:text-gray-200 uppercase tracking-widest mb-3 border-b border-gray-100 dark:border-gray-700 pb-2">
-                                        Specifications
-                                    </h4>
-                                    {selectedEquipment.specs ? (
-                                        <div className="text-gray-600 dark:text-gray-400 leading-relaxed text-sm whitespace-pre-wrap">
-                                            {selectedEquipment.specs}
-                                        </div>
+                                {/* Image Section */}
+                                <div className="w-full md:w-1/2 bg-gray-50 dark:bg-gray-800 flex items-center justify-center p-8 min-h-[300px]">
+                                    {selectedEquipment.image_url ? (
+                                        <img
+                                            src={selectedEquipment.image_url}
+                                            alt={locale === 'ko' ? selectedEquipment.name_ko : selectedEquipment.name_en || ''}
+                                            className="max-w-full max-h-80 object-contain drop-shadow-md"
+                                        />
                                     ) : (
-                                        <p className="text-gray-400 text-sm">스펙 정보가 없습니다.</p>
+                                        <span className="text-gray-400">No Image</span>
                                     )}
                                 </div>
+
+                                {/* Info Section */}
+                                <div className="w-full md:w-1/2 p-8 flex flex-col">
+                                    <div className="mb-6">
+                                        <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">
+                                            {locale === 'ko' ? selectedEquipment.name_ko : (selectedEquipment.name_en || selectedEquipment.name_ko)}
+                                        </h3>
+                                        <p className="text-gray-500 dark:text-gray-400 leading-relaxed">
+                                            {selectedEquipment.type}
+                                        </p>
+                                    </div>
+
+                                    <div className="flex-grow space-y-8">
+                                        <div>
+                                            <h4 className="text-sm font-semibold text-gray-900 dark:text-gray-200 uppercase tracking-widest mb-3 border-b border-gray-100 dark:border-gray-700 pb-2">
+                                                Specifications
+                                            </h4>
+                                            {selectedEquipment.specs ? (
+                                                <div className="text-gray-600 dark:text-gray-400 leading-relaxed text-sm whitespace-pre-wrap">
+                                                    {selectedEquipment.specs}
+                                                </div>
+                                            ) : (
+                                                <p className="text-gray-400 text-sm">스펙 정보가 없습니다.</p>
+                                            )}
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                    </div>
-                </div>
+                        </div>,
+                        document.body
+                    )
+                ) : null
             )}
         </div>
     );
