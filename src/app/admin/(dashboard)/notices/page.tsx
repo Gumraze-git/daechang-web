@@ -11,14 +11,17 @@ import {
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Plus, Trash2, Pencil, Calendar } from 'lucide-react';
-import { getNotices, deleteNotice } from '@/lib/actions/notices';
+import { getNotices } from '@/lib/actions/notices';
+import { getNoticeCategories } from '@/lib/actions/notice-categories';
 import NoticeDeleteButton from '@/components/admin/NoticeDeleteButton';
+import NoticeCategoriesManager from '@/components/admin/NoticeCategoriesManager';
 
 export default async function NoticesPage() {
     const notices = await getNotices();
+    const categories = await getNoticeCategories();
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-10">
             {/* Page Header */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
@@ -103,7 +106,12 @@ export default async function NoticesPage() {
                         )}
                     </TableBody>
                 </Table>
-            </Card >
-        </div >
+            </Card>
+
+            {/* Category Management */}
+            <div>
+                <NoticeCategoriesManager categories={categories} />
+            </div>
+        </div>
     );
 }

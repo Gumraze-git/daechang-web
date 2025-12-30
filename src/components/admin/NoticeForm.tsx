@@ -18,15 +18,17 @@ import { Switch } from '@/components/ui/switch';
 import { Calendar, ChevronLeft, Save, Upload, Trash2 } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { createNotice, updateNotice, type Notice } from '@/lib/actions/notices';
+import { type NoticeCategory } from '@/lib/actions/notice-categories';
 import Image from 'next/image';
 import DeleteAlertDialog from '@/components/admin/DeleteAlertDialog';
 
 interface NoticeFormProps {
     initialData?: Notice;
+    categories?: NoticeCategory[];
     isEdit?: boolean;
 }
 
-export default function NoticeForm({ initialData, isEdit = false }: NoticeFormProps) {
+export default function NoticeForm({ initialData, categories = [], isEdit = false }: NoticeFormProps) {
     const router = useRouter();
     const [isLoading, setIsLoading] = useState(false);
     const [showSuccessDialog, setShowSuccessDialog] = useState(false);
@@ -193,15 +195,23 @@ export default function NoticeForm({ initialData, isEdit = false }: NoticeFormPr
 
                                 <div className="space-y-2">
                                     <Label>카테고리</Label>
-                                    <Select name="category" defaultValue={initialData?.category || 'news'}>
+                                    <Select name="category" defaultValue={initialData?.category || (categories[0]?.name_ko || 'news')}>
                                         <SelectTrigger>
                                             <SelectValue placeholder="카테고리 선택" />
                                         </SelectTrigger>
                                         <SelectContent className="bg-white dark:bg-gray-800">
-                                            <SelectItem value="news">뉴스</SelectItem>
-                                            <SelectItem value="exhibition">전시회</SelectItem>
-                                            <SelectItem value="maintenance">유지보수</SelectItem>
-                                            <SelectItem value="other">기타</SelectItem>
+                                            {categories.length > 0 ? (
+                                                categories.map((cat) => (
+                                                    <SelectItem key={cat.id} value={cat.name_ko}>
+                                                        {cat.name_ko}
+                                                    </SelectItem>
+                                                ))
+                                            ) : (
+                                                <>
+                                                    <SelectItem value="news">뉴스</SelectItem>
+                                                    <SelectItem value="notice">공지사항</SelectItem>
+                                                </>
+                                            )}
                                         </SelectContent>
                                     </Select>
                                 </div>
