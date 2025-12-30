@@ -36,6 +36,11 @@ export type CompanySettings = {
     ceo_message_title_en: string;
     ceo_message_content_ko: string;
     ceo_message_content_en: string;
+    factory_images?: Array<{
+        id: string;
+        url: string;
+        sort_order: number;
+    }>;
     updated_at: string;
 };
 
@@ -47,11 +52,75 @@ export async function getCompanySettings() {
         .single();
 
     if (error) {
-        console.error('Error fetching company settings:', JSON.stringify(error, null, 2));
+        // If no row exists, we might want to return null or a default object
+        // For now, let's just log and return null, handling it in UI
+        console.warn('Error fetching company settings (might be empty):', error.message);
         return null;
     }
 
     return data as CompanySettings;
+}
+
+export async function updateFactoryImages(formData: FormData) {
+    const supabase = await createClient();
+    const imagesJson = formData.get('factory_images') as string;
+
+    if (!imagesJson) {
+        throw new Error('Images data is missing');
+    }
+
+    const factoryImages = JSON.parse(imagesJson);
+
+    // Get existing settings to find ID
+    const { data: existing } = await supabase.from('company_settings').select('id').limit(1).single();
+
+    if (existing) {
+        const { error } = await supabase
+            .from('company_settings')
+            .update({
+                factory_images: factoryImages,
+                updated_at: new Date().toISOString()
+            })
+            .eq('id', existing.id);
+
+        if (error) throw new Error('Failed to update factory images: ' + error.message);
+    } else {
+        // Create new if not exists (should rarely happen for this specific action)
+        const { error } = await supabase
+            .from('company_settings')
+            .insert({
+                factory_images: factoryImages
+            });
+
+        if (error) throw new Error('Failed to create company settings with images: ' + error.message);
+    }
+
+    revalidatePath('/facilities'); // Public page (all locales)
+    revalidatePath('/admin/facilities'); // Admin page
+    return { success: true };
+}
+
+export async function uploadFactoryImage(formData: FormData) {
+    const supabase = await createClient();
+    const file = formData.get('file') as File;
+
+    if (!file) throw new Error('No file uploaded');
+
+    const filename = `overview/${Date.now()}-${file.name.replace(/[^a-zA-Z0-9.-]/g, '')}`;
+    const { error } = await supabase.storage
+        .from('facilities')
+        .upload(filename, file);
+
+    if (error) {
+        console.error('Upload error:', error);
+        throw new Error('Image upload failed');
+    }
+
+    const { data: { publicUrl } } = supabase.storage
+        .from('facilities')
+        .getPublicUrl(filename);
+
+    return publicUrl;
 }
 
 export async function updateCompanySettings(formData: FormData) {

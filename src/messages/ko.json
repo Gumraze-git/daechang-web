@@ -163,7 +163,12 @@
     "stat_area": "공장 면적",
     "stat_area_value": "3,300 m²",
     "view_details": "자세히 보기",
-    "close": "닫기"
+    "close": "닫기",
+    "specs_model": "모델명",
+    "specs_feature": "분류",
+    "specs_item": "항목",
+    "specs_unit": "단위",
+    "specs_value": "값"
   },
   "SupportPage": {
     "support_title": "고객 지원",

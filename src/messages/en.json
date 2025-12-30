@@ -167,7 +167,12 @@
     "capacity": "Capacity",
     "automation_level": "Automation Level",
     "view_details": "View Details",
-    "close": "Close"
+    "close": "Close",
+    "specs_model": "Model",
+    "specs_feature": "Feature",
+    "specs_item": "Item",
+    "specs_unit": "Unit",
+    "specs_value": "Value"
   },
   "SupportPage": {
     "support_title": "Customer Support",

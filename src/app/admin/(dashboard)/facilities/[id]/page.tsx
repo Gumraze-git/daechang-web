@@ -1,31 +1,13 @@
-'use client';
-
-import { use, useEffect, useState } from 'react';
 import FacilityForm from '@/components/admin/FacilityForm';
+import { getFacility } from '@/lib/actions/facilities';
+import { notFound } from 'next/navigation';
 
-// Mock data fetcher
-const getFacility = async (id: string) => {
-    // Simulate API delay
-    await new Promise(resolve => setTimeout(resolve, 500));
-    return {
-        id,
-        name: 'Hanger Shot Blast Machine',
-        type_code: 'welding',
-        specs: 'Capacity: 500kg/h',
-        status: 'Active',
-    };
-};
-
-export default function EditFacilityPage({ params }: { params: Promise<{ id: string }> }) {
-    const { id } = use(params);
-    const [facility, setFacility] = useState<any>(null);
-
-    useEffect(() => {
-        getFacility(id).then(setFacility);
-    }, [id]);
+export default async function EditFacilityPage({ params }: { params: Promise<{ id: string }> }) {
+    const { id } = await params;
+    const facility = await getFacility(id);
 
     if (!facility) {
-        return <div className="p-8 text-center text-gray-500">Loading...</div>;
+        notFound();
     }
 
     return <FacilityForm initialData={facility} isEditMode={true} />;
