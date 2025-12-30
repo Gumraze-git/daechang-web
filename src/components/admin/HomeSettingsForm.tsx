@@ -364,7 +364,7 @@ export default function HomeSettingsForm({ initialSettings, products }: HomeSett
                         </CardHeader>
                         <CardContent>
                             {featuredProducts.length > 0 ? (
-                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                                     {featuredProducts.map((product) => (
                                         <div key={product.id} className="relative flex h-32 bg-white rounded-lg border border-gray-200 overflow-hidden group/product">
                                             {/* Image Section - Full Height */}
