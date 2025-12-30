@@ -38,6 +38,10 @@ export async function Footer() {
                 {tFooter('address_lot')}
               </p>
               <p>
+                <span className="font-medium text-gray-400 mr-2">{tFooter('label_phone')}:</span>
+                {tFooter('phone')}
+              </p>
+              <p>
                 <span className="font-medium text-gray-400 mr-2">{tFooter('label_zip')}:</span>
                 {tFooter('zip_code')}
               </p>

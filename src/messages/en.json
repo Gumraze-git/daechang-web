@@ -2,7 +2,7 @@
   "Index": {
     "title": "Daechang Machinery Industry Co., Ltd.",
     "welcome": "Welcome to Daechang Machinery Industry Co., Ltd.",
-    "description": "Leading the future of machinery with innovative technology and unwavering quality.",
+    "description": "Contributing to the development of the machinery industry through continuous technological innovation and customer satisfaction.",
     "hero_headline": "Innovating the Future of Industrial Machinery",
     "hero_subheadline": "Your trusted partner for Blow Molding Machines and Extrusion Lines.",
     "explore_products": "Explore Products",
@@ -230,7 +230,9 @@
     "contact_info": "Contact Info",
     "quick_links": "Quick Links",
     "privacy_policy": "Privacy Policy",
-    "terms_of_service": "Terms of Service"
+    "terms_of_service": "Terms of Service",
+    "phone": "031-357-7496",
+    "label_phone": "Tel"
   },
   "NoticeDetail": {
     "back_to_list": "Back to List",

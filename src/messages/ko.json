@@ -4,7 +4,7 @@
     "welcome": "대창기계산업(주)에 오신 것을 환영합니다.",
     "history_intro": "대창기계산업(주)의 혁신과 성장의 발자취입니다.",
     "history_intro_desc": "대창기계산업이 걸어온 도전과 신뢰의 발자취를 소개합니다.",
-    "description": "혁신적인 기술과 변함없는 품질로 기계 산업의 미래를 선도합니다.",
+    "description": "끊임없는 기술 혁신과 고객 만족을 통해 기계 산업의 발전에 기여합니다.",
     "hero_headline": "산업 기계의 미래를 혁신하다",
     "hero_subheadline": "블로우 몰딩기 및 압출 라인의 신뢰할 수 있는 파트너.",
     "explore_products": "제품 둘러보기",
@@ -227,7 +227,9 @@
     "contact_info": "연락처",
     "quick_links": "바로가기",
     "privacy_policy": "개인정보처리방침",
-    "terms_of_service": "이용약관"
+    "terms_of_service": "이용약관",
+    "phone": "031-357-7496",
+    "label_phone": "전화"
   },
   "NoticeDetail": {
     "back_to_list": "목록으로 돌아가기",
