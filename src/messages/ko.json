@@ -2,8 +2,6 @@
   "Index": {
     "title": "대창기계산업(주)",
     "welcome": "대창기계산업(주)에 오신 것을 환영합니다.",
-    "history_intro": "대창기계산업(주)의 혁신과 성장의 발자취입니다.",
-    "history_intro_desc": "대창기계산업이 걸어온 도전과 신뢰의 발자취를 소개합니다.",
     "description": "끊임없는 기술 혁신과 고객 만족을 통해 기계 산업의 발전에 기여합니다.",
     "hero_headline": "산업 기계의 미래를 혁신하다",
     "hero_subheadline": "블로우 몰딩기 및 압출 라인의 신뢰할 수 있는 파트너.",
@@ -25,7 +23,8 @@
     "product_reducer_title": "감속기",
     "product_reducer_desc": "중장비 및 산업 기계를 위한 고정밀 선회 감속 어셈블리 솔루션.",
     "product_pto_title": "동력 인출 장치",
-    "product_pto_desc": "다목적 산업 장비를 위한 고효율 동력 인출 장치."
+    "product_pto_desc": "다목적 산업 장비를 위한 고효율 동력 인출 장치.",
+    "no_notices": "등록된 공지사항이 없습니다."
   },
   "Common": {
     "home": "홈",
@@ -100,7 +99,9 @@
     "history_2004_05": "콘크리트 펌프카용 P.T.O 개발 (KCP중공업 납품)",
     "history_2004_03_1": "대창기계산업(주) 설립",
     "history_2004_03_2": "이태리 수입무역",
-    "history_2004_03_3": "Ring Gear 수입무역"
+    "history_intro": "대창기계산업(주)의 혁신과 성장의 발자취입니다.",
+    "history_intro_desc": "대창기계산업이 걸어온 도전과 신뢰의 발자취를 소개합니다.",
+    "Ring Gear 수입무역": "Ring Gear 수입무역"
   },
   "ProductPage": {
     "products": "제품 소개",
