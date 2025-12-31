@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -13,59 +13,75 @@ import {
     TableRow,
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
 import { Card } from '@/components/ui/card';
-import { Plus, MoreHorizontal, Search, Users, Trash2, Mail, Pencil, UserPlus } from 'lucide-react';
+import { Search, Trash2, Pencil, UserPlus } from 'lucide-react';
 import DeleteAlertDialog from '@/components/admin/DeleteAlertDialog';
-
-// Mock Data for Admins
-const MOCK_ADMINS = [
-    {
-        id: '1',
-        name: '최고 관리자',
-        email: 'admin@daechang.com',
-        role: '최고 관리자',
-        status: 'Active',
-        lastLogin: '2024-03-20 14:30',
-    },
-    {
-        id: '2',
-        name: '김철수',
-        email: 'kimcs@daechang.com',
-        role: '관리자',
-        status: 'Active',
-        lastLogin: '2024-03-19 09:15',
-    },
-    {
-        id: '3',
-        name: '이영희',
-        email: 'leeyh@daechang.com',
-        role: '편집자',
-        status: 'Inactive',
-        lastLogin: '2024-02-28 17:45',
-    }
-];
+import { getAdmins, deleteAdminUser } from '@/lib/actions/admin-auth';
+import { toast } from '@/components/ui/use-toast';
 
 export default function AdminsPage() {
     const [searchTerm, setSearchTerm] = useState('');
-
+    const [admins, setAdmins] = useState<any[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
     const [deleteId, setDeleteId] = useState<string | null>(null);
+
+    const fetchAdmins = async () => {
+        setIsLoading(true);
+        try {
+            const data = await getAdmins();
+            setAdmins(data || []);
+        } catch (error) {
+            console.error('Failed to fetch admins:', error);
+            toast({
+                title: "Error",
+                description: "관리자 목록을 불러오는데 실패했습니다.",
+                variant: "destructive",
+            });
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        fetchAdmins();
+    }, []);
 
     const handleDelete = (id: string) => {
         setDeleteId(id);
     };
 
-    const confirmDelete = () => {
-        alert('관리자 계정이 삭제되었습니다. (Mock)');
+    const confirmDelete = async () => {
+        if (!deleteId) return;
+
+        try {
+            const result = await deleteAdminUser(deleteId);
+            if (result.success) {
+                toast({
+                    title: "Success",
+                    description: "관리자 계정이 삭제되었습니다.",
+                });
+                fetchAdmins(); // Refresh list
+            } else {
+                toast({
+                    title: "Error",
+                    description: result.error || "삭제에 실패했습니다.",
+                    variant: "destructive",
+                });
+            }
+        } catch (error) {
+            toast({
+                title: "Error",
+                description: "삭제 중 오류가 발생했습니다.",
+                variant: "destructive",
+            });
+        }
         setDeleteId(null);
     };
+
+    const filteredAdmins = admins.filter(admin =>
+        admin.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        admin.email?.toLowerCase().includes(searchTerm.toLowerCase())
+    );
 
     return (
         <div className="space-y-6">
@@ -89,6 +105,8 @@ export default function AdminsPage() {
                     <Input
                         placeholder="이름 또는 이메일 검색..."
                         className="pl-9 bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-700"
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
                     />
                 </div>
             </Card>
@@ -107,46 +125,60 @@ export default function AdminsPage() {
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        {MOCK_ADMINS.map((admin) => (
-                            <TableRow key={admin.id} className="group">
-                                <TableCell className="font-medium text-gray-900 dark:text-gray-100">
-                                    {admin.name}
-                                </TableCell>
-                                <TableCell className="text-gray-500">
-                                    {admin.email}
-                                </TableCell>
-                                <TableCell>
-                                    <Badge variant="secondary" className="font-normal text-gray-500 bg-gray-100 dark:bg-gray-800 dark:text-gray-400 border border-gray-200 dark:border-gray-700">
-                                        {admin.role}
-                                    </Badge>
-                                </TableCell>
-                                <TableCell>
-                                    <Badge
-                                        className={`font-medium border shadow-none ${admin.status === 'Active'
-                                            ? 'bg-green-50 text-green-700 border-green-200 hover:bg-green-100 dark:bg-green-900/30 dark:text-green-400 dark:border-green-800'
-                                            : 'bg-gray-50 text-gray-600 border-gray-200 hover:bg-gray-100 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-700'
-                                            }`}
-                                    >
-                                        {admin.status === 'Active' ? '활성' : '비활성'}
-                                    </Badge>
-                                </TableCell>
-                                <TableCell className="hidden md:table-cell text-gray-500">
-                                    {admin.lastLogin}
-                                </TableCell>
-                                <TableCell>
-                                    <div className="flex items-center justify-end gap-2">
-                                        <Link href={`/admin/admins/${admin.id}`}>
-                                            <Button variant="ghost" size="icon" className="h-8 w-8 text-gray-400 hover:text-blue-600 hover:bg-blue-50">
-                                                <Pencil className="w-4 h-4" />
-                                            </Button>
-                                        </Link>
-                                        <Button variant="ghost" size="icon" className="h-8 w-8 text-gray-400 hover:text-red-600 hover:bg-red-50" onClick={() => handleDelete(admin.id)}>
-                                            <Trash2 className="w-4 h-4" />
-                                        </Button>
-                                    </div>
+                        {isLoading ? (
+                            <TableRow>
+                                <TableCell colSpan={6} className="h-24 text-center">
+                                    Loading...
                                 </TableCell>
                             </TableRow>
-                        ))}
+                        ) : filteredAdmins.length === 0 ? (
+                            <TableRow>
+                                <TableCell colSpan={6} className="h-24 text-center text-gray-500">
+                                    등록된 관리자가 없습니다.
+                                </TableCell>
+                            </TableRow>
+                        ) : (
+                            filteredAdmins.map((admin) => (
+                                <TableRow key={admin.id} className="group">
+                                    <TableCell className="font-medium text-gray-900 dark:text-gray-100">
+                                        {admin.name}
+                                    </TableCell>
+                                    <TableCell className="text-gray-500">
+                                        {admin.email}
+                                    </TableCell>
+                                    <TableCell>
+                                        <Badge variant="secondary" className="font-normal text-gray-500 bg-gray-100 dark:bg-gray-800 dark:text-gray-400 border border-gray-200 dark:border-gray-700">
+                                            {admin.role}
+                                        </Badge>
+                                    </TableCell>
+                                    <TableCell>
+                                        <Badge
+                                            className={`font-medium border shadow-none ${!admin.must_change_password
+                                                ? 'bg-green-50 text-green-700 border-green-200 hover:bg-green-100 dark:bg-green-900/30 dark:text-green-400 dark:border-green-800'
+                                                : 'bg-yellow-50 text-yellow-600 border-yellow-200 hover:bg-yellow-100 dark:bg-yellow-900/30 dark:text-yellow-400 dark:border-yellow-800'
+                                                }`}
+                                        >
+                                            {!admin.must_change_password ? '정상' : '비밀번호 변경 필요'}
+                                        </Badge>
+                                    </TableCell>
+                                    <TableCell className="hidden md:table-cell text-gray-500">
+                                        {new Date(admin.created_at).toLocaleDateString()}
+                                    </TableCell>
+                                    <TableCell>
+                                        <div className="flex items-center justify-end gap-2">
+                                            <Link href={`/admin/admins/${admin.id}`}>
+                                                <Button variant="ghost" size="icon" className="h-8 w-8 text-gray-400 hover:text-blue-600 hover:bg-blue-50">
+                                                    <Pencil className="w-4 h-4" />
+                                                </Button>
+                                            </Link>
+                                            <Button variant="ghost" size="icon" className="h-8 w-8 text-gray-400 hover:text-red-600 hover:bg-red-50" onClick={() => handleDelete(admin.id)}>
+                                                <Trash2 className="w-4 h-4" />
+                                            </Button>
+                                        </div>
+                                    </TableCell>
+                                </TableRow>
+                            ))
+                        )}
                     </TableBody>
                 </Table>
             </Card>
