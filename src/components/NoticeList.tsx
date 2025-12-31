@@ -136,7 +136,7 @@ export default function NoticeList({ initialNotices, locale }: NoticeListProps) 
                                 category={notice.category} // Pass raw category, or map if needed
                                 href={`/${locale}/notices/${notice.id}`}
                                 locale={locale}
-                                imageUrl={notice.image_url}
+                                imageUrl={notice.image_urls?.[0] || notice.image_url}
                                 isPinned={notice.is_pinned}
                             />
                         ) : (
@@ -148,8 +148,8 @@ export default function NoticeList({ initialNotices, locale }: NoticeListProps) 
                                         : "bg-white border-gray-100 hover:border-gray-200 dark:bg-gray-900 dark:border-gray-800 dark:hover:border-gray-700"
                                 )}>
                                     <div className="shrink-0 w-24 h-16 relative bg-gray-100 dark:bg-gray-800 rounded overflow-hidden">
-                                        {notice.image_url ? (
-                                            <Image src={notice.image_url} alt={title} fill className="object-cover" />
+                                        {(notice.image_urls?.[0] || notice.image_url) ? (
+                                            <Image src={notice.image_urls?.[0] || notice.image_url!} alt={title} fill className="object-cover" />
                                         ) : (
                                             <div className="flex items-center justify-center h-full text-xs text-gray-400">No Image</div>
                                         )}

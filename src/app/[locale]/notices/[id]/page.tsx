@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { ArrowLeft, Calendar, Tag } from 'lucide-react';
 import { notFound } from 'next/navigation';
 import { getNotice } from '@/lib/actions/notices';
-import Image from 'next/image';
+import { NoticeImageCarousel } from '@/components/NoticeImageCarousel';
 
 export default async function NoticeDetailPage({ params }: { params: Promise<{ id: string; locale: string }> }) {
   const { id, locale } = await params;
@@ -44,17 +44,16 @@ export default async function NoticeDetailPage({ params }: { params: Promise<{ i
         </div>
       </div>
 
-      {/* Featured Image - Only show if image_url exists */}
-      {notice.image_url && (
-        <div className="w-full relative aspect-video bg-gray-100 rounded-xl mb-12 overflow-hidden">
-          <Image
-            src={notice.image_url}
-            alt={title || 'Notice Image'}
-            fill
-            className="object-cover"
-          />
-        </div>
-      )}
+      {/* Featured Image - Only show if image available */}
+      {/* Featured Images */}
+      <NoticeImageCarousel
+        images={
+          notice.image_urls && notice.image_urls.length > 0
+            ? notice.image_urls
+            : (notice.image_url ? [notice.image_url] : [])
+        }
+        altText={title || 'Notice Image'}
+      />
 
       {/* Content Section */}
       <div

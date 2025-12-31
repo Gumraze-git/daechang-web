@@ -80,7 +80,7 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
                     href={`/${locale}/notices/${notice.id}`}
                     locale={locale}
                     category={notice.category}
-                    imageUrl={notice.image_url}
+                    imageUrl={notice.image_urls?.[0] || notice.image_url}
                   />
                 );
               })

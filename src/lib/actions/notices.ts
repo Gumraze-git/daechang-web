@@ -15,6 +15,7 @@ export type Notice = {
     is_pinned: boolean;
     published_at: string;
     image_url?: string | null;
+    image_urls?: string[] | null;
     views: number;
     created_at: string;
     updated_at: string;
@@ -64,25 +65,30 @@ export async function createNotice(formData: FormData) {
     const published_at = formData.get('published_at') as string;
     const is_pinned = formData.get('is_pinned') === 'on';
 
-    // Image Upload
-    const imageFile = formData.get('image') as File;
-    let image_url = null;
+    // Image Upload (Multiple)
+    const image_urls: string[] = [];
 
-    if (imageFile && imageFile.size > 0) {
-        const filename = `${Date.now()}-${imageFile.name.replace(/[^a-zA-Z0-9.-]/g, '')}`;
-        const { error } = await supabase.storage
-            .from('notices')
-            .upload(filename, imageFile);
-
-        if (!error) {
-            const { data: { publicUrl } } = supabase.storage
+    for (let i = 0; i < 3; i++) {
+        const imageFile = formData.get(`image_${i}`) as File;
+        if (imageFile && imageFile.size > 0) {
+            const filename = `${Date.now()}-${i}-${imageFile.name.replace(/[^a-zA-Z0-9.-]/g, '')}`;
+            const { error } = await supabase.storage
                 .from('notices')
-                .getPublicUrl(filename);
-            image_url = publicUrl;
-        } else {
-            console.error('Notice image upload error:', error);
+                .upload(filename, imageFile);
+
+            if (!error) {
+                const { data: { publicUrl } } = supabase.storage
+                    .from('notices')
+                    .getPublicUrl(filename);
+                image_urls.push(publicUrl);
+            } else {
+                console.error(`Notice image_${i} upload error:`, error);
+            }
         }
     }
+
+    // Legacy support: set image_url to the first image if exists
+    const image_url = image_urls.length > 0 ? image_urls[0] : null;
 
     const { error } = await supabase.from('notices').insert({
         title_ko,
@@ -94,6 +100,7 @@ export async function createNotice(formData: FormData) {
         published_at: published_at || new Date().toISOString(),
         is_pinned,
         image_url,
+        image_urls,
     });
 
     if (error) {
@@ -129,9 +136,40 @@ export async function updateNotice(id: string, formData: FormData) {
     const published_at = formData.get('published_at') as string;
     const is_pinned = formData.get('is_pinned') === 'on';
 
-    // Image Upload (only if new image is provided)
-    const imageFile = formData.get('image') as File;
-    let image_url = undefined; // Undefined means "don't update" in Supabase update call if we omit it, but here we need to be explicit.
+    // Image Upload (Multiple) handling
+    // We expect the form to send for each slot 0..2:
+    // - `image_${i}`: File (if new upload)
+    // - `existing_image_url_${i}`: String (if keeping existing)
+
+    const final_image_urls: string[] = [];
+
+    for (let i = 0; i < 3; i++) {
+        const newFile = formData.get(`image_${i}`) as File;
+        const existingUrl = formData.get(`existing_image_url_${i}`) as string;
+
+        if (newFile && newFile.size > 0) {
+            // Case 1: New file uploaded
+            const filename = `${Date.now()}-${i}-${newFile.name.replace(/[^a-zA-Z0-9.-]/g, '')}`;
+            const { error } = await supabase.storage
+                .from('notices')
+                .upload(filename, newFile);
+
+            if (!error) {
+                const { data: { publicUrl } } = supabase.storage
+                    .from('notices')
+                    .getPublicUrl(filename);
+                final_image_urls.push(publicUrl);
+            } else {
+                console.error(`Notice update image_${i} upload error:`, error);
+                // If upload fails, try to fallback to existing URL if present? 
+                // Or just skip? Skipping is safer than silent fail-fallback.
+            }
+        } else if (existingUrl && typeof existingUrl === 'string' && existingUrl.length > 0) {
+            // Case 2: No new file, but keeping existing
+            final_image_urls.push(existingUrl);
+        }
+        // Case 3: Neither (Slot cleared or empty) -> do nothing.
+    }
 
     // Construct update object
     const updateData: any = {
@@ -143,37 +181,10 @@ export async function updateNotice(id: string, formData: FormData) {
         status,
         published_at: published_at || new Date().toISOString(),
         is_pinned,
+        image_urls: final_image_urls,
+        image_url: final_image_urls.length > 0 ? final_image_urls[0] : null, // Legacy sync
         updated_at: new Date().toISOString(),
     };
-
-    if (imageFile && imageFile.size > 0) {
-        // New image uploaded
-        const filename = `${Date.now()}-${imageFile.name.replace(/[^a-zA-Z0-9.-]/g, '')}`;
-        const { error } = await supabase.storage
-            .from('notices')
-            .upload(filename, imageFile);
-
-        if (!error) {
-            const { data: { publicUrl } } = supabase.storage
-                .from('notices')
-                .getPublicUrl(filename);
-            updateData.image_url = publicUrl;
-        } else {
-            console.error('Notice image upload error:', error);
-            // Optionally throw error or continue without updating image
-        }
-    } else {
-        // If user deleted the image (handled by a hidden input or just implicit?)
-        // In this simple form, if no new file, we assume keep existing.
-        // If we want to support deleting image, we need a flag.
-        // For now, let's assume if no file, we keep existing. 
-        // NoticeForm handles previewUrl. If previewUrl is null but imageFile is empty, it means user removed it?
-        // Let's check NoticeForm logic later. For now, standard behavior: no file = no change.
-    }
-
-    // However, if we want to support "remove image", we need to know.
-    // The current form doesn't seem to pass "image_deleted" flag. 
-    // Let's implement basic update first.
 
     const { error } = await supabase
         .from('notices')

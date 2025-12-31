@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
@@ -32,17 +32,44 @@ interface NoticeFormProps {
 export default function NoticeForm({ initialData, categories = [], isEdit = false }: NoticeFormProps) {
     const router = useRouter();
     const [isLoading, setIsLoading] = useState(false);
-    const [previewUrl, setPreviewUrl] = useState<string | null>(initialData?.image_url || null);
+    const fileInputRefs = useRef<(HTMLInputElement | null)[]>([]);
+
+    // Initialize previews
+    const initialUrls = initialData?.image_urls && initialData.image_urls.length > 0
+        ? initialData.image_urls
+        : (initialData?.image_url ? [initialData.image_url] : []);
+
+    const [previews, setPreviews] = useState<(string | null)[]>([
+        initialUrls[0] || null,
+        initialUrls[1] || null,
+        initialUrls[2] || null
+    ]);
 
     // Tiptap Editor States
     const [bodyKo, setBodyKo] = useState(initialData?.body_ko || '');
     const [bodyEn, setBodyEn] = useState(initialData?.body_en || '');
 
-    const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
         const file = e.target.files?.[0];
         if (file) {
             const url = URL.createObjectURL(file);
-            setPreviewUrl(url);
+            setPreviews(prev => {
+                const newPreviews = [...prev];
+                newPreviews[index] = url;
+                return newPreviews;
+            });
+        }
+    };
+
+    const removeImage = (index: number) => {
+        setPreviews(prev => {
+            const newPreviews = [...prev];
+            newPreviews[index] = null;
+            return newPreviews;
+        });
+        // Clear file input value
+        if (fileInputRefs.current[index]) {
+            fileInputRefs.current[index]!.value = '';
         }
     };
 
@@ -99,36 +126,53 @@ export default function NoticeForm({ initialData, categories = [], isEdit = fals
                     <div className="lg:col-span-2 space-y-8">
                         <Card>
                             <CardContent className="px-6 pt-2 pb-6 space-y-8">
-                                {/* Image Upload */}
+                                {/* Image Upload (Multiple) */}
                                 <div className="space-y-4 pt-4">
-                                    <h3 className="font-semibold text-lg">대표 이미지</h3>
-                                    <div className="space-y-4">
-                                        <Label htmlFor="image-upload" className="block w-full">
-                                            <div className="relative w-full h-[200px] border-2 border-dashed border-gray-200 rounded-lg flex flex-col items-center justify-center text-gray-500 hover:bg-gray-50 hover:border-gray-300 transition-colors cursor-pointer group overflow-hidden bg-gray-50">
-                                                {previewUrl ? (
-                                                    <Image src={previewUrl} alt="Preview" fill className="object-cover" />
-                                                ) : (
-                                                    <>
-                                                        <Upload className="w-8 h-8 mb-2 group-hover:text-blue-600 transition-colors" />
-                                                        <span className="text-sm font-medium">이미지 업로드</span>
-                                                        <span className="text-xs text-gray-400 mt-1">권장 사이즈: 1200x630 (OG Image)</span>
-                                                    </>
+                                    <div className="flex items-center justify-between">
+                                        <h3 className="font-semibold text-lg">대표 이미지 (최대 3장)</h3>
+                                        <span className="text-sm text-gray-500">순서대로 표시됩니다.</span>
+                                    </div>
+
+                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                        {[0, 1, 2].map((index) => (
+                                            <div key={index} className="space-y-2">
+                                                <Label htmlFor={`image-upload-${index}`} className="block w-full">
+                                                    <div className="relative w-full aspect-[4/3] border-2 border-dashed border-gray-200 rounded-lg flex flex-col items-center justify-center text-gray-500 hover:bg-gray-50 hover:border-gray-300 transition-colors cursor-pointer group overflow-hidden bg-gray-50">
+                                                        {previews[index] ? (
+                                                            <Image src={previews[index]!} alt={`Preview ${index + 1}`} fill className="object-cover" />
+                                                        ) : (
+                                                            <>
+                                                                <Upload className="w-8 h-8 mb-2 group-hover:text-blue-600 transition-colors" />
+                                                                <span className="text-sm font-medium">이미지 {index + 1}</span>
+                                                            </>
+                                                        )}
+                                                    </div>
+                                                    <Input
+                                                        id={`image-upload-${index}`}
+                                                        name={`image_${index}`}
+                                                        type="file"
+                                                        accept="image/*"
+                                                        className="hidden"
+                                                        onChange={(e) => handleImageChange(e, index)}
+                                                        ref={el => { fileInputRefs.current[index] = el; }}
+                                                    />
+                                                    {previews[index] && !previews[index]!.startsWith('blob:') && (
+                                                        <input type="hidden" name={`existing_image_url_${index}`} value={previews[index]!} />
+                                                    )}
+                                                </Label>
+                                                {previews[index] && (
+                                                    <Button
+                                                        variant="outline"
+                                                        size="sm"
+                                                        type="button"
+                                                        className="text-red-500 w-full"
+                                                        onClick={() => removeImage(index)}
+                                                    >
+                                                        <Trash2 className="w-4 h-4 mr-2" /> 삭제
+                                                    </Button>
                                                 )}
                                             </div>
-                                            <Input
-                                                id="image-upload"
-                                                name="image"
-                                                type="file"
-                                                accept="image/*"
-                                                className="hidden"
-                                                onChange={handleImageChange}
-                                            />
-                                        </Label>
-                                        {previewUrl && (
-                                            <Button variant="outline" size="sm" type="button" className="text-red-500 w-full" onClick={() => setPreviewUrl(null)}>
-                                                <Trash2 className="w-4 h-4 mr-2" /> 이미지 삭제
-                                            </Button>
-                                        )}
+                                        ))}
                                     </div>
                                 </div>
 
