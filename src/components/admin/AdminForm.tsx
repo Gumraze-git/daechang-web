@@ -15,6 +15,8 @@ import {
 } from '@/components/ui/select';
 import { ChevronLeft, Save, UserPlus } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { createAdminUser, updateAdminUser } from '@/lib/actions/admin-auth';
+import { toast } from '@/components/ui/use-toast';
 
 interface AdminFormProps {
     initialData?: any;
@@ -24,18 +26,70 @@ interface AdminFormProps {
 export default function AdminForm({ initialData, isEditMode = false }: AdminFormProps) {
     const router = useRouter();
     const [isLoading, setIsLoading] = useState(false);
+    const [formData, setFormData] = useState({
+        name: initialData?.name || '',
+        email: initialData?.email || '',
+        role: initialData?.role || 'admin',
+    });
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsLoading(true);
 
-        // Simulate API call
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        try {
+            if (isEditMode) {
+                const result = await updateAdminUser(initialData.id, {
+                    name: formData.name,
+                    role: formData.role
+                });
 
-        alert(isEditMode ? '관리자 정보가 수정되었습니다. (Mock)' : '관리자 계정이 생성되었습니다. (Mock)\n임시 비밀번호가 이메일로 전송되었습니다.');
-        // Redirect back to list
-        router.push('/admin/admins');
-        setIsLoading(false);
+                if (result.success) {
+                    toast({
+                        title: "Success",
+                        description: "관리자 정보가 수정되었습니다.",
+                    });
+                    router.push('/admin/admins');
+                } else {
+                    toast({
+                        title: "Error",
+                        description: result.error || "수정에 실패했습니다.",
+                        variant: "destructive",
+                    });
+                }
+            } else {
+                const result = await createAdminUser({
+                    name: formData.name,
+                    email: formData.email,
+                    role: formData.role
+                });
+
+                if (result.success) {
+                    // Show temp password
+                    alert(`[관리자 생성 완료]\n\n임시 비밀번호: ${result.tempPassword}\n\n이모지 비밀번호는 이메일로도 전송됩니다(로그참고). 창을 닫으면 비밀번호를 다시 확인할 수 없습니다.`);
+
+                    toast({
+                        title: "Success",
+                        description: "관리자 계정이 생성되었습니다.",
+                    });
+                    router.push('/admin/admins');
+                } else {
+                    toast({
+                        title: "Error",
+                        description: result.error || "계정 생성에 실패했습니다.",
+                        variant: "destructive",
+                    });
+                }
+            }
+        } catch (error) {
+            console.error(error);
+            toast({
+                title: "Error",
+                description: "작업 중 오류가 발생했습니다.",
+                variant: "destructive",
+            });
+        } finally {
+            setIsLoading(false);
+        }
     };
 
     return (
@@ -71,17 +125,35 @@ export default function AdminForm({ initialData, isEditMode = false }: AdminForm
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div className="space-y-2">
                             <Label htmlFor="name">이름</Label>
-                            <Input id="name" placeholder="홍길동" defaultValue={initialData?.name} required />
+                            <Input
+                                id="name"
+                                placeholder="홍길동"
+                                value={formData.name}
+                                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                                required
+                            />
                         </div>
                         <div className="space-y-2">
                             <Label htmlFor="email">이메일</Label>
-                            <Input id="email" type="email" placeholder="hong@daechang.com" defaultValue={initialData?.email} required />
+                            <Input
+                                id="email"
+                                type="email"
+                                placeholder="hong@daechang.com"
+                                value={formData.email}
+                                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                                required
+                                disabled={isEditMode} // Email cannot be changed
+                                className={isEditMode ? "bg-gray-100" : ""}
+                            />
                         </div>
                     </div>
 
                     <div className="space-y-2">
                         <Label htmlFor="role">권한 (Role)</Label>
-                        <Select defaultValue={initialData?.role_code || "admin"}>
+                        <Select
+                            value={formData.role}
+                            onValueChange={(val) => setFormData({ ...formData, role: val })}
+                        >
                             <SelectTrigger>
                                 <SelectValue placeholder="권한 선택" />
                             </SelectTrigger>
@@ -102,7 +174,7 @@ export default function AdminForm({ initialData, isEditMode = false }: AdminForm
                         <div className="space-y-2 pt-4 border-t">
                             <Label>비밀번호 설정</Label>
                             <div className="p-4 bg-gray-50 rounded-lg text-sm text-gray-600 border border-gray-200">
-                                보안을 위해 <strong>초기 비밀번호는 자동으로 생성</strong>되어 해당 이메일로 전송됩니다.
+                                보안을 위해 <strong>초기 비밀번호는 자동으로 생성</strong>되어 해당 이메일(로그)로 전송됩니다.
                                 <br />관리자는 첫 로그인 시 비밀번호를 변경해야 합니다.
                             </div>
                         </div>
