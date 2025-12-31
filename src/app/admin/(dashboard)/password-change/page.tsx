@@ -7,12 +7,13 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Lock, Save } from 'lucide-react';
+import { changePassword } from '@/lib/actions/admin-auth';
+import { toast } from '@/components/ui/use-toast';
 
 export default function PasswordChangePage() {
     const router = useRouter();
     const [isLoading, setIsLoading] = useState(false);
     const [formData, setFormData] = useState({
-        currentPassword: '',
         newPassword: '',
         confirmPassword: '',
     });
@@ -27,24 +28,52 @@ export default function PasswordChangePage() {
         setIsLoading(true);
 
         if (formData.newPassword !== formData.confirmPassword) {
-            alert('새 비밀번호가 일치하지 않습니다.');
+            toast({
+                title: "Error",
+                description: "새 비밀번호가 일치하지 않습니다.",
+                variant: "destructive",
+            });
             setIsLoading(false);
             return;
         }
 
         if (formData.newPassword.length < 8) {
-            alert('비밀번호는 8자 이상이어야 합니다.');
+            toast({
+                title: "Error",
+                description: "비밀번호는 8자 이상이어야 합니다.",
+                variant: "destructive",
+            });
             setIsLoading(false);
             return;
         }
 
-        // Simulate API call
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        try {
+            const result = await changePassword(formData.newPassword);
 
-        alert('비밀번호가 성공적으로 변경되었습니다. 다시 로그인해주세요.');
-        // Redirect to login or home (mock)
-        router.push('/admin/home');
-        setIsLoading(false);
+            if (result.success) {
+                toast({
+                    title: "Success",
+                    description: "비밀번호가 성공적으로 변경되었습니다.",
+                });
+                router.push('/admin/home');
+                router.refresh(); // Refresh to update middleware state check if needed
+            } else {
+                toast({
+                    title: "Error",
+                    description: result.error || "비밀번호 변경에 실패했습니다.",
+                    variant: "destructive",
+                });
+            }
+        } catch (error) {
+            console.error(error);
+            toast({
+                title: "Error",
+                description: "오류가 발생했습니다.",
+                variant: "destructive",
+            });
+        } finally {
+            setIsLoading(false);
+        }
     };
 
     return (
@@ -62,17 +91,6 @@ export default function PasswordChangePage() {
                 </CardHeader>
                 <CardContent>
                     <form onSubmit={handleSubmit} className="space-y-6">
-                        <div className="space-y-2">
-                            <Label htmlFor="currentPassword">현재 비밀번호</Label>
-                            <Input
-                                id="currentPassword"
-                                type="password"
-                                placeholder="현재 비밀번호를 입력하세요"
-                                value={formData.currentPassword}
-                                onChange={handleChange}
-                                required
-                            />
-                        </div>
                         <div className="space-y-2">
                             <Label htmlFor="newPassword">새 비밀번호</Label>
                             <Input
