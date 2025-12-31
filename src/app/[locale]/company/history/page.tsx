@@ -4,14 +4,18 @@ import { cn } from '@/lib/utils';
 import { createClient } from '@/lib/supabase/server';
 
 interface HistoryEvent {
-  month: string;
   day: string;
   description: string;
 }
 
+interface HistoryMonthGroup {
+  month: string;
+  events: HistoryEvent[];
+}
+
 interface HistoryYear {
   year: string;
-  events: HistoryEvent[];
+  months: HistoryMonthGroup[];
 }
 
 export default async function HistoryPage() {
@@ -34,24 +38,37 @@ export default async function HistoryPage() {
 
   // Transform flat data to grouped structure
   const historyData: HistoryYear[] = [];
-  const groupedData: Record<string, HistoryEvent[]> = {};
+  const groupedByYearAndMonth: Record<string, Record<string, HistoryEvent[]>> = {};
 
   (historyItems || []).forEach(item => {
-    if (!groupedData[item.year]) {
-      groupedData[item.year] = [];
+    if (!groupedByYearAndMonth[item.year]) {
+      groupedByYearAndMonth[item.year] = {};
     }
-    groupedData[item.year].push({
-      month: item.month,
+    if (!groupedByYearAndMonth[item.year][item.month]) {
+      groupedByYearAndMonth[item.year][item.month] = [];
+    }
+
+    groupedByYearAndMonth[item.year][item.month].push({
       day: item.day || '',
       description: item.content_ko // Using content_ko as description
     });
   });
 
-  // Convert map to sorted array
-  Object.keys(groupedData).sort((a, b) => b.localeCompare(a)).forEach(year => {
+  // Flatten to array structure for rendering
+  Object.keys(groupedByYearAndMonth).sort((a, b) => b.localeCompare(a)).forEach(year => {
+    const months: HistoryMonthGroup[] = [];
+    const yearMonths = groupedByYearAndMonth[year];
+
+    Object.keys(yearMonths).sort((a, b) => Number(b) - Number(a)).forEach(month => {
+      months.push({
+        month,
+        events: yearMonths[month] // Days are already sorted by query
+      });
+    });
+
     historyData.push({
       year,
-      events: groupedData[year]
+      months
     });
   });
 
@@ -81,7 +98,7 @@ export default async function HistoryPage() {
         {historyData.length === 0 ? (
           <p className="text-center text-gray-500 py-10">등록된 연혁이 없습니다.</p>
         ) : (
-          historyData.map((yearGroup, index) => (
+          historyData.map((yearGroup, yearIndex) => (
             <div
               key={yearGroup.year}
               className="group grid grid-cols-1 md:grid-cols-12 gap-6 md:gap-8 lg:gap-12 py-10 border-b border-gray-100 dark:border-gray-800 last:border-0"
@@ -97,27 +114,30 @@ export default async function HistoryPage() {
               </div>
 
               {/* Content Column */}
-              <div className="md:col-span-8 space-y-5 pl-6 md:pl-0 z-0">
-                {yearGroup.events.map((event, eventIndex) => (
+              <div className="md:col-span-8 space-y-8 pl-6 md:pl-0 z-0">
+                {yearGroup.months.map((monthGroup, monthIndex) => (
                   <div
-                    key={`${yearGroup.year}-${event.month}-${eventIndex}`}
-                    className="relative flex flex-col sm:flex-row sm:items-baseline gap-3 sm:gap-6 animate-in fade-in slide-in-from-bottom-4 duration-700"
-                    style={{ animationDelay: `${eventIndex * 100}ms` }}
+                    key={`${yearGroup.year}-${monthGroup.month}`}
+                    className="relative flex flex-col sm:flex-row gap-3 sm:gap-6 animate-in fade-in slide-in-from-bottom-4 duration-700"
+                    style={{ animationDelay: `${monthIndex * 100}ms` }}
                   >
-                    {/* Month & Day */}
-                    <div className="flex-shrink-0">
+                    {/* Month */}
+                    <div className="flex-shrink-0 w-20">
                       <span className="text-lg font-bold text-gray-900 dark:text-white inline-block border-b-2 border-gray-900 dark:border-white pb-0.5 animate-in fade-in zoom-in-50 duration-500">
-                        {event.month}{t('month_unit')}
-                        {event.day && <span className="text-sm font-medium ml-1 text-gray-500">{event.day}일</span>}
+                        {monthGroup.month}{t('month_unit')}
                       </span>
                     </div>
 
-                    {/* Description */}
-                    <div className="flex-grow space-y-2">
-                      {/* Using description directly as it is user input */}
-                      <p className="text-base md:text-lg text-gray-600 dark:text-gray-300 leading-relaxed font-medium hover:text-gray-900 dark:hover:text-white transition-colors">
-                        {event.description}
-                      </p>
+                    {/* Events List */}
+                    <div className="flex-grow space-y-4 pt-0">
+                      {monthGroup.events.map((event, eventIndex) => (
+                        <div key={eventIndex} className="relative">
+                          {/* Add dot or something maybe? Or just text. Keeping it simple as previous design. */}
+                          <p className="text-base md:text-lg text-gray-600 dark:text-gray-300 leading-relaxed font-medium hover:text-gray-900 dark:hover:text-white transition-colors">
+                            {event.description}
+                          </p>
+                        </div>
+                      ))}
                     </div>
                   </div>
                 ))}
