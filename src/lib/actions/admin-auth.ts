@@ -145,7 +145,10 @@ export async function changePassword(newPassword: string) {
     const supabaseAdmin = createAdminClient();
     const { error: dbError } = await supabaseAdmin
         .from('admins')
-        .update({ must_change_password: false })
+        .update({
+            must_change_password: false,
+            password_changed_at: new Date().toISOString()
+        })
         .eq('id', user.id);
 
     if (dbError) {
