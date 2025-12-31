@@ -134,6 +134,23 @@ export default function CompanySettingsForm({ initialSettings }: CompanySettings
                                         <Label htmlFor="revenue_en">매출액 (영문)</Label>
                                         <Input id="revenue_en" name="revenue_en" defaultValue={settings.revenue_en} />
                                     </div>
+
+                                    {/* Contact & Registration Info */}
+                                    <div className="space-y-2">
+                                        <Label htmlFor="representative_email">대표 이메일</Label>
+                                        <Input id="representative_email" name="representative_email" defaultValue={settings.representative_email} />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Label htmlFor="representative_phone">대표 전화번호</Label>
+                                        <Input id="representative_phone" name="representative_phone" defaultValue={settings.representative_phone} />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Label htmlFor="business_registration_number">사업자 등록번호</Label>
+                                        <Input id="business_registration_number" name="business_registration_number" defaultValue={settings.business_registration_number} />
+                                    </div>
+                                    {/* Empty div for grid alignment if needed, or span 1 */}
+                                    <div className="hidden md:block"></div>
+
                                     <div className="space-y-2 md:col-span-2">
                                         <Label htmlFor="address_ko">주소 (한글)</Label>
                                         <Input id="address_ko" name="address_ko" defaultValue={settings.address_ko} />

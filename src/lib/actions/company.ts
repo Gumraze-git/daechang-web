@@ -17,6 +17,9 @@ export type CompanySettings = {
     revenue_en: string;
     address_ko: string;
     address_en: string;
+    representative_email: string;
+    representative_phone: string;
+    business_registration_number: string;
     mission_title_ko: string;
     mission_title_en: string;
     mission_desc_ko: string;
@@ -134,6 +137,7 @@ export async function updateCompanySettings(formData: FormData) {
         'employees_ko', 'employees_en',
         'revenue_ko', 'revenue_en',
         'address_ko', 'address_en',
+        'representative_email', 'representative_phone', 'business_registration_number',
         'mission_title_ko', 'mission_title_en',
         'mission_desc_ko', 'mission_desc_en',
         'vision_title_ko', 'vision_title_en',
