@@ -21,6 +21,7 @@ import { createNotice, updateNotice, type Notice } from '@/lib/actions/notices';
 import { type NoticeCategory } from '@/lib/actions/notice-categories';
 import Image from 'next/image';
 import DeleteAlertDialog from '@/components/admin/DeleteAlertDialog';
+import TiptapEditor from '@/components/admin/TiptapEditor';
 
 interface NoticeFormProps {
     initialData?: Notice;
@@ -32,6 +33,10 @@ export default function NoticeForm({ initialData, categories = [], isEdit = fals
     const router = useRouter();
     const [isLoading, setIsLoading] = useState(false);
     const [previewUrl, setPreviewUrl] = useState<string | null>(initialData?.image_url || null);
+
+    // Tiptap Editor States
+    const [bodyKo, setBodyKo] = useState(initialData?.body_ko || '');
+    const [bodyEn, setBodyEn] = useState(initialData?.body_en || '');
 
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
@@ -142,7 +147,12 @@ export default function NoticeForm({ initialData, categories = [], isEdit = fals
 
                                     <div className="space-y-2">
                                         <Label htmlFor="body_ko">본문 (국문)</Label>
-                                        <Textarea id="body_ko" name="body_ko" className="min-h-[200px] font-sans" placeholder="내용을 입력하세요..." defaultValue={initialData?.body_ko || ''} />
+                                        <TiptapEditor
+                                            value={bodyKo}
+                                            onChange={setBodyKo}
+                                            placeholder="내용을 입력하세요..."
+                                        />
+                                        <input type="hidden" name="body_ko" value={bodyKo} />
                                     </div>
                                 </div>
 
@@ -161,7 +171,12 @@ export default function NoticeForm({ initialData, categories = [], isEdit = fals
 
                                     <div className="space-y-2">
                                         <Label htmlFor="body_en">본문 (영문)</Label>
-                                        <Textarea id="body_en" name="body_en" className="min-h-[200px] font-sans" placeholder="Enter content..." defaultValue={initialData?.body_en || ''} />
+                                        <TiptapEditor
+                                            value={bodyEn}
+                                            onChange={setBodyEn}
+                                            placeholder="Enter content..."
+                                        />
+                                        <input type="hidden" name="body_en" value={bodyEn} />
                                     </div>
                                 </div>
                             </CardContent>
