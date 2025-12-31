@@ -47,6 +47,30 @@ export async function updateSession(request: NextRequest) {
         return NextResponse.redirect(url)
     }
 
+    // 비밀번호 변경 강제 로직
+    if (user && request.nextUrl.pathname.startsWith('/admin')) {
+        const { data: admin } = await supabase
+            .from('admins')
+            .select('must_change_password')
+            .eq('id', user.id)
+            .single()
+
+        const isPasswordChangePage = request.nextUrl.pathname === '/admin/password-change';
+
+        if (admin?.must_change_password && !isPasswordChangePage) {
+            const url = request.nextUrl.clone()
+            url.pathname = '/admin/password-change'
+            return NextResponse.redirect(url)
+        }
+
+        // 이미 비밀번호를 변경했는데 변경 페이지에 접근하려는 경우 대시보드로 이동 (선택사항, UX 향상)
+        if (!admin?.must_change_password && isPasswordChangePage) {
+            const url = request.nextUrl.clone()
+            url.pathname = '/admin/home'
+            return NextResponse.redirect(url)
+        }
+    }
+
     // 중요: supabaseResponse 객체는 반드시 그대로 반환해야 합니다.
     // 만약 NextResponse.next()로 새로운 Response 객체를 생성해야 한다면 다음을 준수하세요:
     // 1. request를 전달하세요: const myNewResponse = NextResponse.next({ request })
