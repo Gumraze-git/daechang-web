@@ -9,7 +9,7 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/ui/table';
-import { Badge } from '@/components/ui/badge';
+// Removed Badge import
 import { Plus, Trash2, Pencil, Calendar } from 'lucide-react';
 import { getNotices } from '@/lib/actions/notices';
 import { getNoticeCategories } from '@/lib/actions/notice-categories';
@@ -60,7 +60,7 @@ export default async function NoticesPage() {
                                     <TableCell className="font-medium">
                                         <div className="flex items-center gap-2">
                                             {notice.is_pinned && (
-                                                <Badge variant="secondary" className="bg-blue-50 text-blue-700 border-blue-200">고정</Badge>
+                                                <span className="text-xs font-semibold text-blue-600 border border-blue-200 px-1.5 py-0.5 rounded leading-none bg-blue-50/50">고정</span>
                                             )}
                                             <span className="group-hover:text-blue-600 transition-colors">
                                                 {notice.title_ko}
@@ -68,21 +68,21 @@ export default async function NoticesPage() {
                                         </div>
                                     </TableCell>
                                     <TableCell>
-                                        <Badge variant="outline" className="font-normal capitalize">
+                                        <span className="text-gray-700 dark:text-gray-300">
                                             {notice.category}
-                                        </Badge>
+                                        </span>
                                     </TableCell>
                                     <TableCell>
-                                        <Badge
-                                            className={`font-medium border shadow-none ${notice.status === 'published'
-                                                ? 'bg-green-50 text-green-700 border-green-200 hover:bg-green-100 dark:bg-green-900/30 dark:text-green-400 dark:border-green-800'
+                                        <span
+                                            className={`font-medium ${notice.status === 'published'
+                                                ? 'text-green-600 dark:text-green-400'
                                                 : notice.status === 'draft'
-                                                    ? 'bg-gray-50 text-gray-600 border-gray-200 hover:bg-gray-100 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-700'
-                                                    : 'bg-yellow-50 text-yellow-700 border-yellow-200 hover:bg-yellow-100 dark:bg-yellow-900/30 dark:text-yellow-400 dark:border-yellow-800'
+                                                    ? 'text-gray-500 dark:text-gray-400'
+                                                    : 'text-yellow-600 dark:text-yellow-400'
                                                 }`}
                                         >
                                             {notice.status === 'published' ? '게시됨' : notice.status === 'draft' ? '작성중' : '보관됨'}
-                                        </Badge>
+                                        </span>
                                     </TableCell>
                                     <TableCell className="hidden md:table-cell text-gray-500">
                                         <div className="flex items-center gap-2">
