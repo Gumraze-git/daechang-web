@@ -47,28 +47,52 @@ export async function updateSession(request: NextRequest) {
         return NextResponse.redirect(url)
     }
 
-    // 비밀번호 변경 강제 로직
+    // Role & Password Check Logic
     if (user && request.nextUrl.pathname.startsWith('/admin')) {
         const { data: admin } = await supabase
             .from('admins')
-            .select('must_change_password')
+            .select('role, must_change_password')
             .eq('id', user.id)
             .single()
 
-        const isPasswordChangePage = request.nextUrl.pathname === '/admin/password-change';
+        const path = request.nextUrl.pathname
+        const role = admin?.role || 'admin' // default fallback if null, though shouldn't happen for valid admin
 
+        // 1. Force Password Change (Priority)
+        const isPasswordChangePage = path === '/admin/password-change'
         if (admin?.must_change_password && !isPasswordChangePage) {
             const url = request.nextUrl.clone()
             url.pathname = '/admin/password-change'
             return NextResponse.redirect(url)
         }
 
-        // 이미 비밀번호를 변경했는데 변경 페이지에 접근하려는 경우 대시보드로 이동 (선택사항, UX 향상)
-        if (!admin?.must_change_password && isPasswordChangePage) {
+        // 2. RBAC Route Protection
+        // Only Super Admin can access Admin Management
+        if (path.startsWith('/admin/admins') && role !== 'super_admin') {
             const url = request.nextUrl.clone()
             url.pathname = '/admin/home'
             return NextResponse.redirect(url)
         }
+
+        // Editor can ONLY access Notices (and core pages like home/password/profile)
+        // If role is editor, block access to products, facilities, history, partners
+        if (role === 'editor') {
+            const restrictedPaths = [
+                '/admin/products',
+                '/admin/facilities',
+                '/admin/history',
+                '/admin/partners',
+                '/admin/company' // Company settings might be restricted too? Let's say yes for editor.
+            ]
+            if (restrictedPaths.some(p => path.startsWith(p))) {
+                const url = request.nextUrl.clone()
+                url.pathname = '/admin/home'
+                return NextResponse.redirect(url)
+            }
+        }
+
+        // Admin (standard) cannot access Admin Management (handled by first check)
+        // Admin has access to products/facilities etc. so no extra block needed for them specifically.
     }
 
     // 중요: supabaseResponse 객체는 반드시 그대로 반환해야 합니다.
