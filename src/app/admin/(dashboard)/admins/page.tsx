@@ -14,10 +14,12 @@ import {
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
-import { Search, Trash2, Pencil, UserPlus } from 'lucide-react';
+import { Search, Trash2, Pencil, UserPlus, Shield } from 'lucide-react';
 import DeleteAlertDialog from '@/components/admin/DeleteAlertDialog';
 import { getAdmins, deleteAdminUser } from '@/lib/actions/admin-auth';
 import { toast } from '@/components/ui/use-toast';
+import { Label } from '@/components/ui/label';
+import { Switch } from '@/components/ui/switch';
 
 export default function AdminsPage() {
     const [searchTerm, setSearchTerm] = useState('');
@@ -188,6 +190,35 @@ export default function AdminsPage() {
                 onOpenChange={(open) => !open && setDeleteId(null)}
                 onConfirm={confirmDelete}
             />
+
+            {/* Admin Security Settings */}
+            <Card>
+                <div className="p-6">
+                    <div className="flex items-center gap-2 mb-4">
+                        <Shield className="w-5 h-5 text-green-500" />
+                        <h2 className="text-xl font-bold">관리자 보안 설정</h2>
+                    </div>
+                    <p className="text-gray-500 text-sm mb-6">계정 보호 및 보안 관련 정책을 설정합니다.</p>
+
+                    <div className="space-y-6">
+                        <div className="flex items-center justify-between border-b pb-4">
+                            <div className="space-y-0.5">
+                                <Label className="text-base">비밀번호 만료 정책 (90일)</Label>
+                                <p className="text-sm text-gray-500">90일마다 비밀번호 변경을 강제합니다.</p>
+                            </div>
+                            <Switch defaultChecked onCheckedChange={(checked) => toast({ title: "설정 변경", description: "아직 지원되지 않은 기능입니다." })} />
+                        </div>
+
+                        <div className="flex items-center justify-between">
+                            <div className="space-y-0.5">
+                                <Label className="text-base">세션 타임아웃 (30분)</Label>
+                                <p className="text-sm text-gray-500">30분 동안 활동이 없으면 자동으로 로그아웃합니다.</p>
+                            </div>
+                            <Switch defaultChecked onCheckedChange={(checked) => toast({ title: "설정 변경", description: "아직 지원되지 않은 기능입니다." })} />
+                        </div>
+                    </div>
+                </div>
+            </Card>
         </div>
     );
 }
