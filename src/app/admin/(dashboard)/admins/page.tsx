@@ -17,6 +17,7 @@ import { Card } from '@/components/ui/card';
 import { Search, Trash2, Pencil, UserPlus, Shield } from 'lucide-react';
 import DeleteAlertDialog from '@/components/admin/DeleteAlertDialog';
 import { getAdmins, deleteAdminUser } from '@/lib/actions/admin-auth';
+import { getSystemSettings, togglePasswordExpiration, type SystemSettings } from '@/lib/actions/system';
 import { toast } from '@/components/ui/use-toast';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
@@ -24,14 +25,19 @@ import { Switch } from '@/components/ui/switch';
 export default function AdminsPage() {
     const [searchTerm, setSearchTerm] = useState('');
     const [admins, setAdmins] = useState<any[]>([]);
+    const [settings, setSettings] = useState<SystemSettings | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [deleteId, setDeleteId] = useState<string | null>(null);
 
     const fetchAdmins = async () => {
         setIsLoading(true);
         try {
-            const data = await getAdmins();
-            setAdmins(data || []);
+            const [adminsData, settingsData] = await Promise.all([
+                getAdmins(),
+                getSystemSettings()
+            ]);
+            setAdmins(adminsData || []);
+            setSettings(settingsData);
         } catch (error) {
             console.error('Failed to fetch admins:', error);
             toast({
@@ -78,6 +84,31 @@ export default function AdminsPage() {
             });
         }
         setDeleteId(null);
+    };
+
+    const handleTogglePolicy = async (enabled: boolean) => {
+        // Optimistic update
+        setSettings(prev => prev ? { ...prev, password_expiration_enabled: enabled } : null);
+
+        try {
+            const result = await togglePasswordExpiration(enabled);
+            if (result.success) {
+                toast({
+                    title: "Success",
+                    description: `비밀번호 만료 정책이 ${enabled ? '활성화' : '비활성화'}되었습니다.`,
+                });
+            } else {
+                throw new Error("Failed to update");
+            }
+        } catch (error) {
+            // Revert
+            setSettings(prev => prev ? { ...prev, password_expiration_enabled: !enabled } : null);
+            toast({
+                title: "Error",
+                description: "설정 변경에 실패했습니다.",
+                variant: "destructive",
+            });
+        }
     };
 
     const filteredAdmins = admins.filter(admin =>
@@ -201,20 +232,16 @@ export default function AdminsPage() {
                     <p className="text-gray-500 text-sm mb-6">계정 보호 및 보안 관련 정책을 설정합니다.</p>
 
                     <div className="space-y-6">
-                        <div className="flex items-center justify-between border-b pb-4">
+                        <div className="flex items-center justify-between">
                             <div className="space-y-0.5">
                                 <Label className="text-base">비밀번호 만료 정책 (90일)</Label>
                                 <p className="text-sm text-gray-500">90일마다 비밀번호 변경을 강제합니다.</p>
                             </div>
-                            <Switch defaultChecked onCheckedChange={(checked) => toast({ title: "설정 변경", description: "아직 지원되지 않은 기능입니다." })} />
-                        </div>
-
-                        <div className="flex items-center justify-between">
-                            <div className="space-y-0.5">
-                                <Label className="text-base">세션 타임아웃 (30분)</Label>
-                                <p className="text-sm text-gray-500">30분 동안 활동이 없으면 자동으로 로그아웃합니다.</p>
-                            </div>
-                            <Switch defaultChecked onCheckedChange={(checked) => toast({ title: "설정 변경", description: "아직 지원되지 않은 기능입니다." })} />
+                            <Switch
+                                checked={settings?.password_expiration_enabled ?? false}
+                                onCheckedChange={handleTogglePolicy}
+                                disabled={!settings}
+                            />
                         </div>
                     </div>
                 </div>
