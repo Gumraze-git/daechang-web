@@ -49,21 +49,42 @@ export async function updateSession(request: NextRequest) {
 
     // Role & Password Check Logic
     if (user && request.nextUrl.pathname.startsWith('/admin')) {
-        const { data: admin } = await supabase
-            .from('admins')
-            .select('role, must_change_password')
-            .eq('id', user.id)
-            .single()
+        const [{ data: admin }, { data: settings }] = await Promise.all([
+            supabase
+                .from('admins')
+                .select('role, must_change_password, password_changed_at')
+                .eq('id', user.id)
+                .single(),
+            supabase
+                .from('system_settings')
+                .select('*')
+                .single()
+        ])
 
         const path = request.nextUrl.pathname
-        const role = admin?.role || 'admin' // default fallback if null, though shouldn't happen for valid admin
+        const role = admin?.role || 'admin'
+        const isPasswordChangePage = path === '/admin/password-change'
 
         // 1. Force Password Change (Priority)
-        const isPasswordChangePage = path === '/admin/password-change'
+        // Case A: Explicit 'must_change_password' flag
         if (admin?.must_change_password && !isPasswordChangePage) {
             const url = request.nextUrl.clone()
             url.pathname = '/admin/password-change'
             return NextResponse.redirect(url)
+        }
+
+        // Case B: Password Expiration
+        if (settings?.password_expiration_enabled && admin?.password_changed_at && !isPasswordChangePage) {
+            const lastChanged = new Date(admin.password_changed_at).getTime()
+            const now = new Date().getTime()
+            const daysSinceChange = (now - lastChanged) / (1000 * 60 * 60 * 24)
+
+            if (daysSinceChange >= settings.password_expiration_days) {
+                const url = request.nextUrl.clone()
+                url.pathname = '/admin/password-change'
+                // Optional: Add query param to indicate reason, e.g. ?reason=expired
+                return NextResponse.redirect(url)
+            }
         }
 
         // 2. RBAC Route Protection
