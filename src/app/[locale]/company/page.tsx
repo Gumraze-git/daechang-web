@@ -141,7 +141,7 @@ export default async function CompanyPage({ params }: { params: Promise<{ locale
             {coreValues.map((value, idx) => (
               <Card key={idx} className="border-2 border-gray-100 hover:border-primary/50 transition-all duration-300 hover:shadow-lg group overflow-hidden">
                 <CardContent className="p-8 flex flex-col items-center text-center h-full">
-                  <div className={`w-20 h-20 rounded-2xl ${value.bg} flex items-center justify-center mb-6 group-hover:rotate-6 transition-transform duration-300`}>
+                  <div className={`w-20 h-20 rounded-2xl ${value.bg} flex items-center justify-center mb-6 transition-transform duration-300`}>
                     <value.icon className={`w-10 h-10 ${value.color}`} />
                   </div>
                   <h3 className="text-xl font-bold text-gray-900 mb-3">{value.title}</h3>

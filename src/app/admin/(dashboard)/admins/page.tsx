@@ -120,7 +120,7 @@ export default function AdminsPage() {
                             <TableHead>이메일</TableHead>
                             <TableHead>권한</TableHead>
                             <TableHead>상태</TableHead>
-                            <TableHead className="hidden md:table-cell">마지막 접속</TableHead>
+                            <TableHead className="hidden md:table-cell">가입일</TableHead>
                             <TableHead className="w-[50px]"></TableHead>
                         </TableRow>
                     </TableHeader>
