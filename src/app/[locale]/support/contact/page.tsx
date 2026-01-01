@@ -10,6 +10,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import { Loader2 } from 'lucide-react';
+import { createInquiry } from '@/lib/actions/inquiries';
+import { useToast } from '@/components/ui/use-toast';
 
 function ContactForm() {
   const t = useTranslations('SupportPage');
@@ -33,15 +35,47 @@ function ContactForm() {
     }
   }, [searchParams]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const { toast } = useToast();
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsSubmitting(true);
 
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1500));
+    const formData = new FormData(e.currentTarget);
 
-    setIsSubmitting(false);
-    setIsSuccess(true);
+    // Manually append select values if they are not part of native form submission (though often they are if using name prop, but shadcn Select might need hidden input or manual append)
+    // shadcn Select components don't always render accessible hidden inputs valid for FormData unless inside a Form library or manually handled.
+    // Let's check how they are used. The Select component in shadcn usually doesn't emit a name prop to a hidden input automatically unless wrapped. 
+    // We used state for them: inquiryType, productCategory
+    formData.set('inquiry_type', inquiryType);
+    if (productCategory) formData.set('product_category', productCategory);
+
+    try {
+      const result = await createInquiry(formData);
+
+      if (result.success) {
+        setIsSuccess(true);
+        toast({
+          title: t('submit_success_title'),
+          description: t('submit_success_desc'),
+        });
+      } else {
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: result.message || "Something went wrong",
+        });
+      }
+    } catch (error) {
+      console.error(error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "An unexpected error occurred",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   if (isSuccess) {

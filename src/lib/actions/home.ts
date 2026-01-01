@@ -30,7 +30,12 @@ export async function getHomeSettings() {
         } as HomeSettings;
     }
 
-    return data as HomeSettings;
+    return (data || {
+        hero_headline: '산업 기계의 미래를 혁신하다',
+        hero_subheadline: '블로우 몰딩기 및 압출 라인의 신뢰할 수 있는 파트너.',
+        hero_images: ['/hero-bg.png'],
+        show_products_section: true,
+    }) as HomeSettings;
 }
 
 export async function updateHomeSettings(formData: FormData) {
