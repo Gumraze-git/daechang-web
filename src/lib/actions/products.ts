@@ -45,7 +45,7 @@ export async function getProducts() {
     }
 
     // Transform joined partners
-    const products = data.map((p: any) => ({
+    const products = (data || []).map((p: any) => ({
         ...p,
         partners: p.product_partners?.map((pp: any) => pp.partner) || [],
         // category is already an object { code, name_ko } thanks to the query alias, but Supabase might return it as array if not 1:1, but here it is M:1 so it returns object if referenced correctly or array?
@@ -81,7 +81,7 @@ export async function getRecommendedProducts() {
         return [];
     }
 
-    const products = data.map((p: any) => ({
+    const products = (data || []).map((p: any) => ({
         ...p,
         partners: p.product_partners?.map((pp: any) => pp.partner) || []
     }));
@@ -118,8 +118,8 @@ export async function getProduct(id: string) {
     // Transform nested data for easier UI consumption
     const product = {
         ...data,
-        notices: data.product_notices.map((pn: any) => pn.notice),
-        partners: data.product_partners.map((pp: any) => pp.partner)
+        notices: (data.product_notices || []).map((pn: any) => pn.notice),
+        partners: (data.product_partners || []).map((pp: any) => pp.partner)
     };
 
     return product as Product;
