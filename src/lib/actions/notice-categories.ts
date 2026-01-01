@@ -43,7 +43,7 @@ export async function getNoticeCategories() {
         counts[n.category] = (counts[n.category] || 0) + 1;
     });
 
-    return categories.map((cat: NoticeCategory) => ({
+    return (categories || []).map((cat: NoticeCategory) => ({
         ...cat,
         post_count: counts[cat.name_ko] || 0
     }));

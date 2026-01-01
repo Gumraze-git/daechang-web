@@ -8,14 +8,16 @@ import { cn } from '@/lib/utils';
 import { ChevronLeft, ChevronRight, LayoutGrid, List, Pin } from 'lucide-react';
 import { NoticeCard } from '@/components/NoticeCard';
 import type { Notice } from '@/lib/actions/notices';
+import type { NoticeCategory } from '@/lib/actions/notice-categories';
 import Image from 'next/image';
 
 interface NoticeListProps {
     initialNotices: Notice[];
+    categories: NoticeCategory[];
     locale: string;
 }
 
-export default function NoticeList({ initialNotices, locale }: NoticeListProps) {
+export default function NoticeList({ initialNotices, categories: dbCategories, locale }: NoticeListProps) {
     const t = useTranslations('SupportPage');
     const tIndex = useTranslations('Index');
     const tCats = useTranslations('NoticeCategories');
@@ -26,10 +28,10 @@ export default function NoticeList({ initialNotices, locale }: NoticeListProps) 
 
     const categories = [
         { id: 'all', label: tCats('all') },
-        { id: 'news', label: tCats('news') },
-        { id: 'exhibition', label: tCats('exhibition') },
-        { id: 'maintenance', label: tCats('maintenance') },
-        // Add 'other' if used
+        ...dbCategories.map(cat => ({
+            id: cat.name_ko, // Using name_ko as ID for filtering since notices.category currently stores name_ko strings
+            label: locale === 'ko' ? cat.name_ko : (cat.name_en || cat.name_ko)
+        }))
     ];
 
     // Filter notices

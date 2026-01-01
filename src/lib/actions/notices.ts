@@ -34,7 +34,7 @@ export async function getNotices() {
         return [];
     }
 
-    return data as Notice[];
+    return (data || []) as Notice[];
 }
 
 export async function getNotice(id: string) {
