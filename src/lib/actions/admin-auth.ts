@@ -69,6 +69,89 @@ export async function createAdminUser({ email, name, role }: CreateAdminUserPara
 
     console.log(`[Admin Created] Email: ${email}, Temp Password: ${password}`);
 
+    // Send Invitation Email
+    try {
+        const nodemailer = require('nodemailer');
+
+        const transporter = nodemailer.createTransport({
+            host: process.env.MAIL_HOST,
+            port: parseInt(process.env.MAIL_PORT || '587'),
+            secure: false,
+            auth: {
+                user: process.env.MAIL_USER,
+                pass: process.env.MAIL_PASS,
+            },
+            tls: {
+                rejectUnauthorized: false
+            }
+        });
+
+        const loginUrl = `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/admin/login`;
+
+        const mailOptions = {
+            from: process.env.MAIL_ADMIN_FROM,
+            to: email, // Send to the new admin
+            subject: `[대창기계산업] 관리자 계정이 생성되었습니다.`,
+            text: `
+        안녕하세요, ${name}님.
+        
+        대창기계산업 홈페이지(My Daechang) 관리자 계정이 생성되었습니다.
+        아래 정보를 사용하여 로그인 후, 반드시 비밀번호를 변경해 주시기 바랍니다.
+        
+        [로그인 정보]
+        아이디: ${email}
+        임시 비밀번호: ${password}
+        
+        로그인 페이지: ${loginUrl}
+        
+        감사합니다.
+            `,
+            html: `
+        <div style="font-family: 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #eee; border-radius: 8px; overflow: hidden;">
+            <div style="background-color: #003366; color: #fff; padding: 20px; text-align: center;">
+                <h2 style="margin: 0; font-size: 20px;">관리자 계정 생성 안내</h2>
+            </div>
+            
+            <div style="padding: 30px;">
+                <p style="margin-bottom: 20px; color: #333;">
+                    안녕하세요, <strong>${name}</strong>님.<br><br>
+                    대창기계산업 홈페이지(My Daechang) 관리자 계정이 생성되었습니다.<br>
+                    아래 임시 비밀번호로 로그인하신 후, 보안을 위해 <strong>반드시 비밀번호를 변경</strong>해 주시기 바랍니다.
+                </p>
+                
+                <div style="background-color: #f9f9f9; padding: 20px; border-radius: 8px; margin-bottom: 30px; border: 1px solid #e0e0e0;">
+                    <table style="width: 100%; border-collapse: collapse;">
+                        <tr>
+                            <td style="padding: 8px 0; color: #666; width: 100px; font-weight: bold;">아이디</td>
+                            <td style="padding: 8px 0; color: #333;">${email}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 8px 0; color: #666; font-weight: bold;">임시 비밀번호</td>
+                            <td style="padding: 8px 0; color: #d32f2f; font-weight: bold;">${password}</td>
+                        </tr>
+                    </table>
+                </div>
+
+                <div style="text-align: center;">
+                    <a href="${loginUrl}" style="display: inline-block; background-color: #003366; color: #fff; padding: 12px 25px; text-decoration: none; border-radius: 5px; font-weight: bold;">관리자 로그인하러 가기</a>
+                </div>
+            </div>
+            
+            <div style="background-color: #f5f5f5; padding: 15px; text-align: center; font-size: 12px; color: #999;">
+                <p style="margin: 0;">본 메일은 발신 전용이며, 회신되지 않습니다.</p>
+            </div>
+        </div>
+            `
+        };
+
+        const info = await transporter.sendMail(mailOptions);
+        console.log('Invitation email sent:', info.response);
+
+    } catch (emailError) {
+        // 이메일 발송 실패해도 계정 생성을 무효화하지는 않음 (관리자가 temp PW를 직접 알려줄 수 있으므로)
+        console.error('Failed to send invitation email:', emailError);
+    }
+
     revalidatePath('/admin/admins');
 
     return { success: true, tempPassword: password };
