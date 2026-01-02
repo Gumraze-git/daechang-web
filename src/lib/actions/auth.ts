@@ -4,10 +4,17 @@ import { createClient } from '@/lib/supabase/server';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { redirect } from 'next/navigation';
 import nodemailer from 'nodemailer';
+import { checkRateLimit } from '@/lib/rate-limit';
 
 export async function login(formData: FormData) {
     const email = formData.get('email') as string;
     const password = formData.get('password') as string;
+
+    // Rate Limit: 5 attempts per 60 seconds
+    const rateLimit = await checkRateLimit('login', 5, 60);
+    if (!rateLimit.success) {
+        return { error: '너무 많은 로그인 시도가 감지되었습니다. 잠시 후 다시 시도해주세요.' };
+    }
 
     const supabase = await createClient();
 

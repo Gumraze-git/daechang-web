@@ -2,6 +2,7 @@
 
 import { createClient } from '@/lib/supabase/server';
 import { z } from 'zod';
+import { checkRateLimit } from '@/lib/rate-limit';
 
 const inquirySchema = z.object({
     company_name: z.string().optional(),
@@ -25,6 +26,15 @@ export async function createInquiry(formData: FormData) {
         product_category: formData.get('product_category')?.toString() || undefined,
         message: formData.get('message')?.toString() || undefined,
     };
+
+    // Rate Limit: 3 attempts per hour (3600s)
+    const rateLimit = await checkRateLimit('inquiry', 3, 3600);
+    if (!rateLimit.success) {
+        return {
+            success: false,
+            message: '문의가 너무 많이 접수되었습니다. 잠시 후 다시 시도해주세요.'
+        };
+    }
 
     // Validation
     const validatedFields = inquirySchema.safeParse(rawData);
