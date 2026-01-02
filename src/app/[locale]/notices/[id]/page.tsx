@@ -6,7 +6,7 @@ import { ArrowLeft, Calendar, Tag } from 'lucide-react';
 import { notFound } from 'next/navigation';
 import { getNotice } from '@/lib/actions/notices';
 import { NoticeImageCarousel } from '@/components/NoticeImageCarousel';
-import DOMPurify from 'isomorphic-dompurify';
+import { sanitizeHtml } from '@/lib/sanitize';
 
 export default async function NoticeDetailPage({ params }: { params: Promise<{ id: string; locale: string }> }) {
   const { id, locale } = await params;
@@ -59,7 +59,7 @@ export default async function NoticeDetailPage({ params }: { params: Promise<{ i
       {/* Content Section */}
       <div
         className="prose prose-lg max-w-none text-gray-700 mb-16 break-all"
-        dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(body || '') }}
+        dangerouslySetInnerHTML={{ __html: sanitizeHtml(body || '') }}
       />
 
       {/* Footer / Navigation */}
