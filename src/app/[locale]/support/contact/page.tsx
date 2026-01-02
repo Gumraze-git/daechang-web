@@ -253,13 +253,13 @@ function ContactForm() {
             <div className="pt-4">
               <Button
                 type="submit"
-                className="w-full h-16 text-xl font-bold bg-blue-600 hover:bg-blue-700 text-white rounded-xl shadow-lg shadow-blue-600/30 hover:shadow-blue-600/50 hover:-translate-y-1 transition-all duration-300 flex items-center justify-center gap-2"
+                className="w-full h-16 text-xl font-bold bg-blue-600 hover:bg-blue-700 text-white rounded-xl transition-all duration-300 flex items-center justify-center gap-2"
                 disabled={isSubmitting}
               >
                 {isSubmitting ? (
                   <>
                     <Loader2 className="h-6 w-6 animate-spin" />
-                    Processing...
+                    문의 발송 중...
                   </>
                 ) : (
                   t('form_submit_button')
