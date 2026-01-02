@@ -20,6 +20,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { updateHomeSettings, type HomeSettings } from '@/lib/actions/home';
 import { toggleProductFeatured, type Product } from '@/lib/actions/products';
+import { useToast } from "@/components/ui/use-toast";
 
 interface HomeSettingsFormProps {
     initialSettings: HomeSettings;
@@ -43,6 +44,7 @@ const CATEGORY_MAP: Record<string, string> = {
 };
 
 export default function HomeSettingsForm({ initialSettings, products }: HomeSettingsFormProps) {
+    const { toast } = useToast();
     const [isLoading, setIsLoading] = useState(false);
     const [settings, setSettings] = useState<HomeSettings>(initialSettings);
 
@@ -135,14 +137,17 @@ export default function HomeSettingsForm({ initialSettings, products }: HomeSett
         try {
             await updateHomeSettings(formData);
 
-            // Show success state on button
-            // We could add a "isSuccess" state if we want the button to turn green briefly
-            // Show success state on button
-            // We could add a "isSuccess" state if we want the button to turn green briefly
-            // alert("저장되었습니다."); // Removed per user request to avoid checking clicks. Button loading state is sufficient.
-
+            toast({
+                variant: 'success',
+                title: "저장 성공",
+                description: "홈 화면 설정이 성공적으로 저장되었습니다.",
+            });
         } catch (error: any) {
-            alert("저장 중 오류가 발생했습니다: " + error.message);
+            toast({
+                variant: 'destructive',
+                title: "저장 실패",
+                description: error.message || "설정 저장 중 오류가 발생했습니다.",
+            });
         } finally {
             setIsLoading(false);
         }

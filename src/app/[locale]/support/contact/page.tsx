@@ -65,6 +65,7 @@ function ContactForm() {
       if (result.success) {
         setIsSuccess(true);
         toast({
+          variant: "success",
           title: t('submit_success_title'),
           description: t('submit_success_desc'),
         });
