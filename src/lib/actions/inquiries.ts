@@ -17,23 +17,28 @@ export async function createInquiry(formData: FormData) {
     const supabase = await createClient();
 
     const rawData = {
-        company_name: formData.get('company_name'),
-        person_name: formData.get('person_name'),
-        email: formData.get('email'),
-        phone: formData.get('phone'),
-        inquiry_type: formData.get('inquiry_type'),
-        product_category: formData.get('product_category'),
-        message: formData.get('message'),
+        company_name: formData.get('company_name')?.toString() || undefined,
+        person_name: formData.get('person_name')?.toString() || undefined,
+        email: formData.get('email')?.toString() || undefined,
+        phone: formData.get('phone')?.toString() || undefined,
+        inquiry_type: formData.get('inquiry_type')?.toString() || undefined,
+        product_category: formData.get('product_category')?.toString() || undefined,
+        message: formData.get('message')?.toString() || undefined,
     };
 
     // Validation
     const validatedFields = inquirySchema.safeParse(rawData);
 
     if (!validatedFields.success) {
+        const fieldErrors = validatedFields.error.flatten().fieldErrors;
+        const errorMessages = Object.entries(fieldErrors)
+            .map(([field, errors]) => `${field}: ${errors?.join(', ')}`)
+            .join(' | ');
+
         return {
             success: false,
-            error: validatedFields.error.flatten().fieldErrors,
-            message: 'Validation failed'
+            error: fieldErrors,
+            message: `Validation failed: ${errorMessages}`
         };
     }
 
@@ -46,7 +51,7 @@ export async function createInquiry(formData: FormData) {
         console.error('Error creating inquiry:', error);
         return {
             success: false,
-            message: 'Failed to submit inquiry. Please try again.'
+            message: `DB Error: ${error.message}`
         };
     }
 
@@ -66,41 +71,109 @@ export async function createInquiry(formData: FormData) {
                 rejectUnauthorized: false // Optional: depending on server strictness
             }
         });
+        // Fetch category name if exists
+        let categoryName = rawData.product_category || '-';
+        if (rawData.product_category) {
+            const { data: categoryData } = await supabase
+                .from('product_categories')
+                .select('name_ko')
+                .eq('code', rawData.product_category)
+                .single();
+            if (categoryData?.name_ko) {
+                categoryName = categoryData.name_ko;
+            }
+        }
 
         // Content for the email
+        const now = new Date().toLocaleString('ko-KR', { timeZone: 'Asia/Seoul' });
+
+        const typeMapping: Record<string, string> = {
+            'general': '일반 문의',
+            'product': '제품 문의',
+            'tech': '기술 지원 문의',
+            'quote': '견적 요청 문의',
+            'quotation': '견적 요청 문의',
+            'other': '기타 문의'
+        };
+        const typeLabel = typeMapping[rawData.inquiry_type || ''] || rawData.inquiry_type;
+
+        const identifier = rawData.company_name || rawData.person_name;
+        // If category is valid and not a dash, include it
+        const productPart = (categoryName && categoryName !== '-') ? `, ${categoryName}` : '';
+
+        const subjectTitle = `[${typeLabel}] ${identifier}${productPart} 문의의 건`;
+
         const mailOptions = {
             from: process.env.MAIL_FROM,
             to: process.env.MAIL_TO,
-            subject: `[New Inquiry] ${rawData.inquiry_type} - ${rawData.person_name}`,
+            subject: subjectTitle,
             text: `
-        New Inquiry Received:
+        새로운 문의가 접수되었습니다
         
-        Company: ${rawData.company_name}
-        Name: ${rawData.person_name}
-        Email: ${rawData.email}
-        Phone: ${rawData.phone}
-        Type: ${rawData.inquiry_type}
-        Category: ${rawData.product_category}
+        발송 일시: ${now}
+
+        회사명: ${rawData.company_name || '-'}
+        담당자: ${rawData.person_name}
+        이메일: ${rawData.email}
+        연락처: ${rawData.phone}
         
-        Message:
+        문의 유형: ${typeLabel}
+        관심 제품: ${categoryName}
+        
+        문의 내용:
         ${rawData.message}
       `,
             html: `
-        <h2>New Inquiry Received</h2>
-        <ul>
-          <li><strong>Company:</strong> ${rawData.company_name}</li>
-          <li><strong>Name:</strong> ${rawData.person_name}</li>
-          <li><strong>Email:</strong> ${rawData.email}</li>
-          <li><strong>Phone:</strong> ${rawData.phone}</li>
-          <li><strong>Type:</strong> ${rawData.inquiry_type}</li>
-          <li><strong>Category:</strong> ${rawData.product_category}</li>
-        </ul>
-        <h3>Message:</h3>
-        <p style="white-space: pre-wrap;">${rawData.message}</p>
+        <div style="font-family: 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #eee; border-radius: 8px; overflow: hidden;">
+            <div style="background-color: #1a1a1a; color: #fff; padding: 20px; text-align: center;">
+                <h2 style="margin: 0; font-size: 20px;">새로운 문의가 접수되었습니다</h2>
+                <p style="margin: 5px 0 0; font-size: 14px; opacity: 0.8;">${now}</p>
+            </div>
+            
+            <div style="padding: 30px;">
+                <table style="width: 100%; border-collapse: collapse; margin-bottom: 30px;">
+                    <tr>
+                        <td style="padding: 10px; border-bottom: 1px solid #eee; width: 120px; color: #666; font-weight: bold;">회사명</td>
+                        <td style="padding: 10px; border-bottom: 1px solid #eee;">${rawData.company_name || '-'}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 10px; border-bottom: 1px solid #eee; color: #666; font-weight: bold;">담당자</td>
+                        <td style="padding: 10px; border-bottom: 1px solid #eee;"><strong>${rawData.person_name}</strong></td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 10px; border-bottom: 1px solid #eee; color: #666; font-weight: bold;">이메일</td>
+                        <td style="padding: 10px; border-bottom: 1px solid #eee;"><a href="mailto:${rawData.email}" style="color: #0066cc; text-decoration: none;">${rawData.email}</a></td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 10px; border-bottom: 1px solid #eee; color: #666; font-weight: bold;">연락처</td>
+                        <td style="padding: 10px; border-bottom: 1px solid #eee;">${rawData.phone}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 10px; border-bottom: 1px solid #eee; color: #666; font-weight: bold;">문의 유형</td>
+                        <td style="padding: 10px; border-bottom: 1px solid #eee;"><span style="background-color: #f5f5f5; padding: 4px 8px; border-radius: 4px; font-size: 14px;">${typeLabel}</span></td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 10px; border-bottom: 1px solid #eee; color: #666; font-weight: bold;">관심 제품</td>
+                        <td style="padding: 10px; border-bottom: 1px solid #eee;">${categoryName}</td>
+                    </tr>
+                </table>
+
+                <div style="background-color: #f9f9f9; padding: 20px; border-radius: 8px;">
+                    <h3 style="margin: 0 0 15px; font-size: 16px; color: #333;">문의 내용</h3>
+                    <p style="margin: 0; white-space: pre-wrap; line-height: 1.6; color: #555;">${rawData.message}</p>
+                </div>
+            </div>
+            
+            <div style="background-color: #f5f5f5; padding: 15px; text-align: center; font-size: 12px; color: #999;">
+                <p style="margin: 0;">본 메일은 대창기계산업 홈페이지 고객지원 양식을 통해 발송되었습니다.</p>
+            </div>
+        </div>
       `
         };
 
-        await transporter.sendMail(mailOptions);
+        console.log('Attempting to send email with host:', process.env.MAIL_HOST);
+        const info = await transporter.sendMail(mailOptions);
+        console.log('Email sent successfully:', info.response);
 
     } catch (emailError) {
         console.error('Failed to send email:', emailError);
