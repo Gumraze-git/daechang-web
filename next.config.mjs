@@ -8,7 +8,6 @@ const nextConfig = {
         serverActions: {
             bodySizeLimit: '10mb',
         },
-        serverComponentsExternalPackages: ['jsdom'],
     },
     images: {
         remotePatterns: [
