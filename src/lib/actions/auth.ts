@@ -17,8 +17,12 @@ export async function login(formData: FormData) {
     });
 
     if (error) {
-        console.error('Login Error:', error);
-        return { error: error.message }; // Return actual error for debugging
+        if (error.message === 'Invalid login credentials') {
+            console.warn(`Login Attempt Failed: Invalid credentials for ${email}`);
+        } else {
+            console.error('Login Error:', error);
+        }
+        return { error: error.message };
     }
 
     redirect('/admin');
