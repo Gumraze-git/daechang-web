@@ -7,12 +7,20 @@ import { revalidatePath } from 'next/cache';
 /**
  * 랜덤 비밀번호 생성 (영문 대소문자 + 숫자 + 특수문자 조합, 12자리)
  */
+import { randomBytes } from 'crypto';
+
+/**
+ * 랜덤 비밀번호 생성 (영문 대소문자 + 숫자 + 특수문자 조합, 12자리)
+ * Crypto API를 사용하여 보안성 강화
+ */
 function generateRandomPassword() {
     const length = 12;
     const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*";
     let retVal = "";
+    const randomValues = randomBytes(length);
+
     for (let i = 0, n = charset.length; i < length; ++i) {
-        retVal += charset.charAt(Math.floor(Math.random() * n));
+        retVal += charset.charAt(randomValues[i] % n);
     }
     return retVal;
 }
