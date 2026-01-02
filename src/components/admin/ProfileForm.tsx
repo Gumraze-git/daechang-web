@@ -1,11 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Label } from '@/components/ui/label';
-import { Badge } from '@/components/ui/badge';
-import { User, Lock, Calendar, Mail, ShieldCheck, ArrowRight } from 'lucide-react';
+import { Card } from '@/components/ui/card';
 
 interface ProfileFormProps {
     admin: {
@@ -19,42 +15,55 @@ interface ProfileFormProps {
 }
 
 export default function ProfileForm({ admin }: ProfileFormProps) {
+    // Helper to format role text
+    const getRoleText = (role: string) => {
+        if (role === 'super_admin') return '최고 관리자';
+        if (role === 'admin') return '일반 관리자';
+        return role;
+    };
+
     return (
-        <Card className="p-6">
-            <div className="flex flex-col sm:flex-row items-center gap-6">
-                {/* Avatar */}
-                <div className="h-20 w-20 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center shrink-0">
-                    <User className="h-10 w-10 text-blue-600 dark:text-blue-400" />
+        <Card className="p-8 border-gray-100 shadow-sm">
+            <div className="space-y-8">
+                {/* Header Section */}
+                <div>
+                    <h2 className="text-xl font-bold text-gray-900">{admin.name || '관리자'}</h2>
+                    <p className="text-sm text-gray-500 mt-1">
+                        가입일: {new Date(admin.created_at).toLocaleDateString()}
+                    </p>
                 </div>
 
-                {/* Info Container */}
-                <div className="flex-1 text-center sm:text-left space-y-2">
-                    <h2 className="text-2xl font-bold">{admin.name || '관리자'}</h2>
-
-                    <div className="flex flex-wrap items-center justify-center sm:justify-start gap-3">
-                        <div className="flex items-center gap-2 text-gray-500">
-                            <Mail className="w-4 h-4" />
-                            <span>{admin.email}</span>
-                        </div>
-
-                        <Link href="/admin/password-change" className="text-sm text-blue-600 hover:text-blue-800 hover:underline flex items-center gap-1 font-medium">
-                            비밀번호 변경 <ArrowRight className="w-3 h-3" />
-                        </Link>
+                {/* Info Grid */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-6">
+                    <div className="space-y-1">
+                        <label className="text-xs font-semibold text-gray-400 uppercase tracking-wider">이메일</label>
+                        <p className="text-base text-gray-900 font-medium">{admin.email}</p>
                     </div>
 
-                    <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2 mt-2">
-                        <Badge variant="outline" className="gap-1">
-                            <ShieldCheck className="w-3 h-3" />
-                            <span className="uppercase">{admin.role}</span>
-                        </Badge>
-                        <Badge className={`${admin.must_change_password ? "bg-yellow-500" : "bg-green-500"} gap-1`}>
-                            {admin.must_change_password ? '비밀번호 변경 필요' : '정상'}
-                        </Badge>
-                        <span className="text-sm text-gray-400 flex items-center gap-1 ml-2">
-                            <Calendar className="w-3 h-3" />
-                            {new Date(admin.created_at).toLocaleDateString()}
+                    <div className="space-y-1">
+                        <label className="text-xs font-semibold text-gray-400 uppercase tracking-wider">계정 권한</label>
+                        <div className="flex items-center gap-2">
+                            <p className="text-base text-gray-900 font-medium">{getRoleText(admin.role)}</p>
+                            {admin.role === 'super_admin' && (
+                                <span className="text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded">Master</span>
+                            )}
+                        </div>
+                    </div>
+                </div>
+
+                {/* Actions */}
+                <div className="pt-6 border-t border-gray-50 flex items-center justify-between">
+                    <div>
+                        <span className={`text-sm ${admin.must_change_password ? 'text-red-500 font-medium' : 'text-green-600'}`}>
+                            {admin.must_change_password ? '비밀번호 변경이 필요합니다.' : '계정 상태 정상'}
                         </span>
                     </div>
+                    <Link
+                        href="/admin/password-change"
+                        className="text-sm font-medium text-gray-600 hover:text-black hover:underline transition-colors"
+                    >
+                        비밀번호 변경하기 &rarr;
+                    </Link>
                 </div>
             </div>
         </Card>
