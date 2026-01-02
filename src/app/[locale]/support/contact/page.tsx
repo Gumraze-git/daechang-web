@@ -12,6 +12,7 @@ import { Label } from '@/components/ui/label';
 import { Loader2 } from 'lucide-react';
 import { createInquiry } from '@/lib/actions/inquiries';
 import { useToast } from '@/components/ui/use-toast';
+import { getProductCategories } from '@/lib/actions/products';
 
 function ContactForm() {
   const t = useTranslations('SupportPage');
@@ -22,6 +23,7 @@ function ContactForm() {
   // State for form fields
   const [inquiryType, setInquiryType] = useState('product');
   const [productCategory, setProductCategory] = useState('');
+  const [categories, setCategories] = useState<{ code: string; name_ko: string; name_en: string }[]>([]);
 
   useEffect(() => {
     const typeParam = searchParams.get('type');
@@ -33,6 +35,16 @@ function ContactForm() {
     if (categoryParam) {
       setProductCategory(categoryParam);
     }
+
+    const fetchCategories = async () => {
+      try {
+        const data = await getProductCategories();
+        setCategories(data);
+      } catch (error) {
+        console.error("Failed to fetch categories", error);
+      }
+    };
+    fetchCategories();
   }, [searchParams]);
 
   const { toast } = useToast();
@@ -43,10 +55,7 @@ function ContactForm() {
 
     const formData = new FormData(e.currentTarget);
 
-    // Manually append select values if they are not part of native form submission (though often they are if using name prop, but shadcn Select might need hidden input or manual append)
-    // shadcn Select components don't always render accessible hidden inputs valid for FormData unless inside a Form library or manually handled.
-    // Let's check how they are used. The Select component in shadcn usually doesn't emit a name prop to a hidden input automatically unless wrapped. 
-    // We used state for them: inquiryType, productCategory
+    // Manually append select values
     formData.set('inquiry_type', inquiryType);
     if (productCategory) formData.set('product_category', productCategory);
 
@@ -135,6 +144,7 @@ function ContactForm() {
                 </Label>
                 <Input
                   id="company"
+                  name="company_name"
                   placeholder={t('placeholder_company')}
                   className="h-14 bg-gray-50 dark:bg-gray-800/50 border-transparent hover:bg-gray-100 dark:hover:bg-gray-800 focus:bg-white dark:focus:bg-gray-900 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 rounded-xl text-lg placeholder:text-gray-500 dark:placeholder:text-gray-400 transition-all duration-300"
                 />
@@ -145,6 +155,7 @@ function ContactForm() {
                 </Label>
                 <Input
                   id="name"
+                  name="person_name"
                   required
                   placeholder={t('placeholder_name')}
                   className="h-14 bg-gray-50 dark:bg-gray-800/50 border-transparent hover:bg-gray-100 dark:hover:bg-gray-800 focus:bg-white dark:focus:bg-gray-900 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 rounded-xl text-lg placeholder:text-gray-500 dark:placeholder:text-gray-400 transition-all duration-300"
@@ -159,6 +170,7 @@ function ContactForm() {
                 </Label>
                 <Input
                   id="email"
+                  name="email"
                   type="email"
                   required
                   placeholder={t('placeholder_email')}
@@ -171,6 +183,7 @@ function ContactForm() {
                 </Label>
                 <Input
                   id="phone"
+                  name="phone"
                   type="tel"
                   required
                   placeholder={t('placeholder_phone')}
@@ -207,10 +220,11 @@ function ContactForm() {
                     <SelectValue placeholder={t('placeholder_select_category')} />
                   </SelectTrigger>
                   <SelectContent align="start" className="rounded-xl border-gray-100 dark:border-gray-800 shadow-xl bg-white dark:bg-gray-900 z-50">
-                    <SelectItem value="blow-molding-machines" className="text-base py-3 cursor-pointer">{t('form_option_blow_molding')}</SelectItem>
-                    <SelectItem value="extrusion-lines" className="text-base py-3 cursor-pointer">{t('form_option_extrusion')}</SelectItem>
-                    <SelectItem value="reducers" className="text-base py-3 cursor-pointer">{t('form_option_reducer')}</SelectItem>
-                    <SelectItem value="ptos" className="text-base py-3 cursor-pointer">{t('form_option_pto')}</SelectItem>
+                    {categories.map((category) => (
+                      <SelectItem key={category.code} value={category.code} className="text-base py-3 cursor-pointer">
+                        {category.name_ko} {category.name_en ? `(${category.name_en})` : ''}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </div>
@@ -222,6 +236,7 @@ function ContactForm() {
               </Label>
               <Textarea
                 id="message"
+                name="message"
                 required
                 placeholder={t('placeholder_message')}
                 className="min-h-[200px] bg-gray-50 dark:bg-gray-800/50 border-transparent hover:bg-gray-100 dark:hover:bg-gray-800 focus:bg-white dark:focus:bg-gray-900 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 rounded-xl text-lg p-5 resize-none placeholder:text-gray-500 dark:placeholder:text-gray-400 transition-all duration-300"
