@@ -374,3 +374,18 @@ export async function toggleProductFeatured(id: string, isFeatured: boolean) {
     revalidatePath('/admin/home');
     revalidatePath('/');
 }
+
+export async function getProductCategories() {
+    const supabase = await createClient();
+    const { data, error } = await supabase
+        .from('product_categories')
+        .select('code, name_ko, name_en')
+        .order('code', { ascending: true });
+
+    if (error) {
+        console.error('Error fetching product categories:', error);
+        return [];
+    }
+
+    return data as { code: string; name_ko: string; name_en: string }[];
+}
