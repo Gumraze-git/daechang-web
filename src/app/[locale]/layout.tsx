@@ -20,6 +20,14 @@ export async function generateMetadata({ params }: Omit<Props, 'children'>) {
     icons: {
       icon: '/favicon_v3.png',
     },
+    openGraph: {
+      title: t('title'),
+      description: t('description'),
+      url: `https://daechang-web.vercel.app/${locale}`,
+      siteName: '대창기계산업(주)',
+      locale: locale === 'ko' ? 'ko_KR' : 'en_US',
+      type: 'website',
+    },
   };
 }
 
