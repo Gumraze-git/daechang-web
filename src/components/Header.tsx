@@ -79,7 +79,6 @@ export function Header() {
             width={320}
             height={80}
             className="h-10 w-auto object-contain"
-            unoptimized
           />
         </Link>
 
@@ -136,7 +135,7 @@ export function Header() {
               {/* Mobile Menu Header with Logo */}
               <div className="p-6 border-b border-gray-100 dark:border-gray-800 flex justify-between items-center bg-gray-50/50 dark:bg-gray-900/50">
                 <Link href="/" className="flex items-center space-x-2" onClick={() => setIsOpen(false)}>
-                  <Image src="/logo_small.png" alt="Daechang Logo" width={160} height={40} className="h-8 w-auto" unoptimized />
+                  <Image src="/logo_small.png" alt="Daechang Logo" width={160} height={40} className="h-8 w-auto" />
                 </Link>
                 {/* Close button is handled by SheetPrimitive.Close, but we can have custom one here if needed, or rely on default */}
               </div>

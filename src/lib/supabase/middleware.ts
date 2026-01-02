@@ -39,7 +39,8 @@ export async function updateSession(request: NextRequest) {
     if (
         !user &&
         request.nextUrl.pathname.startsWith('/admin') &&
-        !request.nextUrl.pathname.startsWith('/admin/login')
+        !request.nextUrl.pathname.startsWith('/admin/login') &&
+        !request.nextUrl.pathname.startsWith('/admin/forgot-password')
     ) {
         // 사용자가 없는 경우, 로그인 페이지로 리다이렉트합니다.
         const url = request.nextUrl.clone()

@@ -21,36 +21,69 @@ export type Notice = {
     updated_at: string;
 }
 
-export async function getNotices() {
-    const supabase = await createClient();
-    const { data, error } = await supabase
-        .from('notices')
-        .select('*')
-        .order('is_pinned', { ascending: false })
-        .order('published_at', { ascending: false });
+import { unstable_cache, revalidateTag } from 'next/cache';
+import { createClient as createSupabaseClient } from '@supabase/supabase-js';
 
-    if (error) {
-        console.error('Error fetching notices:', error);
-        return [];
+export const getNotices = unstable_cache(
+    async () => {
+        const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+        const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+        if (!url || !key) {
+            console.warn('Supabase env vars missing. Returning empty list during build.');
+            return [];
+        }
+
+        const supabase = createSupabaseClient(url, key);
+        const { data, error } = await supabase
+            .from('notices')
+            .select('*')
+            .order('is_pinned', { ascending: false })
+            .order('published_at', { ascending: false });
+
+        if (error) {
+            console.error('Error fetching notices:', error);
+            return [];
+        }
+
+        return (data || []) as Notice[];
+    },
+    ['notices-list'],
+    {
+        tags: ['notices'],
+        revalidate: 3600
     }
-
-    return (data || []) as Notice[];
-}
+);
 
 export async function getNotice(id: string) {
-    const supabase = await createClient();
-    const { data, error } = await supabase
-        .from('notices')
-        .select('*')
-        .eq('id', id)
-        .single();
+    return unstable_cache(
+        async () => {
+            const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+            const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
-    if (error) {
-        console.error('Error fetching notice:', error);
-        return null;
-    }
+            if (!url || !key) {
+                return null;
+            }
 
-    return data as Notice;
+            const supabase = createSupabaseClient(url, key);
+            const { data, error } = await supabase
+                .from('notices')
+                .select('*')
+                .eq('id', id)
+                .single();
+
+            if (error) {
+                console.error(`Error fetching notice (id=${id}):`, JSON.stringify(error, null, 2));
+                return null;
+            }
+            return data as Notice;
+        },
+        [`notice-${id}`],
+        {
+            tags: ['notices', `notice-${id}`],
+            revalidate: 3600
+        }
+    )();
 }
 
 export async function createNotice(formData: FormData) {
@@ -109,6 +142,9 @@ export async function createNotice(formData: FormData) {
     }
 
     revalidatePath('/admin/notices');
+
+    revalidateTag('notices', { expire: 0 });
+
     return { success: true };
 }
 
@@ -122,6 +158,7 @@ export async function deleteNotice(id: string) {
     }
 
     revalidatePath('/admin/notices');
+    revalidateTag('notices', { expire: 0 });
 }
 
 export async function updateNotice(id: string, formData: FormData) {
@@ -197,6 +234,9 @@ export async function updateNotice(id: string, formData: FormData) {
     }
 
     revalidatePath('/admin/notices');
-    revalidatePath(`/admin/notices/${id}`); // Revalidate detail page (though admin detail might not exist, public one does)
+    revalidatePath(`/admin/notices/${id}`);
+
+    revalidateTag('notices', { expire: 0 });
+    revalidateTag(`notice-${id}`, { expire: 0 });
     return { success: true };
 }

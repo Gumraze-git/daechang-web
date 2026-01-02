@@ -10,19 +10,33 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter }
 import { Label } from '@/components/ui/label';
 import { Loader2, ArrowRight } from 'lucide-react';
 
+import { useToast } from '@/components/ui/use-toast';
+
 import { login } from '@/lib/actions/auth';
 
 export default function AdminLoginPage() {
     const router = useRouter(); // router might not be needed for redirect in server action, but kept for now or safe removal
     const [isLoading, setIsLoading] = useState(false);
+    const { toast } = useToast();
 
     const handleLogin = async (formData: FormData) => {
         setIsLoading(true);
         // Server Action 호출
-        const result = await login(formData); // login import 필요
+        const result = await login(formData);
 
         if (result?.error) {
-            alert(result.error);
+            let errorMessage = "로그인에 실패했습니다.";
+            if (result.error.includes("Invalid login credentials")) {
+                errorMessage = "아이디 또는 비밀번호가 일치하지 않습니다.";
+            } else if (result.error.includes("Email not confirmed")) {
+                errorMessage = "이메일 인증이 완료되지 않았습니다.";
+            }
+
+            toast({
+                variant: "destructive",
+                title: "로그인 실패",
+                description: errorMessage,
+            });
             setIsLoading(false);
         }
     };
@@ -74,7 +88,7 @@ export default function AdminLoginPage() {
                                 </div>
                             </div>
                         </CardContent>
-                        <CardFooter className="pt-6 pb-8">
+                        <CardFooter className="pt-6 pb-8 flex flex-col gap-4">
                             <Button type="submit" className="w-full h-11 text-base font-medium bg-blue-600 hover:bg-blue-700 shadow-lg shadow-blue-600/20 transition-all hover:-translate-y-0.5" disabled={isLoading}>
                                 {isLoading ? (
                                     <>
@@ -85,6 +99,13 @@ export default function AdminLoginPage() {
                                     '관리자 로그인'
                                 )}
                             </Button>
+
+                            <Link
+                                href="/admin/forgot-password"
+                                className="text-xs font-medium text-gray-400 hover:text-gray-600 transition-colors relative z-50 p-2"
+                            >
+                                비밀번호 찾기
+                            </Link>
                         </CardFooter>
                     </form>
                 </Card>
