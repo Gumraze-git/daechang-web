@@ -21,7 +21,12 @@ import { createNotice, updateNotice, type Notice } from '@/lib/actions/notices';
 import { type NoticeCategory } from '@/lib/actions/notice-categories';
 import Image from 'next/image';
 import DeleteAlertDialog from '@/components/admin/DeleteAlertDialog';
-import TiptapEditor from '@/components/admin/TiptapEditor';
+import dynamic from 'next/dynamic';
+
+const TiptapEditor = dynamic(() => import('@/components/admin/TiptapEditor'), {
+    ssr: false,
+    loading: () => <div className="h-[300px] w-full bg-gray-50 flex items-center justify-center text-gray-400 rounded-md border border-gray-200">에디터 로딩 중...</div>
+});
 
 interface NoticeFormProps {
     initialData?: Notice;
