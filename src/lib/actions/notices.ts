@@ -46,7 +46,7 @@ export async function getNotice(id: string) {
         .single();
 
     if (error) {
-        console.error('Error fetching notice:', error);
+        console.error(`Error fetching notice (id=${id}):`, JSON.stringify(error, null, 2));
         return null;
     }
 
