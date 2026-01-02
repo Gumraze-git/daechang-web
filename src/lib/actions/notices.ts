@@ -26,10 +26,15 @@ import { createClient as createSupabaseClient } from '@supabase/supabase-js';
 
 export const getNotices = unstable_cache(
     async () => {
-        const supabase = createSupabaseClient(
-            process.env.NEXT_PUBLIC_SUPABASE_URL!,
-            process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-        );
+        const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+        const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+        if (!url || !key) {
+            console.warn('Supabase env vars missing. Returning empty list during build.');
+            return [];
+        }
+
+        const supabase = createSupabaseClient(url, key);
         const { data, error } = await supabase
             .from('notices')
             .select('*')
@@ -53,10 +58,14 @@ export const getNotices = unstable_cache(
 export async function getNotice(id: string) {
     return unstable_cache(
         async () => {
-            const supabase = createSupabaseClient(
-                process.env.NEXT_PUBLIC_SUPABASE_URL!,
-                process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-            );
+            const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+            const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+            if (!url || !key) {
+                return null;
+            }
+
+            const supabase = createSupabaseClient(url, key);
             const { data, error } = await supabase
                 .from('notices')
                 .select('*')
