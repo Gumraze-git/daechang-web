@@ -23,7 +23,7 @@ import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 
 export default function AdminsPage() {
-    const [searchTerm, setSearchTerm] = useState('');
+
     const [admins, setAdmins] = useState<any[]>([]);
     const [settings, setSettings] = useState<SystemSettings | null>(null);
     const [isLoading, setIsLoading] = useState(true);
@@ -111,10 +111,7 @@ export default function AdminsPage() {
         }
     };
 
-    const filteredAdmins = admins.filter(admin =>
-        admin.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        admin.email?.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+
 
     return (
         <div className="space-y-6">
@@ -131,18 +128,7 @@ export default function AdminsPage() {
                 </Link>
             </div>
 
-            {/* Filters & Search */}
-            <Card className="flex flex-col sm:flex-row gap-4 items-center justify-between p-4 py-4">
-                <div className="relative w-full sm:w-80">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                    <Input
-                        placeholder="이름 또는 이메일 검색..."
-                        className="pl-9 bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-700"
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                    />
-                </div>
-            </Card>
+
 
             {/* Admins Table */}
             <Card className="overflow-hidden p-0 py-0 gap-0">
@@ -164,14 +150,14 @@ export default function AdminsPage() {
                                     Loading...
                                 </TableCell>
                             </TableRow>
-                        ) : filteredAdmins.length === 0 ? (
+                        ) : admins.length === 0 ? (
                             <TableRow>
                                 <TableCell colSpan={6} className="h-24 text-center text-gray-500">
                                     등록된 관리자가 없습니다.
                                 </TableCell>
                             </TableRow>
                         ) : (
-                            filteredAdmins.map((admin) => (
+                            admins.map((admin) => (
                                 <TableRow key={admin.id} className="group">
                                     <TableCell className="font-medium text-gray-900 dark:text-gray-100">
                                         {admin.name}
@@ -179,10 +165,8 @@ export default function AdminsPage() {
                                     <TableCell className="text-gray-500">
                                         {admin.email}
                                     </TableCell>
-                                    <TableCell>
-                                        <Badge variant="secondary" className="font-normal text-gray-500 bg-gray-100 dark:bg-gray-800 dark:text-gray-400 border border-gray-200 dark:border-gray-700">
-                                            {admin.role}
-                                        </Badge>
+                                    <TableCell className="text-gray-900 dark:text-gray-100">
+                                        {admin.role === 'super_admin' ? '최고 관리자' : '일반 관리자'}
                                     </TableCell>
                                     <TableCell>
                                         <Badge
