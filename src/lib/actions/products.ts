@@ -3,6 +3,7 @@
 import { createClient } from '@/lib/supabase/server';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
+import { z } from 'zod';
 
 export type Product = {
     id: string;
@@ -128,31 +129,51 @@ export async function getProduct(id: string) {
 export async function createProduct(formData: FormData) {
     const supabase = await createClient();
 
-    // Extract basic fields
-    const name_ko = formData.get('name_ko') as string;
-    const name_en = formData.get('name_en') as string;
-    const desc_ko = formData.get('desc_ko') as string;
-    const desc_en = formData.get('desc_en') as string;
-    const category_code = formData.get('category_code') as string;
-    const model_no = formData.get('model_no') as string;
-    const capacity = formData.get('capacity') as string;
-    const status = formData.get('status') as string;
-    const is_featured = formData.get('is_featured') === 'on';
+    // 1. Parse and Validate Input using Zod
+    const schema = z.object({
+        name_ko: z.string().min(1, '제품명(한글)을 입력해주세요.'),
+        name_en: z.string().min(1, '제품명(영문)을 입력해주세요.'),
+        desc_ko: z.string().optional(),
+        desc_en: z.string().optional(),
+        category_code: z.string().min(1, '카테고리를 선택해주세요.'),
+        model_no: z.string().optional(),
+        capacity: z.string().optional(),
+        status: z.enum(['active', 'draft', 'hidden']).default('draft'),
+        is_featured: z.boolean(),
+        partner_ids: z.array(z.string()).optional(),
+        notice_ids: z.array(z.string()).optional(),
+        specs: z.array(z.any()).optional(),
+        features: z.array(z.any()).optional(),
+    });
 
-    // We will use partner_ids instead of a single partner_id
-    const partnerIdsString = formData.get('partner_ids') as string;
-    const partnerIds = partnerIdsString ? JSON.parse(partnerIdsString) : [];
+    const rawData = {
+        name_ko: formData.get('name_ko'),
+        name_en: formData.get('name_en'),
+        desc_ko: formData.get('desc_ko'),
+        desc_en: formData.get('desc_en'),
+        category_code: formData.get('category_code'),
+        model_no: formData.get('model_no'),
+        capacity: formData.get('capacity'),
+        status: formData.get('status'),
+        is_featured: formData.get('is_featured') === 'on',
+        partner_ids: formData.get('partner_ids') ? JSON.parse(formData.get('partner_ids') as string) : [],
+        notice_ids: formData.get('notice_ids') ? JSON.parse(formData.get('notice_ids') as string) : [],
+        specs: formData.get('specs') ? JSON.parse(formData.get('specs') as string) : [],
+        features: formData.get('features') ? JSON.parse(formData.get('features') as string) : [],
+    };
 
-    // Extract related notices IDs
-    const noticeIdsString = formData.get('notice_ids') as string;
-    const noticeIds = noticeIdsString ? JSON.parse(noticeIdsString) : [];
+    const validation = schema.safeParse(rawData);
 
-    // Extract Specs and Features
-    const specsString = formData.get('specs') as string;
-    const specs = specsString ? JSON.parse(specsString) : [];
+    if (!validation.success) {
+        console.error('Validation Error:', validation.error);
+        throw new Error(validation.error.issues[0].message);
+    }
 
-    const featuresString = formData.get('features') as string;
-    const features = featuresString ? JSON.parse(featuresString) : [];
+    const {
+        name_ko, name_en, desc_ko, desc_en, category_code,
+        model_no, capacity, status, is_featured,
+        partner_ids, notice_ids, specs, features
+    } = validation.data;
 
     // Handle Image Uploads
     const images: string[] = [];
@@ -204,8 +225,8 @@ export async function createProduct(formData: FormData) {
     }
 
     // Insert Product-Notices Relationships
-    if (noticeIds.length > 0 && product) {
-        const productNotices = noticeIds.map((noticeId: string) => ({
+    if (notice_ids && notice_ids.length > 0 && product) {
+        const productNotices = notice_ids.map((noticeId: string) => ({
             product_id: product.id,
             notice_id: noticeId
         }));
@@ -220,8 +241,8 @@ export async function createProduct(formData: FormData) {
     }
 
     // Insert Product-Partners Relationships
-    if (partnerIds.length > 0 && product) {
-        const productPartners = partnerIds.map((partnerId: string) => ({
+    if (partner_ids && partner_ids.length > 0 && product) {
+        const productPartners = partner_ids.map((partnerId: string) => ({
             product_id: product.id,
             partner_id: partnerId
         }));
@@ -242,33 +263,52 @@ export async function createProduct(formData: FormData) {
 export async function updateProduct(id: string, formData: FormData) {
     const supabase = await createClient();
 
-    // Extract basic fields
-    const name_ko = formData.get('name_ko') as string;
-    const name_en = formData.get('name_en') as string;
-    const desc_ko = formData.get('desc_ko') as string;
-    const desc_en = formData.get('desc_en') as string;
-    const category_code = formData.get('category_code') as string;
-    const model_no = formData.get('model_no') as string;
-    const capacity = formData.get('capacity') as string;
-    const status = formData.get('status') as string;
-    const is_featured = formData.get('is_featured') === 'on';
+    // 1. Zod Validation
+    const schema = z.object({
+        name_ko: z.string().min(1, '제품명(한글)을 입력해주세요.'),
+        name_en: z.string().min(1, '제품명(영문)을 입력해주세요.'),
+        desc_ko: z.string().optional(),
+        desc_en: z.string().optional(),
+        category_code: z.string().min(1, '카테고리를 선택해주세요.'),
+        model_no: z.string().optional(),
+        capacity: z.string().optional(),
+        status: z.enum(['active', 'draft', 'hidden']).default('draft'),
+        is_featured: z.boolean(),
+        partner_ids: z.array(z.string()).optional(),
+        notice_ids: z.array(z.string()).optional(),
+        specs: z.array(z.any()).optional(),
+        features: z.array(z.any()).optional(),
+        current_images: z.array(z.string()).optional(),
+    });
 
-    const partnerIdsString = formData.get('partner_ids') as string;
-    const partnerIds = partnerIdsString ? JSON.parse(partnerIdsString) : [];
+    const rawData = {
+        name_ko: formData.get('name_ko'),
+        name_en: formData.get('name_en'),
+        desc_ko: formData.get('desc_ko'),
+        desc_en: formData.get('desc_en'),
+        category_code: formData.get('category_code'),
+        model_no: formData.get('model_no'),
+        capacity: formData.get('capacity'),
+        status: formData.get('status'),
+        is_featured: formData.get('is_featured') === 'on',
+        partner_ids: formData.get('partner_ids') ? JSON.parse(formData.get('partner_ids') as string) : [],
+        notice_ids: formData.get('notice_ids') ? JSON.parse(formData.get('notice_ids') as string) : [],
+        specs: formData.get('specs') ? JSON.parse(formData.get('specs') as string) : [],
+        features: formData.get('features') ? JSON.parse(formData.get('features') as string) : [],
+        current_images: formData.get('current_images') ? JSON.parse(formData.get('current_images') as string) : [],
+    };
 
-    const noticeIdsString = formData.get('notice_ids') as string;
-    const noticeIds = noticeIdsString ? JSON.parse(noticeIdsString) : [];
+    const validation = schema.safeParse(rawData);
 
-    // Extract Specs and Features
-    const specsString = formData.get('specs') as string;
-    const specs = specsString ? JSON.parse(specsString) : [];
+    if (!validation.success) {
+        throw new Error(validation.error.issues[0].message);
+    }
 
-    const featuresString = formData.get('features') as string;
-    const features = featuresString ? JSON.parse(featuresString) : [];
-
-    // Current images from previews (existing ones)
-    const currentImagesString = formData.get('current_images') as string;
-    const currentImages = currentImagesString ? JSON.parse(currentImagesString) : [];
+    const {
+        name_ko, name_en, desc_ko, desc_en, category_code,
+        model_no, capacity, status, is_featured,
+        partner_ids, notice_ids, specs, features, current_images
+    } = validation.data;
 
     // Handle New Image Uploads
     const newImages: string[] = [];
@@ -290,7 +330,7 @@ export async function updateProduct(id: string, formData: FormData) {
         }
     }
 
-    const allImages = [...currentImages, ...newImages];
+    const allImages = [...(current_images || []), ...newImages];
 
     // Update Product
     const { error: productError } = await supabase
@@ -319,8 +359,8 @@ export async function updateProduct(id: string, formData: FormData) {
     // Update Relationships (Delete old and insert new)
     // 1. Notices
     await supabase.from('product_notices').delete().eq('product_id', id);
-    if (noticeIds.length > 0) {
-        const productNotices = noticeIds.map((noticeId: string) => ({
+    if (notice_ids && notice_ids.length > 0) {
+        const productNotices = notice_ids.map((noticeId: string) => ({
             product_id: id,
             notice_id: noticeId
         }));
@@ -329,8 +369,8 @@ export async function updateProduct(id: string, formData: FormData) {
 
     // 2. Partners
     await supabase.from('product_partners').delete().eq('product_id', id);
-    if (partnerIds.length > 0) {
-        const productPartners = partnerIds.map((partnerId: string) => ({
+    if (partner_ids && partner_ids.length > 0) {
+        const productPartners = partner_ids.map((partnerId: string) => ({
             product_id: id,
             partner_id: partnerId
         }));
